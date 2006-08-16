@@ -1,0 +1,1845 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Shunde</name>
+    </assembly>
+    <members>
+        <member name="T:Shunde.Utilities.TextUtils">
+            <summary>A Utility class for text</summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.GetFriendlyFileSize(System.Int64)">
+            <summary>Converts a number of bytes into a friendly Name, such as 603 bytes, 14 KB, 1,048 MB etc</summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.ToHtml(System.String)">
+            <summary>
+            Converts a string's line breaks into Html line breaks
+            </summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.GetFriendlyDate(System.DateTime,System.String,System.String)">
+            <summary>Gets the textual representation of a date in a "friendly" format, using the specified month and year formats. If the time is not midnight, then the time is included</summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.GetFriendlyDateRange(System.DateTime,System.DateTime,System.String,System.String)">
+            <summary>Gets, as text, the start and end date and time for a start date and end date using the format strings for the month and year</summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.IsMidnight(System.DateTime)">
+            <summary>Returns true if the time is midnight</summary>
+            <remarks>Ignores the seconds and milliseconds</remarks>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.AreSameDay(System.DateTime,System.DateTime)">
+            <summary>Returns true if 2 date times are on the same day</summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.AreSameTime(System.DateTime,System.DateTime)">
+            <summary>Returns true if 2 date times have the same Hour and Minute values</summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.JavascriptStringEncode(System.String)">
+            <summary>Converts a string so that it can be used as a javascript string</summary>
+            <remarks>Uses escape codes for new lines, apostrophes, speech marks</remarks>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.IsValidEmailAddress(System.String)">
+            <summary>Checks to see if a string is a valid email address. A valid email address is at least 5 characters, and has an '@' and a '.' in it</summary>
+            <param Name="email">String containing email address to check</param>
+            <returns>Returns boolean indicating whether this is a valid email address or not</returns>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.RemoveNonAlphaNumeric(System.String)">
+            <summary>Strips a string of all but the alpha-numeric characters</summary>
+            <param Name="input">The string you wish to parse</param>
+            <returns>Returns just the alpha-numeric characters of the input string</returns>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.RemoveNonNumeric(System.String)">
+            <summary>Strips a string of all but the numeric characters</summary>
+            <param Name="input">The string you wish to parse</param>
+            <returns>Returns just the numeric characters of the input string</returns>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.RemoveIllegalCharactersFromFilename(System.String)">
+            <summary>
+            Removes illegal characters, such as ':' and '\' from filenames
+            </summary>
+            <param Name="filename">The original filename, excluding the path (can include file extension)</param>
+            <returns>The filename where any illegal characters are replaced with underscores</returns>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.AppendNameValueToUrl(System.String,System.String,System.String)">
+            <summary>Appends a Name and Value pair to a URL</summary>
+            <remarks>Automatically adds the '?' or '&amp;' as necessary, and URLEncodes the Value</remarks>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.CutText(System.String,System.Int32)">
+            <summary>Cuts a string to end at the end of a word. It appends "..." to the end if the text is cut (that is, if <i>length</i> is greater than the length of the string.</summary>
+            <param Name="str">The string to be cut</param>
+            <param Name="length">The number of characters that the string should be cut at</param>
+            <returns>A string cut at the specified point</returns>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.GetOrdinalSuffix(System.Int32)">
+            <summary>Gets a number as an ordered number, if you know what I mean. For example, converts 1 to "1st" or 2 to "2nd"</summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.ParseStringForFullTextSearch(System.String,System.String[],System.String)">
+            <summary>Parses a string so that it is suitable for a CONTAINSTABLE query</summary>
+            <param Name="searchQuery">The query to parse</param>
+            <param Name="noiseWords">The noisewords for this database - all lowercase</param>
+            <param Name="searchType">The type of search to do; either <i>AND</i> or <i>OR</i></param>
+            <returns>The string ready to be queried</returns>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.GetNoiseWords(System.String)">
+            <summary>
+            Creates a dictionary containing all the words in the noise file
+            </summary>
+            <param Name="filePath">The full path of the noise file</param>
+            <returns>Returns a hash Table</returns>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.ParseStringForFullTextSearch(System.String,System.Collections.Generic.Dictionary{System.String,System.Boolean},System.String)">
+            <summary>Parses a string so that it is suitable for a CONTAINSTABLE query</summary>
+            <param Name="searchQuery">The query to parse</param>
+            <param Name="noiseWords">The noisewords for this database - all lowercase</param>
+            <param Name="searchType">The type of search to do; either <i>AND</i> or <i>OR</i></param>
+            <returns>The string ready to be queried</returns>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.GetExceptionReportAsHtml(System.Exception,System.Web.HttpRequest,System.String)">
+            <summary>Gets a diagnostic report of an exception</summary>
+        </member>
+        <member name="M:Shunde.Utilities.TextUtils.MakeFriendly(System.String)">
+            <summary>Converts a string in camel format suchAsThis into a string Such As This</summary>
+        </member>
+        <member name="T:Shunde.Common.AttribDataType">
+            <summary>The type of data that an <see cref="T:Shunde.Common.Attrib"/> holds</summary>
+        </member>
+        <member name="T:Shunde.Framework.DBObject">
+            <summary>Represents a Database object.</summary>
+            <remarks>
+            	<para>This is the base type of a framework used for applications that save object info in SQL Server. Each object extends this object, with that objects columns specified by an array of <see cref="T:Shunde.Framework.DBColumn"/> objects. This base class implements Code that will save and populate objects.</para>
+            </remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBObject.className">
+            <summary>The full class Name of this object, including namespace, eg. Shunde.DBObject</summary>
+            <remarks>This is used to know which object type to create when creating a new DBObject. The full class Name can be gotten by getting the FullName property of a Type object</remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBObject.updateId">
+            <summary>The update id, used to see if an object can be updated without concurrency issues.</summary>
+            <remarks>This is incremented each time an object is saved.</remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBObject.objectInfo">
+            <summary>The object info for the class that this object is an instance of</summary>
+            <remarks>This is just a reference to the <see cref="T:Shunde.Framework.ObjectInfo"/> in the objectInfoHT HastTable</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.#ctor">
+            <summary>Creates a new DBObject</summary>
+            <remarks>This Constructor loads the reference to the <see cref="T:Shunde.Framework.ObjectInfo"/> of the class that this type belongs to.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo">ObjectInfo</see> for this class. Each class has an ObjectInfo, and each instance of the class has a reference to it.</summary>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.ResetId">
+            <summary>
+            Resets the Id of the object so that when saved again, a new object will be created in the database.
+            </summary>
+            <remarks>This is useful for those times when you would like to clone an existing object. Simply populate it, call ResetId, and save</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.Populate">
+            <summary>Populates this object from the database</summary>
+            <exception cref="T:Shunde.ObjectDoesNotExistException">Thrown if the specified Id is not found in the database.</exception>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.PopulateBinaryData">
+            <summary>Populates the data of all the <see cref="T:Shunde.Framework.BinaryData"/> objects in this class</summary>
+            <remarks>When <see cref="M:Shunde.Framework.DBObject.Populate"/> is called on an object, any Binary Data is not fully populated. This must be therefore called before trying to access the binary data.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.PopulateObjects">
+            <summary>Populates the other DB objects in this class</summary>
+            <remarks>This will populate all DBOBjects in this object, that are in the columns of the <see cref="T:Shunde.Framework.DBTable"/> for this class. Any DBObjects that are null are not populated.</remarks>
+            <exception cref="T:Shunde.ObjectDoesNotExistException">Thrown if one of the DBObjects in this class has an invalid id.</exception>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.PopulateBaseProperties(System.Data.SqlClient.SqlDataReader)">
+            <summary>Populates the properties of this class given a populated <see cref="T:System.Data.SqlClient.SqlDataReader"/> object</summary>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.PopulateBaseProperties(System.Data.SqlClient.SqlDataReader,Shunde.Framework.ObjectInfo,System.Boolean)">
+            <summary>Populates the properties of this class given a populated SqlDataReader object, using the <see href="ObjectInfo" /> to specify which fields should be populated</summary>
+            <remarks>The <see href="ObjectInfo" /> is used to specify which fields of a class should be populated.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.CreateObject(System.Reflection.Assembly,System.String)">
+            <summary>Creates a new DBObject which belongs in the given Assembly with the classname, where the classname includes the namespace</summary>
+            <remarks>First checks the <see cref="F:Shunde.Framework.ObjectInfo.constructors"/> dictionary for the <see cref="T:System.Reflection.ConstructorInfo"/> object. If not, it uses the Assembly to create a ConstructorInfo.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.Exists">
+            <summary>Checks to see if this object exists in the database</summary>
+            <remarks>Currently, if the id is less than 1 then it is considered to not exist. There is no check in the database for performance reasons. This may change later on.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.Save">
+            <summary>Saves this object to the database</summary>
+            <exception cref="T:Shunde.ValidationException">Thrown if the object fails the database constraints. The Message property contains detailed information on why it failed, which is suitable to be shown to the end user.</exception>
+            <exception cref="T:Shunde.ConcurrencyException">Thrown if an object is read and updated by more than one user at the same time. The first to save will have no problem, but if anyone tries to save subsequent to another save without re-reading the data, then this exception will be thrown. The Message property contains detailed information suitable to be shown to the end user.</exception>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.ToString">
+            <summary>Gets a String representation of this object</summary>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.GetHashCode">
+            <summary>Gets the hash key for this object</summary>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.Equals(System.Object)">
+            <summary>Specifies that two DBObjects are equal</summary>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.GetObjects(System.String,System.Type)">
+            <summary>Gets and (possibly partially) populates all the DBObjects for a given SQL Statement</summary>
+            <remarks>The base type is the type that all the objects being retrieved extend. For example, if Notebook and Desktop both extend Computer, then the base type is Computer if getting all Notebooks and Desktops. The returned objects are then created as the type that they should be (ie. Notebooks and Desktops), however they are only partially populated up to the level of the base type (ie. Computer).</remarks>
+            <param Name="query">The SQL query used to retrieve the objects</param>
+            <param Name="baseType">The type of the lowest level DBObject.</param>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.GetObjects(System.Type,System.Type[],System.Boolean,System.String)">
+            <summary>Gets and populates all the DBObjects for a given SQL Statement using the Types given in extendingTypes</summary>
+            <remarks>The base type is the type that all the objects being retrieved extend. For example, if Notebook and Desktop both extend Computer, then the base type is Computer if getting all Notebooks and Desktops. The returned objects are then created as the type that they should be (ie. Notebooks and Desktops), and fully populated if the type is included in the extendingTypes array. However, if the type is not included then it is only partially populated up to the level of the base type (ie. Computer).</remarks>
+            <param Name="baseType">The type of the lowest level DBObject.</param>
+            <param Name="extendingTypes">An optional array containing the extended types of objects that may be returned - if included then the returned objects will be fully populated.</param>
+            <param Name="useView">If this is true, then it is assumed that a view exists that contains the base type LEFT JOINED with all the extendingTypes. This is then used in the FROM clause.</param>
+            <param Name="where">The SQL WHERE query</param>
+        </member>
+        <member name="M:Shunde.Framework.DBObject.GetObject(System.String)">
+            <summary>Gets and populates a single DBObject</summary>
+            <remarks>This is a useful method when you do not know the type of object you will get back. Just pass in a SQL statement that returns one id.</remarks>
+            <param Name="query">An SQL query that returns a single int which is the ID of the object</param>
+            <exception cref="T:Shunde.ValidationException">Thrown if the query returns more than one row.</exception>
+            <exception cref="T:Shunde.ObjectDoesNotExistException">Thrown if the specified ID is not found in the database.</exception>
+            <returns>Returns a fully populated DBObject</returns>
+        </member>
+        <member name="P:Shunde.Framework.DBObject.Id">
+            <summary>The id of the object</summary>
+        </member>
+        <member name="P:Shunde.Framework.DBObject.FriendlyName">
+            <summary>
+            Gets a Name that can be displayed to the end user for this object, if such a Name exists
+            </summary>
+        </member>
+        <member name="P:Shunde.Framework.DBObject.IsDeleted">
+            <summary>Specifies that this object is deleted</summary>
+            <remarks>Rather than deleting an object from the database, it is just marked as deleted. The lastUpdate field of the object should be the date that it was deleted on, and lastUpdatedBy should hold the Name of the user that deleted it.</remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBObject.DisplayOrder">
+            <summary>The relative (to other DBObjects) display order that this DBObject should appear in</summary>
+        </member>
+        <member name="P:Shunde.Framework.DBObject.LastUpdate">
+            <summary>The last time that this object was updated.</summary>
+            <remarks>This is automatically updated each time the object is saved.</remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBObject.LastUpdatedBy">
+            <summary>The person or user who last updated this object</summary>
+        </member>
+        <member name="M:Shunde.Common.AttribDataType.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.AttribDataType.GetDataType">
+            <summary>Gets the data Type of the attribute</summary>
+        </member>
+        <member name="M:Shunde.Common.AttribDataType.GetAttribDataTypes">
+            <summary>Gets and populates all the AttribDataTypes</summary>
+            <returns>Returns an array of 0 or more AttribDataTypes</returns>
+        </member>
+        <member name="P:Shunde.Common.AttribDataType.Name">
+            <summary>The Name of this data type</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribDataType.DataClassName">
+            <summary>The C# class Name of this data type</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribDataType.FriendlyName">
+            <summary>
+            Gets the name of this object
+            </summary>
+        </member>
+        <member name="T:Shunde.Framework.DBTable">
+            <summary>Represents a single Database Table</summary>
+        </member>
+        <member name="M:Shunde.Framework.DBTable.#ctor(System.String,Shunde.Framework.DBColumn[])">
+            <summary>Creates a new DBTable with the specified Name and columns</summary>
+        </member>
+        <member name="P:Shunde.Framework.DBTable.Name">
+            <summary>The Name of the Table</summary>
+        </member>
+        <member name="P:Shunde.Framework.DBTable.Columns">
+            <summary>The columns that make up the Table</summary>
+        </member>
+        <member name="P:Shunde.Framework.DBTable.ObjectInfo">
+            <summary>
+            The object info corresponding to this Table
+            </summary>
+        </member>
+        <member name="P:Shunde.Framework.DBTable.UniqueIndexColumns">
+            <summary>A comma separated list of columns that, held together, need to be unique</summary>
+            <remarks>The comma separated list must have no spaces between the column names. Leave it as an empty string to have no unique index created.</remarks>
+        </member>
+        <member name="T:Shunde.Utilities.PagingUtil">
+            <summary>A class that helps create paging for an array of objects</summary>
+        </member>
+        <member name="M:Shunde.Utilities.PagingUtil.#ctor">
+            <summary>
+            Creates a new Paging Util object
+            </summary>
+        </member>
+        <member name="M:Shunde.Utilities.PagingUtil.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a new Paging Util object
+            </summary>
+            <param Name="currentPage">The current page that is being viewed</param>
+            <param Name="numberOfItems">The total number of items to page through</param>
+            <param Name="numberPerPage">The number per page to display</param>
+        </member>
+        <member name="M:Shunde.Utilities.PagingUtil.GetPageLinksAsHtml(System.String,System.String)">
+            <summary>Gets the list of pages, with next, page nums, and previous buttons</summary>
+        </member>
+        <member name="M:Shunde.Utilities.PagingUtil.getPageXOfY">
+            <summary>Gets text saying Page X of Y</summary>
+        </member>
+        <member name="M:Shunde.Utilities.PagingUtil.GetStart">
+            <summary>Gets the start index for this page</summary>
+        </member>
+        <member name="M:Shunde.Utilities.PagingUtil.GetEnd">
+            <summary>Gets the end index for this page</summary>
+        </member>
+        <member name="P:Shunde.Utilities.PagingUtil.NumberPerPage">
+            <summary>Holds Value of property numberPerPage</summary>
+        </member>
+        <member name="P:Shunde.Utilities.PagingUtil.CurrentPage">
+            <summary>Holds Value of property currentPage</summary>
+        </member>
+        <member name="P:Shunde.Utilities.PagingUtil.NumberOfItems">
+            <summary>Holds Value of property size</summary>
+        </member>
+        <member name="P:Shunde.Utilities.PagingUtil.TotalPages">
+            <summary>
+            The total number of pages of items
+            </summary>
+        </member>
+        <member name="P:Shunde.Utilities.PagingUtil.HasNextPage">
+            <summary>
+            Specifies whether there is another page or not
+            </summary>
+        </member>
+        <member name="P:Shunde.Utilities.PagingUtil.HasPreviousPage">
+            <summary>
+            Specifies whether there is a previous page or not
+            </summary>
+        </member>
+        <member name="T:Shunde.Common.TreeNode">
+            <summary>A node of a tree, to allow for heirachical structures</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.CompareTo(System.Object)">
+            <summary>Compares the Name of this string to another TreeNode</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.PopulateAncestors">
+            <summary>Populates the ancestors of this tree node</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.Save">
+            <summary>Saves this object to the database</summary>
+            <remarks>Before saving, TreeNode loops are checked for</remarks>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.GetTreeNodesAsForest(System.Type,System.Type[])">
+            <summary>Gets all the tree nodes in the database</summary>
+            <remarks>Even gets deleted tree nodes</remarks>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.GetTreeNodesAsForest(System.String,System.Type,System.Type[])">
+            <summary>Gets all the tree nodes in the database</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.ConvertToForest(Shunde.Common.TreeNode[],System.Type)">
+            <summary>Converts an array of TreeNode objects into a forest of trees</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.SetShadedProperty(Shunde.Common.TreeNode,System.Boolean)">
+            <summary>Sets the cached variable for a TreeNode and it's descendants</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.FindDescendant(System.Int32)">
+            <summary>Finds the TreeNode from the Children, or descendants of this TreeNode</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.FindTreeNode(Shunde.Common.TreeNode[],System.Int32)">
+            <summary>Finds the TreeNode with the TreeNode id catId from the tree of categories</summary>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.ConvertToFlatArray(Shunde.Common.TreeNode[])">
+            <summary>Converts a heirachacle Array of Categories into a flat array of Categories</summary>
+            <remarks>The relationships between Parent/Children are retained. It orders the categories alphabetically.</remarks>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.ConvertToFlatArray(Shunde.Common.TreeNode[],System.Type)">
+            <summary>Converts a heirachacle Array of Categories into a flat array of Categories</summary>
+            <remarks>The relationships between Parent/Children are retained. It orders the categories alphabetically.</remarks>
+        </member>
+        <member name="M:Shunde.Common.TreeNode.Search(System.String,Shunde.Common.TreeNode[])">
+            <summary>Searches for a TreeNode</summary>
+            <param Name="query">The search query</param>
+            <param Name="cats">A heirachical array of Categories. Rather than creating new Categories, it will just return an array of pointers to the categories within this parameter</param>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.Name">
+            <summary>The Name of the TreeNode</summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.Notes">
+            <summary>Notes pertaining to this TreeNode</summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.Parent">
+            <summary>The Parent of this TreeNode</summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.IsHidden">
+            <summary>Specifies that this TreeNode is hidden</summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.Children">
+            <summary>The Children of this TreeNode</summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.IsShaded">
+            <summary>Specifies whether a TreeNode is visible, or shaded</summary>
+            <remarks>A TreeNode is 'shaded' if either it is hidden, or one of its ancestors is hidden - this is not set from the database; rather it is a 'cached' variable, only valid if set, to save time working it out every time it is needed.</remarks>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.FullName">
+            <summary>Returns the Name of this TreeNode, with all ancestors names</summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.FriendlyName">
+            <summary>
+            Gets the friendly name of the object
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.IsLeaf">
+            <summary>Returns true if this TreeNode is a leaf node (ie. has no Children)</summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.RootNode">
+            <summary>Returns the root node of the tree that this TreeNode belongs in</summary>
+        </member>
+        <member name="P:Shunde.Common.TreeNode.IsVisible">
+            <summary>Returns true if this TreeNode, and none of its parents, are hidden</summary>
+        </member>
+        <member name="T:Shunde.WebControls.ObjectEditor">
+            <summary>
+            A Control that renders text boxes to edit a DBObject
+            </summary>
+        </member>
+        <member name="F:Shunde.WebControls.ObjectEditor.info">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.#ctor">
+            <summary>
+            Creates a new Object Editor
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.OnInit(System.EventArgs)">
+            <summary>
+            The OnInit event
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.RenderBeginTag(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            Renders the begin tag
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.PopulateTable">
+            <summary>
+            Makes the table
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.SaveUserInputToObject">
+            <summary>
+            Writes the user-inputted values to the object
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.SetOrders(System.String[])">
+            <summary>Pass an array of strings and column infos for each string will be made with display order in ascending order</summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.GetCI(System.String)">
+            <summary>
+            Gets the column info of a column
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.SetFriendlyName(System.String,System.String)">
+            <summary>
+            Sets the friendly Name of a database column
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.ObjectEditor.RenderContents(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            This method is created solely for the design view of visual studio
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.UpdaterName">
+            <summary>
+            An optional Name to record who updated this object
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.DBObject">
+            <summary>The object being edited</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.NumberTextBoxWidth">
+            <summary>
+            The default width of number textboxes
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.DateTextBoxWidth">
+            <summary>
+            The default width of date textboxes
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.StringTextBoxWidth">
+            <summary>
+            The default width of string textboxes
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.MultilineTextBoxHeight">
+            <summary>
+            The default width of string textboxes
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.FileUploaderWidth">
+            <summary>
+            The default width of file uploaders
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.IsForPublic">
+            <summary>If set to false, then extra info is given in dropdown boxes. This should be false almost always.</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.ShowOnlySpecified">
+            <summary>If true, then only those columns that have information in the info hashtable will be shown</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.AutoPopulateSelections">
+            <summary>If true, then selections will be automatically populated, if they aren't already</summary>
+            <remarks>This simply returns all the (non-deleted) objects of the specified type in the database</remarks>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.SaveButton">
+            <summary>The save button</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.CancelButton">
+            <summary>The cancel button</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.DeleteButton">
+            <summary>The delete button</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.BeforeSaveDelegate">
+            <summary>If this is set and ObjectSaveDelegate is null, then this will be called after populating the object with the values from the object editor, but before the <see cref="M:Shunde.Framework.DBObject.Save"/> method is called.</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.ObjectSaveDelegate">
+            <summary>If this is set, then this will be called when the object editor 'save' button is pressed. If it is null, then the object editor will save the object.</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.AfterObjectSavedDelegate">
+            <summary>If the object editor saves the object, then this will be called upon a successful save, upon which the delegate will probably redirect to another page.</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.ObjectDeleteDelegate">
+            <summary>If this is set, then this will be called when the object editor 'delete' button is pressed. If it is null, then the object editor will delete the object.</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.AfterObjectDeletedDelegate">
+            <summary>If the object editor deletes the object, then this will be called upon a successful delete, upon which the delegate will probably redirect to another page.</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.EditCancelledDelegate">
+            <summary>Called when the 'cancel' button is pressed</summary>
+        </member>
+        <member name="P:Shunde.WebControls.ObjectEditor.TagKey">
+            <summary>
+            Gets the tag that surrounds this control
+            </summary>
+        </member>
+        <member name="T:Shunde.WebControls.BeforeSaveDelegate">
+            <summary>
+            Called after the object has been saved
+            </summary>
+        </member>
+        <member name="T:Shunde.WebControls.AfterObjectSavedDelegate">
+            <summary>
+            Called after the object has been saved
+            </summary>
+        </member>
+        <member name="T:Shunde.WebControls.AfterObjectDeletedDelegate">
+            <summary>
+            Called after an object is deleted
+            </summary>
+        </member>
+        <member name="T:Shunde.WebControls.ObjectSaveDelegate">
+            <summary>
+            A delegate to take care of saving the object
+            </summary>
+        </member>
+        <member name="T:Shunde.WebControls.ObjectDeleteDelegate">
+            <summary>
+            A delegate to take care of saving the object
+            </summary>
+        </member>
+        <member name="T:Shunde.WebControls.EditCancelledDelegate">
+            <summary>
+            A delegate to take care of saving the object
+            </summary>
+        </member>
+        <member name="T:Shunde.Utilities.ObjectUtils">
+            <summary>A Utility class for the DBObject Class</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.#ctor">
+            <summary>Prevents creation of this class</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.WriteObjectsToXml(System.IO.Stream,System.Collections.Generic.IList{Shunde.Framework.DBObject})">
+            <summary>
+            Writes a list of DBObjects to a stream as XML
+            </summary>
+            <param name="outputStream">The stream to write to</param>
+            <param name="objects">The DBObjects to write</param>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.AddObjectsToCache(System.Web.Caching.Cache,System.Collections.Generic.IEnumerable{Shunde.Framework.DBObject})">
+            <summary>Adds a collection of DBObjects to the cache, which can later be accessed using <see cref="M:Shunde.Utilities.ObjectUtils.GetObjectFromCache(System.Web.Caching.Cache,System.Int32)"/>.</summary>
+            <param name="cache">The cache to use</param>
+            <param name="objectsToAdd">The objects to add</param>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.GetObjectFromCache(System.Web.Caching.Cache,System.Int32)">
+            <summary>Populates an object with the given id, and saves it to the cache. In future instances, the cached version is used.</summary>
+            <param name="cache">The Cache to use</param>
+            <param name="objectId">The ID of the object to populate</param>
+            <exception cref="T:Shunde.ObjectDoesNotExistException">Thrown when the object does not exist in the database</exception>
+            <returns>A fully populated DBObject</returns>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.RemoveObjectFromCache(System.Web.Caching.Cache,System.Int32)">
+            <summary>Removes the object with the given id from the cache</summary>
+            <remarks>No exception is thrown if the object is not already in the cache</remarks>
+            <param name="cache">The cache to use</param>
+            <param name="objectId">The id of the object to remove</param>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.SaveListOfObjects(System.Collections.Generic.IEnumerable{Shunde.Framework.DBObject})">
+            <summary>Saves an array of <see cref="T:Shunde.Framework.DBObject"/>s</summary>
+            <exception cref="T:Shunde.ValidationException">Thrown if an object in the array fails the database constraints. The Message property contains detailed information on why it failed, which may or may not be suitable to show on the end user, depending on the situation.</exception>
+            <exception cref="T:Shunde.ConcurrencyException">Thrown if an object is read and updated by more than one user at the same time. The first to save will have no problem, but if anyone tries to save subsequent to another save without re-reading the data, then this exception will be thrown. The Message property contains detailed information suitable to be shown to the end user.</exception>
+            <param Name="objects">An array of <see cref="T:Shunde.Framework.DBObject"/>s to be saved</param>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.GetFromList(System.Collections.Generic.IEnumerable{Shunde.Framework.DBObject},System.Int32)">
+            <summary>Gets a DBObject with the given id from an array of DBObjects, or null if the DBObject is not in the array</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.DeleteFromList(System.Collections.Generic.IEnumerable{Shunde.Framework.DBObject},Shunde.Framework.DBObject)">
+            <summary>Deletes an DBObject from an array of DBObjects</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.AddToArray(Shunde.Framework.DBObject[],Shunde.Framework.DBObject)">
+            <summary>
+            Adds an object to an array, or replaces it if it's already in the array
+            </summary>
+            <param name="array">An array of objects</param>
+            <param name="toAdd">The object to be updated or added</param>
+        </member>
+        <member name="M:Shunde.Utilities.ObjectUtils.GetIDsAsCSV(System.Collections.Generic.IEnumerable{Shunde.Framework.DBObject})">
+            <summary>
+            Returns a comma separated list of object IDs
+            </summary>
+            <param Name="objects">The objects whose IDs will be returned</param>
+            <returns>A comma separated list as a string</returns>
+        </member>
+        <member name="T:Shunde.Common.TextSection">
+            <summary>Some text, stored in the database</summary>
+        </member>
+        <member name="M:Shunde.Common.TextSection.#ctor">
+            <summary>Default Constructor</summary>
+            <remarks>This constructor exists only because all <see cref="T:Shunde.Framework.DBObject"/>s must have a constructor that takes no paramaters. You should use the other constructor when creating a TextSection object.</remarks>
+        </member>
+        <member name="M:Shunde.Common.TextSection.#ctor(System.String)">
+            <summary>Creates a new TextSection object and populates it using the specified Code</summary>
+            <param Name="code">The Code to get</param>
+        </member>
+        <member name="M:Shunde.Common.TextSection.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.TextSection.GetTextSectionsForAdministration">
+            <summary>
+            Gets all the text sections that have a value specified for administrators
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.TextSection.Code">
+            <summary>Unique Code identifying this object</summary>
+            <remarks>This can be any unique identify, however, it is recommended that the URL of a page is used, ignoring the querystring.</remarks>
+        </member>
+        <member name="P:Shunde.Common.TextSection.Header">
+            <summary>An optional Header</summary>
+        </member>
+        <member name="P:Shunde.Common.TextSection.Content">
+            <summary>The Content of the text</summary>
+        </member>
+        <member name="P:Shunde.Common.TextSection.NameForAdministrators">
+            <summary>
+            The name for this textblock for administrators, for editing purposes, for example 'Homepage'
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.TextSection.FriendlyName">
+            <summary>
+            Returns the header name if one exists; otherwise the default friendly name is returned
+            </summary>
+        </member>
+        <member name="T:Shunde.Common.GenericType">
+            <summary>This is a generic class for a type, for example a type of event</summary>
+            <remarks>This allows multiple type objects, normally kept in separate tables, to all be stored in one Table.</remarks>
+        </member>
+        <member name="F:Shunde.Common.GenericType.objects">
+            <summary>The objects within this type</summary>
+        </member>
+        <member name="M:Shunde.Common.GenericType.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.GenericType.GetGenericTypes(Shunde.Common.GenericTypeType)">
+            <summary>Gets and populates all the GenericTypes for the given type</summary>
+            <param Name="GenericTypeType">The type to filter by</param>
+            <returns>Returns an array of 0 or more GenericTypes</returns>
+        </member>
+        <member name="M:Shunde.Common.GenericType.GetGenericTypes(System.Int32)">
+            <summary>Gets and populates all the GenericTypes for the given <see cref="P:Shunde.Common.GenericTypeType.Code"/></summary>
+            <param Name="genericTypeTypeCode">The <see cref="P:Shunde.Common.GenericTypeType.Code"/> of the <see cref="P:Shunde.Common.GenericType.GenericTypeType"/> that are to be returned.</param>
+            <returns>Returns an array of 0 or more GenericTypes</returns>
+        </member>
+        <member name="M:Shunde.Common.GenericType.GetGenericTypes">
+            <summary>Gets all the generic types in the database, irrespective of the <see cref="P:Shunde.Common.GenericType.GenericTypeType"/></summary>
+            <returns>Returns an array of 0 or more GenericTypes</returns>
+        </member>
+        <member name="P:Shunde.Common.GenericType.GenericTypeType">
+            <summary>The type of generic type that this is</summary>
+        </member>
+        <member name="P:Shunde.Common.GenericType.Name">
+            <summary>The Name of this data type</summary>
+        </member>
+        <member name="P:Shunde.Common.GenericType.Notes">
+            <summary>Any extra Notes about this type</summary>
+        </member>
+        <member name="P:Shunde.Common.GenericType.FormatInfo">
+            <summary>Optional text field containing format information, such as a colour Code</summary>
+        </member>
+        <member name="P:Shunde.Common.GenericType.Code">
+            <summary>
+            A unique code to identify this GenericType
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.GenericType.FriendlyName">
+            <summary>
+            Gets the friendly name of the object
+            </summary>
+        </member>
+        <member name="T:Shunde.Common.IAttribRelation">
+            <summary>
+            A relation between some object and an attribute
+            </summary>
+        </member>
+        <member name="M:Shunde.Common.IAttribRelation.Save">
+            <summary>
+            Saves any changes to this relation;
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.IAttribRelation.Attrib">
+            <summary>
+            The attribute in the relation
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.IAttribRelation.DBObject">
+            <summary>
+            The object that is related to the attrib
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.IAttribRelation.IsDeleted">
+            <summary>
+            Specifies whether this relation is deleted or not
+            </summary>
+        </member>
+        <member name="T:Shunde.Utilities.WebUtils">
+            <summary>A utility class for web-related tasks, eg making web requests or sending emails</summary>
+        </member>
+        <member name="F:Shunde.Utilities.WebUtils.EmailsPerNewsletter">
+            <summary>The number of email addresses put into the Blind Carbon Copy field that can be sent at once, for bulk email sending</summary> 
+        </member>
+        <member name="M:Shunde.Utilities.WebUtils.RenderControlToString(System.Web.UI.Control)">
+            <summary>
+            Renders a control to a string. Useful for things such as using a control to create HTML for an email
+            </summary>
+            <param Name="control">The control, with any properties already set</param>
+            <returns>The HTML as a string of the control</returns>
+        </member>
+        <member name="M:Shunde.Utilities.WebUtils.RenderWebUserControlToString(System.Web.UI.Page,System.Web.UI.Control)">
+            <summary>
+            Renders a control to a string. Useful for things such as using a control to create HTML for an email
+            </summary>
+            <param Name="page">The page it's displayed on</param>
+            <param Name="control">The control, with any properties already set</param>
+            <returns>The HTML as a string of the control</returns>
+        </member>
+        <member name="M:Shunde.Utilities.WebUtils.GetHostName(System.String)">
+            <summary>Gets the host Name from an IP Address</summary>
+        </member>
+        <member name="M:Shunde.Utilities.WebUtils.MakeWebRequest(System.Uri,System.String)">
+            <summary>Makes a request to a Uri, and returns the output</summary>
+            <param Name="target">The target destinations</param>
+            <param Name="postValue">A string of Name/Value pairs, in the form of a querystring</param>
+            <returns>The output of the requested Uri</returns>
+        </member>
+        <member name="M:Shunde.Utilities.WebUtils.MakeWebRequest(System.Uri,System.String,System.String,System.String,System.String)">
+            <summary>Makes a request to a Uri, and returns the output</summary>
+            <param Name="target">The target destinations</param>
+            <param Name="postValue">A string of Name/Value pairs, in the form of a querystring</param>
+            <param Name="userName">The user Name to authenticate for this request</param>
+            <param Name="password">The password for the login</param>
+            <param Name="domain">The domain of the login</param>
+            <returns>The output of the requested Uri</returns>
+        </member>
+        <member name="M:Shunde.Utilities.WebUtils.MakeWebRequest(System.Uri,System.String,System.Net.NetworkCredential)">
+            <summary>Makes a request to a Uri, and returns the output</summary>
+            <param Name="target">The target destination</param>
+            <param Name="postValue">A string of Name/Value pairs, in the form of a querystring</param>
+            <param Name="networkCredentials">The network credentials for this request. Null for anonymous access</param>
+            <returns>The output of the requested Uri</returns>
+        </member>
+        <member name="M:Shunde.Utilities.WebUtils.GetResponse(System.Uri,System.String,System.Net.NetworkCredential)">
+            <summary>Makes a request to a Uri, and returns the Response</summary>
+            <param Name="target">The target destination</param>
+            <param Name="postValue">A string of Name/Value pairs, in the form of a querystring</param>
+            <param Name="networkCredentials">The network credentials for this request. Null for anonymous access</param>
+            <returns>The output of the requested Uri</returns>
+        </member>
+        <member name="M:Shunde.Utilities.WebUtils.sendBulkEmail(System.String,System.String[],System.String,System.String,System.String)">
+            <summary>Sends a bulk email</summary>
+        </member>
+        <member name="T:Shunde.Utilities.Encrypter">
+            <summary>
+            Some methods for encrypting text
+            </summary>
+        </member>
+        <member name="M:Shunde.Utilities.Encrypter.EncryptOneWay(System.String,System.String)">
+            <summary>Makes a one-way encryption on a string</summary>
+            <param name="hash">A hash key to blend in with the input</param>
+            <param name="input">The string to encrypt</param>
+            <returns>Returns an encrypted string which should be nearly impossible to return to the original string</returns>
+        </member>
+        <member name="F:Shunde.Utilities.Encrypter.HexDigits">
+            <summary>The hex digits in use</summary>
+        </member>
+        <member name="M:Shunde.Utilities.Encrypter.ToHexString(System.Byte[])">
+            <summary>Converts an array of bytes into hexadecimal digits</summary> 
+        </member>
+        <member name="T:Shunde.Common.WebsiteVisit">
+            <summary>Information on a website visit</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.#ctor">
+            <summary>Creates a new instance of a UserVisit</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.#ctor(System.Web.HttpRequest)">
+            <summary>Creates a new instance of a UserVisit populating the variables with values from an HttpRequest object</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.UpdateHostNames">
+            <summary>Attempts to update the host Name of site visits that don't have host names, returning the number of successes</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.GetNumberWithoutHostNames">
+            <summary>Gets the number of site visits that don't have host names</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.GetWebsiteVisitsWithoutHostName">
+            <summary>Gets 20 random UserVisit objects with no UserHostName</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.GetWebsiteVisitsWhere(System.String,System.Int32)">
+            <summary>Gets an array of UserVisit objects with the given SQL WHERE clause</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.SetEndTime(System.Web.SessionState.HttpSessionState)">
+            <summary>Sets the end time for those occasions where the session has timed out</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisit.SetUserHostName">
+            <summary>Sets the user host Name</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.Visitor">
+            <summary>
+            The visitor, or null if unknown
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.StartTime">
+            <summary>The start time of this visit</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.EndTime">
+            <summary>The end time of this Visit</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.UserAgent">
+            <summary>The user agent string</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.SiteReferrer">
+            <summary>The place that this visit came from</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.SearchString">
+            <summary>The string that the person searched for to find the website</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.IPAddress">
+            <summary>The IP address of the client</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.UserHostName">
+            <summary>The User-host Name</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisit.NumberOfPagesViewed">
+            <summary>
+            The number of pages which were viewed
+            </summary>
+        </member>
+        <member name="T:Shunde.Framework.ObjectInfo">
+            <summary>Information for a class. This contains the <see cref="T:Shunde.Framework.DBTable"/>s that make up this object, as well as the from clause and column clause to use in SQL statements, etc.</summary>
+        </member>
+        <member name="F:Shunde.Framework.ObjectInfo.fromClause">
+            <summary>The text to appear in an SQL FROM clause. Either the joined tables that make up this object, or the Name of a view if one is used.</summary>		
+        </member>
+        <member name="F:Shunde.Framework.ObjectInfo.columnClause">
+            <summary>The column names that are in the SELECT query</summary>
+        </member>
+        <member name="F:Shunde.Framework.ObjectInfo.baseTableName">
+            <summary>The base Table Name</summary>
+            <remarks>This will be DBObject unless there is an Indexed View in use on one of the tables making up this object, in which case it will be the Name of a view</remarks>
+        </member>
+        <member name="F:Shunde.Framework.ObjectInfo.objectInfoHT">
+            <summary>Hash Table containing all the <see cref="T:Shunde.Framework.ObjectInfo">ObjectInfo</see> objects</summary>
+            <remarks>Each Class, as it is loaded, has it's ObjectInfo placed into this HashTable - that is object per class. Each DBObject then gets a reference to the ObjectInfo of the class it belongs to, for easy access.</remarks>
+        </member>
+        <member name="F:Shunde.Framework.ObjectInfo.constructors">
+            <summary>Hash Table of constructors</summary>
+            <remarks>Creating DBObjects is a common occurance in the Shunde Framework. For this reason, the <see cref="T:System.Reflection.ConstructorInfo">ConstructorInfo</see> object for each class is saved in this Hashtable automatically, as classes are loaded.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.#ctor(System.Type,Shunde.Framework.DBTable)">
+            <summary>Creates a new ObjectInfo class and populates the fromClause</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.#ctor(System.Type,Shunde.Framework.DBTable,System.Boolean)">
+            <summary>Creates a new ObjectInfo class and populates the fromClause, with the option of specifying that this object uses a Database view.</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.GetSelectStatement">
+            <summary>Creates a SELECT statement for this object with no WHERE clause</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.GetSelectStatement(System.Int32)">
+            <summary>Creates a SELECT statement for this object with no WHERE clause selecting the TOP numberToGet records, or unlimited if -1</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.GetJoinedColumnClause(System.Type[])">
+            <summary>Returns the columns of this object LEFT joined onto the specified object types</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.GetJoinedFromClause(System.Type[])">
+            <summary>Returns a FROM clause that is LEFT joined onto the specified object types</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.SetupObjectInfo(Shunde.Framework.ObjectInfo)">
+            <summary>Sets up an object info object</summary>
+            <remarks>Creates the FROM and COLUMN clauses. This is called by the constructor and is only necessary if something like useView has its Value changed</remarks>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.SetupColumnClause(Shunde.Framework.ObjectInfo)">
+            <summary>Gets a comma separated list of the column names that make up this object</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.GetDirectTable">
+            <summary>Gets the Table that this object added - eg. For a Product it would be the Product Table</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.SetupFromClause(Shunde.Framework.ObjectInfo)">
+            <summary>Gets a comma separated list of the Table names that make up this object</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.RegisterObjectInfo(System.Type,Shunde.Framework.DBTable)">
+            <summary>Registers an <see cref="T:Shunde.Framework.ObjectInfo">ObjectInfo</see> into the hash Table</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.RegisterObjectInfo(Shunde.Framework.ObjectInfo)">
+            <summary>Registers an <see cref="T:Shunde.Framework.ObjectInfo"/> into the hash Table</summary>
+        </member>
+        <member name="M:Shunde.Framework.ObjectInfo.GetObjectInfo(System.Type)">
+            <summary>Gets an ObjectInfo for the given Type</summary>
+        </member>
+        <member name="P:Shunde.Framework.ObjectInfo.ViewName">
+            <summary>
+            The Name of the Sql Server View, applicable if a view is used for this object info
+            </summary>
+        </member>
+        <member name="P:Shunde.Framework.ObjectInfo.Tables">
+            <summary>The tables that make up this object</summary>
+        </member>
+        <member name="P:Shunde.Framework.ObjectInfo.UseView">
+            <summary>Specifies that a view exists for this Table. The view is the equivalent of the joined tables.</summary>
+        </member>
+        <member name="P:Shunde.Framework.ObjectInfo.DBObjectType">
+            <summary>The Type of the object that this ObjectInfo represents</summary>
+        </member>
+        <member name="T:Shunde.Common.Email">
+            <summary>An email message that can be sent to people</summary>
+        </member>
+        <member name="F:Shunde.Common.Email.FixedSizeFont">
+            <summary>CSS Style used fixed-width characters</summary>
+        </member>
+        <member name="F:Shunde.Common.Email.NiceFont">
+            <summary>Arial CSS</summary>
+        </member>
+        <member name="M:Shunde.Common.Email.#ctor">
+            <summary>Constructor</summary>
+        </member>
+        <member name="M:Shunde.Common.Email.SetHtmlMessage(System.String,System.String)">
+            <summary>Sets the message body as HTML</summary>
+            <param Name="message">The html message, which this method will wrap in &lt;body&gt; tags etc</param>
+            <param Name="cssStyles">CSS Styles for use in the message. If null, then default styles are used.</param>
+        </member>
+        <member name="M:Shunde.Common.Email.Send">
+            <summary>Sends this email message</summary>
+            <remarks>Uses SMTP server localhost on port 25</remarks>
+        </member>
+        <member name="M:Shunde.Common.Email.Send(System.String)">
+            <summary>Sends this email message</summary>
+            <param Name="server">The IP address or Host Name of the SMTP Server</param>
+            <remarks>Uses Port 25</remarks>
+        </member>
+        <member name="M:Shunde.Common.Email.Send(System.String,System.Int32)">
+            <summary>Sends this email message</summary>
+            <param Name="server">The IP address or Host Name of the SMTP Server</param>
+            <param Name="port">The port number of the SMTP server</param>
+        </member>
+        <member name="M:Shunde.Common.Email.BulkSend(System.String,System.Int32,System.Collections.Generic.List{System.String})">
+            <summary>
+            Sends this email to bulk recipients
+            </summary>
+            <param Name="recipients">A list of email addresses</param>
+            <remarks>Places the email addresses in the BCC fields, breaking it up into multiple sends if necessary</remarks>
+        </member>
+        <member name="T:Shunde.Common.AttribType">
+            <summary>An Type of an <see cref="T:Shunde.Common.Attrib"/></summary>
+        </member>
+        <member name="M:Shunde.Common.AttribType.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.AttribType.GetDataType">
+            <summary>Gets the Type of the attribute</summary>
+        </member>
+        <member name="M:Shunde.Common.AttribType.GetAttribTypes(Shunde.Framework.DBObject)">
+            <summary>Gets and populates the AttribTypes that exist in the given object</summary>
+        </member>
+        <member name="M:Shunde.Common.AttribType.GetAttribType(System.String)">
+            <summary>Gets an AttribType with the given Name</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.Owner">
+            <summary>The object that this Attribute Type belongs to</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.Name">
+            <summary>The Name of this attribute</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.Instructions">
+            <summary>Instructions on how this attribute should be filled in, for site administrators</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.DataType">
+            <summary>The type of the attribute</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.IsShared">
+            <summary>Specifies that this is a shared attribute. This means more than one object can access this attribute.</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.AllowMultiSelections">
+            <summary>Allow multiple selections to be made. Only valid if this is a shared attribute type.</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.Suffix">
+            <summary>The text which should follow the Value of the attribute</summary>
+            <remarks>This is useful for those attributes which are measures. For example, the Suffix may be "meters", in which case "meters" will follow the Value of the attribute</remarks>
+        </member>
+        <member name="P:Shunde.Common.AttribType.DecimalPlaces">
+            <summary>The number of decimal places to round to, for float numbers</summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.IsRequired">
+            <summary>
+            Specifies that this attribute is required to have a value
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.CurrentRelations">
+            <summary>
+            Currently selected relations for this attribute type
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.IsImage">
+            <summary>
+            Applicable to Binary data; specifies that it is an image
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.IsMultiLine">
+            <summary>
+            Applicable to strings only, specifies that it is a multi-line string
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.AttribType.UseRichTextEditor">
+            <summary>
+            Applicable to Multiline strings only, specifies that, if available, a rich-text editor should be used for editing
+            </summary>
+        </member>
+        <member name="T:Shunde.Common.Attrib">
+            <summary>An Attrib, short for Attribute, is just an attribute for an object</summary>
+            <remarks>This class exists so that you don't need to create a database table for every single kind of attribute. An example of an attribute is Screen Type (LCD or CRT etc) of a Monitor. The monitor would have screenType variable of type Attrib, which would be one of the Attribs in the database with the "ScreenType" <see cref="P:Shunde.Common.Attrib.AttribType"/>.</remarks>
+        </member>
+        <member name="M:Shunde.Common.Attrib.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.Attrib.CreateImagesFromDataValue(System.Drawing.Size,System.Drawing.Size,System.Boolean)">
+            <summary>
+            Attempts to create a thumbnail using the value in <see cref="P:Shunde.Common.Attrib.Value"/>, returning true if successful
+            </summary>
+        </member>
+        <member name="M:Shunde.Common.Attrib.Save">
+            <summary>
+            Saves this object
+            </summary>
+        </member>
+        <member name="M:Shunde.Common.Attrib.GetAttribsAsForest(Shunde.Common.AttribType)">
+            <summary>Gets and populates all the Attribs for a given <see cref="P:Shunde.Common.Attrib.AttribType"/></summary>
+            <param name="attribType">The <see cref="P:Shunde.Common.Attrib.AttribType"/> that the attribs are for</param>
+            <returns>Returns a forest of 0 or more Attribs for the given AttribType</returns>
+        </member>
+        <member name="M:Shunde.Common.Attrib.CreateFromValue(Shunde.Common.AttribType,System.String,Shunde.Common.Attrib)">
+            <summary>Creates a new Attrib with the given Value and Parent and returns the newly created object</summary>
+            <remarks>If the object already existed and the AttribType is a shared attribute, then nothing is created and that object is returned.</remarks>
+        </member>
+        <member name="P:Shunde.Common.Attrib.AttribType">
+            <summary>The type of this Attribute</summary>
+            <remarks>For example, "ScreenType".</remarks>
+        </member>
+        <member name="P:Shunde.Common.Attrib.Value">
+            <summary>The Value of this attribute</summary>
+        </member>
+        <member name="P:Shunde.Common.Attrib.TextualValue">
+            <summary>
+            Returns the textual value of this attribute
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.Attrib.Thumbnail">
+            <summary>
+            The thumbnail for this attribute, if available
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.Attrib.LargeImage">
+            <summary>
+            The thumbnail for this attribute, if available
+            </summary>
+        </member>
+        <member name="T:Shunde.WebControls.TextSectionDisplayer">
+            <summary>
+            A control to render a TextSection to an HTML page
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.TextSectionDisplayer.OnPreRender(System.EventArgs)">
+            <summary>
+            Checks to see if rendering should start
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.TextSectionDisplayer.RenderContents(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            Renders the control as HTML
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.TextSectionDisplayer.CreateChildControls">
+            <summary>
+            Creates the child controls of this control
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.TextSectionDisplayer.AllowEditing">
+            <summary>
+            Specifies that the user viewing this has authorisation to edit the text.
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.TextSectionDisplayer.TextSection">
+            <summary>
+            The text section to be written to the page
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.TextSectionDisplayer.ShowHeader">
+            <summary>
+            Specifies whether or not to show the header, which if true will be wrapped in &lt;h1&gt; tags.
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.TextSectionDisplayer.TagKey">
+            <summary>
+            Gets the tag that surrounds this control
+            </summary>
+        </member>
+        <member name="T:Shunde.Framework.DBColumn">
+            <summary>Represents a Database column</summary>
+        </member>
+        <member name="F:Shunde.Framework.DBColumn.ShortNullValue">
+            <summary>The C# short Value that represents the database NULL Value</summary>
+            <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBColumn.IntegerNullValue">
+            <summary>The C# integer Value that represents the database NULL Value</summary>
+            <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBColumn.LongNullValue">
+            <summary>The C# long Value that represents the database NULL Value</summary>
+            <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBColumn.DoubleNullValue">
+            <summary>The C# double Value that represents the database NULL Value</summary>
+            <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBColumn.FloatNullValue">
+            <summary>The C# float Value that represents the database NULL Value</summary>
+            <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBColumn.DateTimeNullValue">
+            <summary>The C# DateTime Value that represents the database NULL Value</summary>
+            <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
+        </member>
+        <member name="F:Shunde.Framework.DBColumn.sdrIndex">
+            <summary>This specifies the index into the SqlDataReader that this column's Value will be in.</summary>
+        </member>
+        <member name="F:Shunde.Framework.DBColumn.isDBObjectType">
+            <summary>Specifies that this column is a foreign key to an DBObject.</summary>
+        </member>
+        <member name="M:Shunde.Framework.DBColumn.#ctor(System.String,System.Type,System.Boolean)">
+            <summary>Creates a new DBColumn with the values specified. Also sets the Value of <see cref="F:Shunde.Framework.DBColumn.isDBObjectType"/>.</summary>
+        </member>
+        <member name="M:Shunde.Framework.DBColumn.GetColumnName">
+            <summary>Gets the database column Name of this column</summary>
+            <remarks>This is normally the same as the Name specified in <see cref="P:Shunde.Framework.DBColumn.Name"/>, however for DBObject types it has "Id" appended.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBColumn.#ctor(System.String,System.Type,System.Boolean,System.IComparable,System.IComparable)">
+            <summary>Creates a new DBColumn with the values specified. Also sets the Value of <see cref="F:Shunde.Framework.DBColumn.isDBObjectType"/>.</summary>
+            <remarks>This constructor is normally used for DateTime, double, or int types where a minimum and/or maximum Value is set.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBColumn.#ctor(System.String,System.Type,System.Int32,System.Int32)">
+            <summary>Creates a new DBColumn with the values specified. Also sets the Value of <see cref="F:Shunde.Framework.DBColumn.isDBObjectType"/>.</summary>
+            <remarks>This constructor is normally used for string types where a minimum and/or maximum string length is needed. It sets <see cref="F:Shunde.Framework.DBColumn.allowNulls"/> to false.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBColumn.GetSqlText(System.Object)">
+            <summary>Gets the Value of this object in a suitable manner for use in SQL statements</summary>
+            <remarks>string values will have apostrophes escaped, and be enclosed by apostrophes. Varchar columns will also have the <see cref="M:System.String.Trim">string.Trim</see> method called on them. Null values will be returned as "null", and all other types are converted to an appropriate string representation.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBColumn.IsColumnNull(System.Object)">
+            <summary>Determines whether the given object should be considered to be null by the database.</summary>
+            <remarks>This is true if the Value is null, but also if an int has the Value <see cref="F:Shunde.Framework.DBColumn.IntegerNullValue"/> etc.</remarks>
+        </member>
+        <member name="M:Shunde.Framework.DBColumn.Validate(Shunde.Framework.DBObject,System.Object)">
+            <summary>Checks that the given Value is within the constraints placed upon it by this column.</summary>
+            <remarks>This does not check the specific constraints specified in the <see cref="F:Shunde.Framework.DBColumn.constraints"/> field. A Value violating those constraints will be found when attempting to save the object.</remarks>
+            <exception cref="T:Shunde.ValidationException">Thrown if the Value violates the constraints of this column. The Message property contains a friendly error message, suitable to show to end users, on why the validation failed.</exception>
+        </member>
+        <member name="M:Shunde.Framework.DBColumn.IsUniqueInDB(Shunde.Framework.DBObject,System.Object)">
+            <summary>Checks whether this column for the given object holds a unique Value in the database</summary>
+            <remarks>This check is not made if this is a deleted object. Uniqueness only holds among non deleted objects.</remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.Name">
+            <summary>The Name of this column</summary>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.DBTable">
+            <summary>The Table that this column is a part of</summary>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.Type">
+            <summary>The C# Type of the column</summary>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.FieldInfo">
+            <summary>
+            Gets the field info that corresponds to this column
+            </summary>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.IsUnique">
+            <summary>Specifies that this column should be unique in the Table</summary>
+            <remarks>If IsUnique is set to true, a <see cref="T:Shunde.ValidationException"/> is thrown when saving the object if there is another row with the same Value in the database for this column. Unlike in Sql Server, two null values are considered Unique in this context.</remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.MinAllowed">
+            <summary>Represents the minimum Value that this column is allowed.</summary>
+            <remarks>
+            	<para>If there is no minimum, then this should be null.</para>
+            	<para>If a column has a Value lower than the set Value, then a <see cref="T:Shunde.ValidationException"/> will be thrown.</para>
+            </remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.MaxAllowed">
+            <summary>Represents the maximum Value that this column is allowed.</summary>
+            <remarks>
+            	<para>If a column has a Value higher than the set Value, then a <see cref="T:Shunde.ValidationException"/> will be thrown.</para>
+            	<para>If there is no maximum, then this should be null.</para>
+            </remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.MinLength">
+            <summary>This is the minimum number of characters allowed for a string in this column</summary>
+            <remarks>
+            	<para>For a string Value, this should always be at least 0. For other types, this Value is ignored.</para>
+            	<para>If a string column has a Value shorter than the set Value, then a <see cref="T:Shunde.ValidationException"/> will be thrown.</para>
+            </remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.MaxLength">
+            <summary>This is the maximum number of characters allowed for a string in this column</summary>
+            <remarks>
+            	<para>If this is set to a positive Value then the type of column is assumed to be nvarchar. A Value of -1 means that the column is assumed to be an ntext column.</para>
+            	<para>If a string column has a Value longer than the set Value and the set Value is positive, then a <see cref="T:Shunde.ValidationException"/> will be thrown.</para>
+            </remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.AllowNulls">
+            <summary>Specifies whether or not this column allows NULL values into the database.</summary>
+            <remarks>If a this is set to false and the Value being saved is null, then a <see cref="T:Shunde.ValidationException"/> will be thrown.</remarks>
+        </member>
+        <member name="P:Shunde.Framework.DBColumn.Constraints">
+            <summary>Any CHECK CONSTRAINTS that aren't covered by other fields in the DBColumn class can be specified manually.</summary>
+            <example>The className field of the <see cref="T:Shunde.Framework.DBObject"/> class requires that the Value start with 1 or more characters, followed by a period, followed by one or more characters. This is achieved with the following way:
+            	<Code>
+            		DBColumn cnCol = new DBColumn( "className", typeof(string), 1, 100);
+            		cnCol.Constraints = "className LIKE '_%._%'";
+            	</Code>
+            </example>
+        </member>
+        <member name="T:Shunde.Framework.BinaryData">
+            <summary>A structure for holding binary data</summary>
+        </member>
+        <member name="F:Shunde.Framework.BinaryData.size">
+            <summary>The cached size of the data</summary>
+            <remarks>Used when the data isn't loaded</remarks>
+        </member>
+        <member name="M:Shunde.Framework.BinaryData.#ctor(System.Byte[],System.String,System.String)">
+            <summary>Creates a new binary data with the specified data and mimetype</summary>
+        </member>
+        <member name="M:Shunde.Framework.BinaryData.#ctor(System.Int32,System.String,System.String)">
+            <summary>Creates a new binary data with the specified size and mimetype</summary>
+        </member>
+        <member name="P:Shunde.Framework.BinaryData.Data">
+            <summary>The data</summary>
+        </member>
+        <member name="P:Shunde.Framework.BinaryData.MimeType">
+            <summary>The MIME Type, if it is a file</summary>
+        </member>
+        <member name="P:Shunde.Framework.BinaryData.Filename">
+            <summary>The filename</summary>
+        </member>
+        <member name="P:Shunde.Framework.BinaryData.Size">
+            <summary>Gets the size, in bytes, of this data</summary>
+        </member>
+        <member name="P:Shunde.Framework.BinaryData.Exists">
+            <summary>
+            Checks whether this BinaryData has any data
+            </summary>
+        </member>
+        <member name="T:Shunde.Common.WebPage">
+            <summary>The base of each webpage.</summary>
+            <remarks>This is inherited by each ASP.NET page. It exposes certain properties and methods needed throughout a website</remarks>
+        </member>
+        <member name="M:Shunde.Common.WebPage.Page_Init(System.Object,System.EventArgs)">
+            <summary>Called when the page loads</summary>
+        </member>
+        <member name="M:Shunde.Common.WebPage.Page_Load(System.Object,System.EventArgs)">
+            <summary>Called when the page loads</summary>
+        </member>
+        <member name="M:Shunde.Common.WebPage.Page_Unload(System.Object,System.EventArgs)">
+            <summary>Called when the page un-loads</summary>
+        </member>
+        <member name="M:Shunde.Common.WebPage.Redirect(System.String)">
+            <summary>Redirets to the given URL (absolute or relative)</summary>
+        </member>
+        <member name="M:Shunde.Common.WebPage.GetIntParam(System.String)">
+            <summary>Gets an int from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
+            <param Name="paramName">The Name of the querystring parameter</param>
+            <returns>Returns retrieved parameter as an int</returns>
+        </member>
+        <member name="M:Shunde.Common.WebPage.GetDoubleParam(System.String)">
+            <summary>Gets a double from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
+            <param Name="paramName">The Name of the querystring parameter</param>
+            <returns>Returns retrieved parameter as a double</returns>
+        </member>
+        <member name="M:Shunde.Common.WebPage.GetStringParam(System.String)">
+            <summary>Gets a string from the querystring. Returns an empty string if the param does not exist</summary>
+            <param Name="paramName">The Name of the querystring parameter</param>
+            <returns>Returns retrieved parameter as a string</returns>
+        </member>
+        <member name="M:Shunde.Common.WebPage.Page_Error(System.Object,System.EventArgs)">
+            <summary>Gets called whenever there is a page error</summary>
+        </member>
+        <member name="M:Shunde.Common.WebPage.HandleException(System.Exception,System.Web.HttpRequest,System.String)">
+            <summary>Handles any exceptions that occur on the site</summary>
+            <param Name="ex">The Exception that was thrown</param>
+            <param Name="request">The <i>HttpRequest</i> object that requested the page</param>
+            <param Name="extraInformation">Any extra information that may be useful for trouble-shooting</param>
+        </member>
+        <member name="M:Shunde.Common.WebPage.RemoveCache">
+            <summary>Removes all the cached objects</summary>
+        </member>
+        <member name="M:Shunde.Common.WebPage.RemoveCache(System.String)">
+            <summary>Removes the cache from the site</summary>
+            <param Name="cacheName">The Name of the cache to be removed</param>
+            <remarks>Giving cacheToRemove a Value of <i>{REMOVEALL}</i> removes all the cached items</remarks>
+        </member>
+        <member name="M:Shunde.Common.WebPage.GetTextSection(System.String,System.String)">
+            <summary>Gets some text with the given Code</summary>
+            <remarks>Uses data in the cache if available. If not available, it is retrieved from the database and added to the cache. Using a Code that doesn't exist is how you create new sections.</remarks>
+            <param name="nameForAdministrators">The name to give for administrators</param>
+            <param name="code">The Code of the text</param>
+            <returns>Returns a TextSection object</returns>
+        </member>
+        <member name="P:Shunde.Common.WebPage.ConnectionString">
+            <summary>Gets the database connection string</summary>
+        </member>
+        <member name="P:Shunde.Common.WebPage.ErrorsEmail">
+            <summary>Gets the errors email address for this website</summary>
+        </member>
+        <member name="P:Shunde.Common.WebPage.WebsiteName">
+            <summary>Gets the website Name</summary>
+        </member>
+        <member name="P:Shunde.Common.WebPage.SmtpServer">
+            <summary>
+            The IP address or host Name of the SMTP server
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.WebPage.SmtpPortNumber">
+            <summary>
+            The port number of the SMTP server
+            </summary>
+        </member>
+        <member name="T:Shunde.Common.GenericTypeType">
+            <summary>This is a type of a <see cref="T:Shunde.Common.GenericType"/>, for example "Event Type"</summary>
+        </member>
+        <member name="M:Shunde.Common.GenericTypeType.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.GenericTypeType.GetGenericTypeType(System.Int32)">
+            <summary>Gets the GenericTypeType with the given <see cref="P:Shunde.Common.GenericTypeType.Code"/></summary>
+        </member>
+        <member name="M:Shunde.Common.GenericTypeType.GetGenericTypeTypes">
+            <summary>Gets and populates all the GenericTypeTypes</summary>
+            <returns>Returns an array of 0 or more GenericTypeTypes</returns>
+        </member>
+        <member name="P:Shunde.Common.GenericTypeType.Name">
+            <summary>The Name of this data type</summary>
+        </member>
+        <member name="P:Shunde.Common.GenericTypeType.Notes">
+            <summary>Any extra Notes about this type</summary>
+        </member>
+        <member name="P:Shunde.Common.GenericTypeType.Code">
+            <summary>A unique Code identifying this type</summary>
+        </member>
+        <member name="P:Shunde.Common.GenericTypeType.FriendlyName">
+            <summary>
+            Gets the friendly name of the object
+            </summary>
+        </member>
+        <member name="T:Shunde.Common.AttribRelation">
+            <summary>
+            A relation between an object and an attribute
+            </summary>
+        </member>
+        <member name="M:Shunde.Common.AttribRelation.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.AttribRelation.GetAttribsRelatedTo(Shunde.Framework.DBObject)">
+            <summary>Gets and populates all the Attribs that are related (by an <see cref="T:Shunde.Common.AttribRelation"/>) to the given Object</summary>
+            <returns>Returns an array of 0 or more Attrib objects</returns>
+        </member>
+        <member name="M:Shunde.Common.AttribRelation.GetAttribRelations(Shunde.Framework.DBObject)">
+            <summary>
+            Gets the relations for a given attribute type and object
+            </summary>
+            <remarks>Returns deleted relations also</remarks>
+        </member>
+        <member name="P:Shunde.Common.AttribRelation.Attrib">
+            <summary>
+            The attribute in the relation
+            </summary>
+        </member>
+        <member name="P:Shunde.Common.AttribRelation.DBObject">
+            <summary>
+            The object related to the attribute
+            </summary>
+        </member>
+        <member name="T:Shunde.Utilities.DBUtils">
+            <summary>Database Utilities for the Shunde framework</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetSqlConnection">
+            <summary>Gets the SqlConnection</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetSqlTransaction">
+            <summary>Gets the SqlTransaction</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.SetSqlConnection(System.String)">
+            <summary>Each HttpContext has it's own SqlConnection. This method sets the SqlConnection, ready to be used.</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.BeginTransaction">
+            <summary>
+            Starts an Sql Transaction
+            </summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.CommitTransaction">
+            <summary>
+            Commits the currently started Sql Transaction
+            </summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.RollbackTransaction">
+            <summary>
+            Rolls back the current Sql Transaction
+            </summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.CloseSqlConnection">
+            <summary>Closes the database connection for the current HttpContext</summary>
+        </member>
+        <member name="F:Shunde.Utilities.DBUtils.storageContainer">
+            <summary></summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetStorageContainer">
+            <summary></summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ExecuteSqlCommand(System.String)">
+            <summary>Executes a non-query SQL Command</summary>
+            <param Name="sqlStatement">The SQL statement to be executed (not a SELECT statement)</param>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ExecuteSqlCommand(System.Data.SqlClient.SqlCommand)">
+            <summary>Executes a non-query SQL Command using the supplied SqlCommand object (useful for transactions)</summary>
+            <param Name="sqlCommand">An SqlCommand object</param>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ExecuteSqlQuery(System.String)">
+            <summary>Executes an SQL Query</summary>
+            <param Name="sqlQuery">The SQL SELECT statement to be queried</param>
+            <returns>Returns an SqlDataReader object with the results from the query</returns>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ExecuteSqlQuery(System.Data.SqlClient.SqlCommand)">
+            <summary>Executes an SQL Query using the specified SqlCommand object (useful in Transactions)</summary>
+            <param Name="sqlCommand">The SqlCommand object to use</param>
+            <returns>Returns an SqlDataReader object with the results from the query</returns>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetIntFromSqlSelect(System.String)">
+            <summary>Executes an SQL Query that is known to return just one integer Value</summary>
+            <remarks>To use this, set the column Name holding the integer to <i>intValue</i>. If no results are found, or more than 1 result is found, or <i>intValue</i> is an invalid column Name or does not hold an integer, a MiscException will be thrown</remarks>
+            <param Name="sqlQuery">The SQL SELECT statement to be queried</param>
+            <returns>Returns the integer Value returned by the SQL statement</returns>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetIntFromSqlSelect(System.Data.SqlClient.SqlCommand)">
+            <summary>Executes an SQL Query that is known to return just one integer Value</summary>
+            <remarks>To use this, set the column Name holding the integer to <i>intValue</i>. If no results are found, or more than 1 result is found, or <i>intValue</i> is an invalid column Name or does not hold an integer, a MiscException will be thrown</remarks>
+            <param Name="sqlCommand">The <see cref="T:System.Data.SqlClient.SqlCommand"/> to execute</param>
+            <returns>Returns the integer Value returned by the SQL statement</returns>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.HasRows(System.String)">
+            <summary>Executes the given SQL Query and returns a boolean indicating whether 1 or more rows were returned</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ParseSql(System.String)">
+            <summary>Escapes all apostrophes in an SQL Statement.</summary>
+            <param Name="sql">The SQL string to be parsed</param>
+            <returns>Returns escaped SQL string. This is an empty string if the passed string was null</returns>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ParseSql(System.String,System.Boolean)">
+            <summary>Escapes all apostrophes in an SQL Statement.</summary>
+            <param Name="sql">The SQL string to be parsed</param>
+            <param Name="encloseInSingleQuotes">If true, this will enclose the return string in single quotes (<i>'</i>), or will set the string to the Value "<i>null</i>" if it is an empty string. This is useful for setting fields to equal NULL in the database where values are empty.</param>
+            <returns>Returns escaped SQL string.</returns>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ParseSql(System.DateTime)">
+            <summary>Parse a date-time, to be put into SQL Server</summary>
+            <remarks>Sets Value to Null if DateTime.MinValue</remarks>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ParseSql(System.Boolean)">
+            <summary>Converts a boolean into the SQL equivalent</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.ParseSql(System.Int32)">
+            <summary>Converts an int Value into the SQL equivalent, or NULL if int = int.MinValue</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetIntValue(System.Data.SqlClient.SqlDataReader,System.String)">
+            <summary>Gets an int Value from the given SqlDataReader</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.getIntValueMayBeNull(System.Data.SqlClient.SqlDataReader,System.String)">
+            <summary>Gets an int Value from the given SqlDataReader, where the int Value may be null</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetBoolValue(System.Data.SqlClient.SqlDataReader,System.String)">
+            <summary>Gets a boolean Value from the given SqlDataReader</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetDateTimeValue(System.Data.SqlClient.SqlDataReader,System.String)">
+            <summary>Gets a DateTime Value from the given SqlDataReader</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBUtils.GetSqlDbType(Shunde.Framework.DBColumn)">
+            <summary>Gets the SqlDataType for the given column</summary>
+        </member>
+        <member name="T:Shunde.ShundeException">
+            <summary>A miscellaneous exception</summary>
+            <exception cref="T:System.Exception">General exception to be thrown</exception>
+        </member>
+        <member name="M:Shunde.ShundeException.#ctor">
+            <summary>Misc exception</summary>
+        </member>
+        <member name="M:Shunde.ShundeException.#ctor(System.String)">
+            <summary>Misc exception, with details</summary>
+        </member>
+        <member name="T:Shunde.ObjectDoesNotExistException">
+            <summary>A miscellaneous exception</summary>
+            <exception cref="T:System.Exception">General exception to be thrown</exception>
+        </member>
+        <member name="M:Shunde.ObjectDoesNotExistException.#ctor">
+            <summary>Misc exception</summary>
+        </member>
+        <member name="M:Shunde.ObjectDoesNotExistException.#ctor(System.String)">
+            <summary>Misc exception, with details</summary>
+        </member>
+        <member name="T:Shunde.ValidationException">
+            <summary>Exceptions that are to do with validation. The error message should be a friendly message to deliver to the client.</summary>
+        </member>
+        <member name="M:Shunde.ValidationException.#ctor">
+            <summary>Misc exception</summary>
+        </member>
+        <member name="M:Shunde.ValidationException.#ctor(System.String)">
+            <summary>Misc exception, with details</summary>
+        </member>
+        <member name="T:Shunde.WarningException">
+            <summary>A warning only. Different from a ValidationException in that it may be valid, but there is a suspicion that something may not be right anyway</summary>
+        </member>
+        <member name="M:Shunde.WarningException.#ctor">
+            <summary>Misc exception</summary>
+        </member>
+        <member name="M:Shunde.WarningException.#ctor(System.String)">
+            <summary>Misc exception, with details</summary>
+        </member>
+        <member name="T:Shunde.ConcurrencyException">
+            <summary>A concurrency exception is thrown when the same data is updated at once. The first to complete will go through, however the 2nd to complete will throw a concurrency exception.</summary>
+        </member>
+        <member name="M:Shunde.ConcurrencyException.#ctor">
+            <summary>Misc exception</summary>
+        </member>
+        <member name="M:Shunde.ConcurrencyException.#ctor(System.String)">
+            <summary>Misc exception, with details</summary>
+        </member>
+        <member name="T:Shunde.ShundeSqlException">
+            <summary>An Sql Exception</summary>
+            <exception cref="T:System.Exception">Thrown when an SqlException is created. This is an exception who's <i>InnerException</i> property is an SqlException, with the extra property <i>sqlStatement</i> holding the SQL statement that created the exception.</exception>
+        </member>
+        <member name="F:Shunde.ShundeSqlException.sqlStatement">
+            <summary>The SQL statement that caused the error</summary>
+        </member>
+        <member name="M:Shunde.ShundeSqlException.#ctor(System.String,System.Exception)">
+            <summary>Creates a new exception</summary>
+            <param Name="sqlStatement">The SQL statement that created the exception</param>
+            <param Name="ex">The Exception that was caught (generally an <i>SqlException</i> exception)</param>
+        </member>
+        <member name="M:Shunde.ShundeSqlException.ToHtml">
+            <summary>Prints out details of this exception</summary>
+        </member>
+        <member name="P:Shunde.ShundeSqlException.Message">
+            <summary>The reason for the problem</summary>
+        </member>
+        <member name="T:Shunde.SearchType">
+            <summary>Search types for full-text searches</summary>
+        </member>
+        <member name="F:Shunde.SearchType.And">
+            <summary>All words must be contained</summary>
+        </member>
+        <member name="F:Shunde.SearchType.Or">
+            <summary>Any words must be contained</summary>
+        </member>
+        <member name="T:Shunde.WebControls.TreeDisplayer">
+            <summary>
+            Displays a forest of trees, using HTML unordered lists
+            </summary>
+        </member>
+        <member name="M:Shunde.WebControls.TreeDisplayer.RenderContents(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            Renders the control
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.TreeDisplayer.Forest">
+            <summary>
+            The forest of treenodes to display
+            </summary>
+        </member>
+        <member name="P:Shunde.WebControls.TreeDisplayer.NodeToHtmlDelegate">
+            <summary>
+            A delegate that converts a node to HTML. Each node that gets displayed will use this delegate to create the text to show. If no delegate is specified, then the <see cref="P:Shunde.Common.TreeNode.Name"/> field will be used.
+            </summary>
+        </member>
+        <member name="T:Shunde.WebControls.NodeToHtmlDelegate">
+            <summary>
+            A delegate that gets an HTML representation for the treenode
+            </summary>
+        </member>
+        <member name="T:Shunde.Utilities.DBCreation">
+            <summary>A class for creating database tables for <see cref="T:Shunde.Framework.DBObject"/>s</summary>
+            <remarks>This class creates SQL Code to create database tables and views, along with foreign key constraints etc, by using the information in the <see cref="T:Shunde.Framework.ObjectInfo"/> class for a given type.</remarks>
+        </member>
+        <member name="M:Shunde.Utilities.DBCreation.GetForeignKeyConstraints(System.Type)">
+            <summary>Creates constraints for a Table</summary>
+            <remarks>Does not create any constraints for DBObjects</remarks>
+        </member>
+        <member name="M:Shunde.Utilities.DBCreation.GetForeignKeyText(System.String,System.String,System.String)">
+            <summary>Creates part of a FOREIGN KEY constraint</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBCreation.GetCreateView(System.Type)">
+            <summary>Creates SQL Code to create an indexed view</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBCreation.GetCreateTable(System.Type,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>Creates SQL Code to create a Table for the given type</summary>
+            <remarks>Pass a list of already-created Table names into checker to make sure that no duplicate tables are being created</remarks>
+        </member>
+        <member name="M:Shunde.Utilities.DBCreation.GetCreateTable(System.Type,Shunde.Framework.DBTable,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>Creates the SQL Code for a single DBTable</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBCreation.GetColumnText(Shunde.Framework.DBColumn,System.String)">
+            <summary>Gets the SQL Code to create a single column in a CREATE TABLE statement</summary>
+        </member>
+        <member name="M:Shunde.Utilities.DBCreation.GetSqlServerType(Shunde.Framework.DBColumn)">
+            <summary>Gets the SQL Server type equivalent to the C# type that the given column has.</summary>
+        </member>
+        <member name="T:Shunde.Utilities.ImageUtils">
+            <summary>An image with methods to load, resize, and save images</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.CreateFromUri(System.Uri)">
+            <summary>Instantiates a new ShundeImage from the given URI</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.CreateFromBinaryData(Shunde.Framework.BinaryData)">
+            <summary>Instantiates a new ShundeImage from the given URI</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.GetBytes(System.Drawing.Bitmap,System.Int64)">
+            <summary>Gets this image as an array of bytes</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.CreatedResizedCopy(System.Drawing.Image,System.Drawing.Size,System.Boolean)">
+            <summary>Creates a thumbnail of the current image, keeping width/height dimensions</summary>
+            <param Name="image">The image to be copied and resized</param>
+            <param Name="newSize">The new Size to convert to</param>
+            <param Name="addWhiteSpace">If true, white space will be added to the sides to keep the ratio. If false, the ratio will be kept, however either the width or height will not be the requested size.</param>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.CreatedResizedCopy(System.Drawing.Image,System.Int32,System.Int32,System.Boolean)">
+            <summary>Creates a thumbnail of the current image, keeping width/height dimensions</summary>
+            <param Name="image">The image to be copied and resized</param>
+            <param Name="newWidth">The new width to convert to</param>
+            <param Name="newHeight">The new height to convert to</param>
+            <param Name="addWhiteSpace">If true, white space will be added to the sides to keep the ratio. If false, the ratio will be kept, however either the width or height will not be the requested size.</param>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.CreatedResizedCopy(System.Drawing.Image,System.Int32,System.Int32,System.Boolean,System.Drawing.Color)">
+            <summary>Creates a thumbnail of the current image, keeping width/height dimensions</summary>
+            <param Name="image">The image to be copied and resized</param>
+            <param Name="newWidth">The new width to convert to</param>
+            <param Name="newHeight">The new height to convert to</param>
+            <param Name="addWhiteSpace">If true, white space will be added to the sides to keep the ratio. If false, the ratio will be kept, however either the width or height will not be the requested size.</param>
+            <param Name="backgroundColor">If addWhiteSpace is true and white space is added, the colour of the "white" space is this color</param>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.CreatedResizedCopy(System.Drawing.Image,System.Int32,System.Int32,System.Boolean,System.Drawing.Color,System.Web.UI.WebControls.VerticalAlign,System.Web.UI.WebControls.HorizontalAlign)">
+            <summary>Creates a thumbnail of the current image, keeping width/height dimensions</summary>
+            <param Name="image">The image to be copied and resized</param>
+            <param Name="newWidth">The new width to convert to</param>
+            <param Name="newHeight">The new height to convert to</param>
+            <param Name="addWhiteSpace">If true, white space will be added to the sides to keep the ratio. If false, the ratio will be kept, however either the width or height will not be the requested size.</param>
+            <param Name="backgroundColor">If addWhiteSpace is true and white space is added, the colour of the "white" space is this color</param>
+            <param Name="verticalAlign">If addWhiteSpace is true, specifies how original image will be vertically aligned in the new sized image</param>
+            <param Name="horizontalAlign">If addWhiteSpace is true, specifies how original image will be horizontally aligned in the new sized image</param>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.GetResizeMultiplier(System.Drawing.Image,System.Double,System.Double)">
+            <summary>Calculates amount to strectch image so the width and height are at a maximum while retaining aspect ratio</summary>
+            <param Name="image">The image that the multiplier is for</param>
+            <param Name="newWidth">The new width to convert to</param>
+            <param Name="newHeight">The new height to convert to</param>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.GetJpgCodec">
+            <summary>Gets the JPG codec</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ImageUtils.GetEncoderInfo(System.String)">
+            <summary>Gets a codec info object from a mime-type</summary>
+        </member>
+        <member name="T:Shunde.Common.WebsiteVisitAction">
+            <summary>An action during a visit</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisitAction.#cctor">
+            <summary>Sets up the <see cref="T:Shunde.Framework.ObjectInfo"/> for this class</summary>
+        </member>
+        <member name="M:Shunde.Common.WebsiteVisitAction.GetUserVisits(Shunde.Common.WebsiteVisit)">
+            <summary>Gets an array of WebsiteVisitAction objects for the given WebsiteVisit</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisitAction.Visit">
+            <summary>The visit that this view occured in</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisitAction.TimeStamp">
+            <summary>The time of this view</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisitAction.ViewedObject">
+            <summary>The object that was viewed</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisitAction.Url">
+            <summary>The URL, if possible, that the view took place at</summary>
+        </member>
+        <member name="P:Shunde.Common.WebsiteVisitAction.Description">
+            <summary>A description of the action</summary>
+        </member>
+        <member name="T:Shunde.Utilities.ComparableRow">
+            <summary>A Panel with a display order so that you can order the panels after creating them</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ComparableRow.CompareTo(System.Object)">
+            <summary></summary>
+        </member>
+        <member name="P:Shunde.Utilities.ComparableRow.DisplayOrder">
+            <summary>
+            The relative number to order this panel to another with
+            </summary>
+        </member>
+        <member name="T:Shunde.Utilities.ColumnInfo">
+            <summary>A Utility class for specifying values of a <see cref="T:Shunde.Framework.DBColumn"/> for programmatically creating ASP.NET controls.</summary>
+        </member>
+        <member name="F:Shunde.Utilities.ColumnInfo.SqlEmailRegex">
+            <summary>The regular expression that matches an email address in SQL Server</summary>
+        </member>
+        <member name="F:Shunde.Utilities.ColumnInfo.EmailRegex">
+            <summary>The regular expression that matches an email address in standard Regular Expression syntax</summary>
+        </member>
+        <member name="M:Shunde.Utilities.ColumnInfo.GetMoreInfoAsJavascriptPopupHtml">
+            <summary>Gets the html to create a link which invokes a javascript alert containing the <see cref="P:Shunde.Utilities.ColumnInfo.MoreInfo"/> details</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.FindObjectDelegate">
+            <summary>
+            If a TextBox mode is being used, then this delegate will be called to either find or create an object
+            </summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.SelectionMode">
+            <summary>
+            If this is a selections column, then this specifies the mode to use to select objects.
+            </summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.FriendlyName">
+            <summary>The Name to show end users, rather than the database Name</summary>
+            <remarks>If left blank, then this gets populated automatically using <see cref="M:Shunde.Utilities.TextUtils.MakeFriendly(System.String)"/> on the column Name</remarks>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.MoreInfo">
+            <summary>A description of the column to show end users</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.ValidationRegex">
+            <summary>An optional regular expression to match against user input</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.RegexErrorMessage">
+            <summary>The error message to give when the user entered data does not match against <see cref="P:Shunde.Utilities.ColumnInfo.ValidationRegex"/></summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.ShowThisColumn">
+            <summary>Specifies whether to display this column to the end user</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.IsInvisible">
+            <summary>Specifies that this column should be made into a text box in the form, however it should be invisible to the user (by using an Html hidden input field).</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.ShowTimeWithDate">
+            <summary>Specifies that on a date field, a box for entering the time should be shown also. True, by default.</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.TextboxWidth">
+            <summary>The width of the textbox. If null, then the default for the datatype is used.</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.TexboxHeight">
+            <summary>The height of the textbox. If null, then the default for the datatype is used.</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.DisplayOrder">
+            <summary>The order to display this column in, relative to others</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.NoSelectionName">
+            <summary>The option Name in a dropdown list to signify that no selection has been made</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.AddOnTheFly">
+            <summary>Specifies that, for a selection, new values can be typed in by the user</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.DefaultValue">
+            <summary>The default Value of the column</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.AutoPopulate">
+            <summary>If true, then for a selection, the Object Editor will automatically populate the selections</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.Selections">
+            <summary>The available selections for a drop-down list</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.UseRichTextEditor">
+            <summary>If this is an unbounded string, then a RTE can be used if this is set to true</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.MaxAllowedInDropDown">
+            <summary>The maximum number of options in a drop down allowed before a popup window is used to select an object. To force the use of a pop up window, set this to -1</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.SelectionsPopupUrl">
+            <summary>The Url of the popup window to select the object from</summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.SearchBoxUrl">
+            <summary>
+            The url of the page which will return the search results of that which is being typed in, if the selection mode for this column is set to SearchBox
+            </summary>
+        </member>
+        <member name="P:Shunde.Utilities.ColumnInfo.ViewBinaryDataUrl">
+            <summary>The address to preview binary data</summary>
+        </member>
+        <member name="T:Shunde.Utilities.SelectionMode">
+            <summary>
+            These are the different modes available for selecting an object in the ObjectEditor
+            </summary>
+        </member>
+        <member name="F:Shunde.Utilities.SelectionMode.DropDownList">
+            <summary>
+            Uses a dropdown list to select the object.
+            </summary>
+        </member>
+        <member name="F:Shunde.Utilities.SelectionMode.RadioButtonList">
+            <summary>
+            Uses a radiobuttonlist. This is best when there are only a few options to choose from.
+            </summary>
+        </member>
+        <member name="F:Shunde.Utilities.SelectionMode.TextBox">
+            <summary>
+            Uses a textbox to allow the user to enter in a name to find the object. If a url for a popup window is given, then it uses a popup window. This is best when there are hundreds or more objects, or some advanced search is required to find the object. If an XML search url is specified, then as they write, matching objects are displayed, allowing them to select an object.
+            </summary>
+        </member>
+        <member name="F:Shunde.Utilities.SelectionMode.Default">
+            <summary>
+            The default action is to use a dropdown list, unless a specified threshold is passed.
+            </summary>
+        </member>
+        <member name="T:Shunde.Utilities.FindObjectDelegate">
+            <summary>
+            A delegate to handle the creation of a new object, given only the name.
+            </summary>
+            <param name="name">The name that the user has typed in</param>
+            <param name="createIfNotExists">If true, then the object will be attempted to be created, if possible, based on just the name</param>
+        </member>
+    </members>
+</doc>

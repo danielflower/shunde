@@ -1,0 +1,77 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{11CAADB6-843B-42B2-8E08-3FBDD066F84E}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\Playground\", "Playground", "{6E58A54F-4B78-470C-831E-CD0C6210DD9B}"
+	ProjectSection(WebsiteProperties) = preProject
+		SccProjectName = ""$/Shunde 3.0.root/Playground", ACAAAAAA"
+		SccAuxPath = ""
+		SccLocalPath = "."
+		SccProvider = "MSSCCI:Microsoft Visual SourceSafe"
+		ProjectReferences = "{11CAADB6-843B-42B2-8E08-3FBDD066F84E}|Shunde.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/Playground 3.0"
+		Debug.AspNetCompiler.PhysicalPath = "Playground\"
+		Debug.AspNetCompiler.TargetPath = "Z:\Shunde\Playground 3.0\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/Playground 3.0"
+		Release.AspNetCompiler.PhysicalPath = "Playground\"
+		Release.AspNetCompiler.TargetPath = "Z:\Shunde\Playground 3.0\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "1908"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 3
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Model\\Model.csproj
+		SccLocalPath1 = .
+		SccProjectFilePathRelativizedFromConnection1 = Model\\
+		SccWebProject2 = true
+		SccProjectUniqueName2 = Playground
+		SccProjectName2 = \u0022$/Shunde\u00203.0.root/Playground\u0022,\u0020ACAAAAAA
+		SccLocalPath2 = Playground
+		SccProjectEnlistmentChoice2 = 2
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|.NET = Debug|.NET
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Release|.NET = Release|.NET
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Release|.NET.ActiveCfg = Release|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{11CAADB6-843B-42B2-8E08-3FBDD066F84E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Debug|.NET.ActiveCfg = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Debug|.NET.Build.0 = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Debug|Any CPU.ActiveCfg = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Debug|Mixed Platforms.ActiveCfg = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Debug|Mixed Platforms.Build.0 = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Release|.NET.ActiveCfg = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Release|.NET.Build.0 = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Release|Any CPU.ActiveCfg = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Release|Mixed Platforms.ActiveCfg = Debug|.NET
+		{6E58A54F-4B78-470C-831E-CD0C6210DD9B}.Release|Mixed Platforms.Build.0 = Debug|.NET
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
