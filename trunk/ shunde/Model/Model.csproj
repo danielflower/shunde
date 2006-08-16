@@ -1,0 +1,100 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{11CAADB6-843B-42B2-8E08-3FBDD066F84E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Shunde</RootNamespace>
+    <AssemblyName>Shunde</AssemblyName>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>Shunde.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Debug\Shunde.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Release\Shunde.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\Attrib.cs" />
+    <Compile Include="Common\AttribDataType.cs" />
+    <Compile Include="Common\AttribRelation.cs" />
+    <Compile Include="Common\AttribType.cs" />
+    <Compile Include="Common\Email.cs" />
+    <Compile Include="Common\GenericType.cs" />
+    <Compile Include="Common\GenericTypeType.cs" />
+    <Compile Include="Common\IAttribRelation.cs" />
+    <Compile Include="Common\TreeNode.cs" />
+    <Compile Include="Common\WebsiteVisit.cs" />
+    <Compile Include="Common\WebsiteVisitAction.cs" />
+    <Compile Include="Utilities\Encrypter.cs" />
+    <Compile Include="Utilities\ImageUtils.cs" />
+    <Compile Include="Common\TextSection.cs" />
+    <Compile Include="Common\WebPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Enumerations.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="Framework\BinaryData.cs" />
+    <Compile Include="Framework\DBColumn.cs" />
+    <Compile Include="Framework\DBObject.cs" />
+    <Compile Include="Framework\DBTable.cs" />
+    <Compile Include="Framework\ObjectInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\ComparablePanel.cs" />
+    <Compile Include="Utilities\DBColumnOptions.cs" />
+    <Compile Include="Utilities\DBCreator.cs" />
+    <Compile Include="Utilities\DBUtils.cs" />
+    <Compile Include="Utilities\ObjectUtils.cs" />
+    <Compile Include="Utilities\PagingUtil.cs" />
+    <Compile Include="Utilities\TextUtils.cs" />
+    <Compile Include="Utilities\WebUtils.cs" />
+    <Compile Include="WebControls\ObjectEditor.cs" />
+    <Compile Include="WebControls\TextSectionDisplayer.cs" />
+    <Compile Include="WebControls\TreeDisplayer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shunde.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ObjectEditorScripts.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
