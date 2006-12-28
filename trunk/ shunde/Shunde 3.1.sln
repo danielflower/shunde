@@ -31,15 +31,17 @@ EndProject
 Global
 	GlobalSection(SourceCodeControl) = preSolution
 		SccNumberOfProjects = 3
+		SccProjectUniqueName0 = Model\\Model.csproj
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = Model\\Model.csproj
-		SccLocalPath1 = .
-		SccProjectFilePathRelativizedFromConnection1 = Model\\
-		SccWebProject2 = true
-		SccProjectUniqueName2 = Playground
-		SccProjectName2 = \u0022$/Shunde\u00203.0.root/Playground\u0022,\u0020ACAAAAAA
-		SccLocalPath2 = Playground
-		SccProjectEnlistmentChoice2 = 2
+		SccProjectFilePathRelativizedFromConnection0 = Model\\
+		SccWebProject1 = true
+		SccProjectUniqueName1 = Playground
+		SccProjectName1 = \u0022$/Shunde\u00203.0.root/Playground\u0022,\u0020ACAAAAAA
+		SccLocalPath1 = Playground
+		SccProjectEnlistmentChoice1 = 2
+		SccProjectName2 = \u0022$/Shunde\u00203.0.root/Shunde\u00203.0\u0022,\u0020CAAAAAAA
+		SccLocalPath2 = .
+		SccProvider2 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET

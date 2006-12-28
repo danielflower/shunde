@@ -29,6 +29,20 @@ namespace Shunde.Utilities
 			set { findObjectDelegate = value; }
 		}
 
+
+		private RequiredField requiredField = RequiredField.UseColumnDefault;
+
+		/// <summary>
+		/// Specifies whether to make this field required; by default the value specified in the DBTable for this column is used.
+		/// </summary>
+		public RequiredField RequiredField
+		{
+			get { return requiredField; }
+			set { requiredField = value; }
+		}
+	
+
+
 		private SelectionMode selectionMode = SelectionMode.Default;
 
 		/// <summary>
@@ -62,7 +76,7 @@ namespace Shunde.Utilities
 
 		private string validationRegex = "";
 
-		/// <summary>An optional regular expression to match against user input</summary>
+		/// <summary>An optional regular expression to match against user input. This is in addition to any regular expression defined on the DBColumn itself.</summary>
 		public string ValidationRegex
 		{
 			get { return validationRegex; }
@@ -267,6 +281,30 @@ namespace Shunde.Utilities
 		Default = 4
 
 	}
+
+	/// <summary>
+	/// Specifies whether to make a field required or not
+	/// </summary>
+	public enum RequiredField
+	{
+
+		/// <summary>
+		/// Use the default for the column, as specified in the DBTable for the object
+		/// </summary>
+		UseColumnDefault,
+
+		/// <summary>
+		/// Make the field required
+		/// </summary>
+		Yes,
+
+		/// <summary>
+		/// Make the field not required
+		/// </summary>
+		No
+
+	}
+
 
 	/// <summary>
 	/// A delegate to handle the creation of a new object, given only the name.

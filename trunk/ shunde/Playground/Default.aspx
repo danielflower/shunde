@@ -10,6 +10,10 @@
 
 <a href="SqlCreator/Default.aspx">Create Database Sql</a>
 
+<br /><br />
+
+<a href="ClassCreator/Default.aspx">[Create Classes]</a> |
+
 
 </asp:Content>
 

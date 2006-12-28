@@ -61,37 +61,6 @@ namespace Shunde.Utilities
 			return fk;
 		}
 
-		/// <summary>Creates SQL Code to create an indexed view</summary>
-		public static string GetCreateView(Type type)
-		{
-
-			string t = "";
-
-			ObjectInfo oi = ObjectInfo.GetObjectInfo(type);
-
-			if (!oi.UseView)
-			{
-				return t;
-			}
-
-			String viewName = oi.ViewName;
-
-			oi.UseView = false;
-			ObjectInfo.SetupObjectInfo(oi);
-
-
-			t = "SET ANSI_NULLS ON\nSET ANSI_PADDING ON\nSET ANSI_WARNINGS ON\nSET ARITHABORT ON\nSET CONCAT_NULL_YIELDS_NULL ON\nSET QUOTED_IDENTIFIER ON\nGO\n\n";
-
-			t += "CREATE VIEW [dbo].[" + viewName + "] WITH SCHEMABINDING AS\n" + oi.GetSelectStatement() + "\nGO\n\n";
-
-			t += "CREATE UNIQUE CLUSTERED INDEX IX_" + TextUtils.RemoveNonAlphaNumeric(viewName) + "_id ON [dbo].[" + viewName + "](id)\nGO\n\n";
-
-			oi.UseView = true;
-			ObjectInfo.SetupObjectInfo(oi);
-
-			return t;
-
-		}
 
 		/// <summary>Creates SQL Code to create a Table for the given type</summary>
 		/// <remarks>Pass a list of already-created Table names into checker to make sure that no duplicate tables are being created</remarks>

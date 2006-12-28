@@ -29,6 +29,7 @@ namespace Shunde
     /// <summary>Exceptions that are to do with validation. The error message should be a friendly message to deliver to the client.</summary>
     public class ValidationException : ShundeException
     {
+
         /// <summary>Misc exception</summary>
         public ValidationException() : base() { }
         /// <summary>Misc exception, with details</summary>
@@ -38,10 +39,23 @@ namespace Shunde
     /// <summary>A warning only. Different from a ValidationException in that it may be valid, but there is a suspicion that something may not be right anyway</summary>
     public class WarningException : ShundeException
     {
+
+		private string warningId;
+
+		/// <summary>
+		/// Used to uniquely identify a warning message.
+		/// </summary>
+		public string WarningId
+		{
+			get { return warningId; }
+			set { warningId = value; }
+		}
+	
+
         /// <summary>Misc exception</summary>
-        public WarningException() : base() { }
+		public WarningException(string warningId) : base() { this.WarningId = warningId; }
         /// <summary>Misc exception, with details</summary>
-        public WarningException(string message) : base(message) { }
+		public WarningException(string warningId, string message) : base(message) { this.warningId = warningId; }
     }
 
     /// <summary>A concurrency exception is thrown when the same data is updated at once. The first to complete will go through, however the 2nd to complete will throw a concurrency exception.</summary>

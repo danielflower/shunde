@@ -91,7 +91,12 @@ public partial class SqlCreator_Default : PageBase
 
 		Type ooDBObjType = typeof(DBObject);
 
+		
 		Type[] types = a.GetTypes();
+
+		Comparison<Type> comparer = new Comparison<Type>(delegate(Type t1, Type t2) { return t1.FullName.CompareTo(t2.FullName); });
+		Array.Sort<Type>(types, comparer);
+
 		for (int i = 0; i < types.Length; i++)
 		{
 			Type t = types[i];

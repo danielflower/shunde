@@ -34,12 +34,24 @@ namespace Shunde.Utilities
 
 			MemoryStream ms = new MemoryStream(bd.Data);
 
-			Bitmap bitmap = new Bitmap(ms);
+			Bitmap bitmap = (Bitmap)Bitmap.FromStream(ms,true);
 			ms.Close();
 			return bitmap;
 
 		}
 
+
+
+
+		/// <summary>Gets this image as an array of bytes</summary>
+		public static byte[] GetBytes(Bitmap bitmap)
+		{
+
+			MemoryStream ms = new MemoryStream();
+			bitmap.Save(ms, bitmap.RawFormat);
+
+			return ms.GetBuffer();
+		}
 
 		/// <summary>Gets this image as an array of bytes</summary>
 		public static byte[] GetBytes(Bitmap bitmap, long compression)
@@ -122,7 +134,7 @@ namespace Shunde.Utilities
 
 
 
-			Bitmap newImg = new Bitmap(changeWidth, changeHeight);
+			Bitmap newImg = new Bitmap(image, changeWidth, changeHeight);
 
 
 
@@ -187,7 +199,7 @@ namespace Shunde.Utilities
 			}
 
 
-			Bitmap secondBitmap = new Bitmap(newWidth, newHeight);
+			Bitmap secondBitmap = new Bitmap(image, newWidth, newHeight);
 			Graphics g = Graphics.FromImage(secondBitmap);
 
 			g.Clear(backgroundColor);
@@ -204,9 +216,9 @@ namespace Shunde.Utilities
 		/// <param Name="image">The image that the multiplier is for</param>
 		/// <param Name="newWidth">The new width to convert to</param>
 		/// <param Name="newHeight">The new height to convert to</param>
-		private static double GetResizeMultiplier(Image image, double newWidth, double newHeight)
+		public static double GetResizeMultiplier(Image image, double newWidth, double newHeight)
 		{
-
+			/*
 			int newHeightDif = (int)(newHeight - image.Height);
 			int newWidthDif = (int)(newWidth - image.Width);
 
@@ -217,7 +229,8 @@ namespace Shunde.Utilities
 				m = newWidth / image.Width;
 
 			return m;
-
+			*/
+			return Math.Min(newHeight / image.Height, newWidth / image.Width);
 		}
 
 		/// <summary>Gets the JPG codec</summary>

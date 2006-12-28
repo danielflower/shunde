@@ -56,12 +56,25 @@ namespace Shunde.Common
 			set { description = value; }
 		}
 
+		private WebsiteVisitAction previousAction = null;
+
+		/// <summary>
+		/// The previous action this this visit
+		/// </summary>
+		public WebsiteVisitAction PreviousAction
+		{
+			get { return previousAction; }
+			set { previousAction = value; }
+		}
+
+
 		/// <summary>Sets up the <see cref="Shunde.Framework.ObjectInfo" /> for this class</summary>
 		static WebsiteVisitAction()
 		{
 
 			DBTable tbl = new DBTable("WebsiteVisitAction", new DBColumn[] {
 				new DBColumn( "visit", typeof(WebsiteVisit), false ),
+				new DBColumn( "previousAction", typeof(WebsiteVisitAction), true ),
 				new DBColumn( "timeStamp", typeof(DateTime), false ),
 				new DBColumn( "viewedObject", typeof(DBObject), true ),
 				new DBColumn( "url", typeof(string), 0, 1000 ),

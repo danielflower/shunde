@@ -18,7 +18,8 @@ namespace Shunde.Framework
 
 		private int id = -1;
 
-		/// <summary>The id of the object</summary>
+		/// <summary>A unique (to the whole database) ID to identify this object</summary>
+		/// <remarks>Shunde automatically generates a new ID for your object when you save a new object.</remarks>
 		public int Id
 		{
 			get { return id; }
@@ -57,6 +58,7 @@ namespace Shunde.Framework
 		private int displayOrder;
 
 		/// <summary>The relative (to other DBObjects) display order that this DBObject should appear in</summary>
+		/// <remarks>The use of this is optional, but if you want to order some objects in a specific way, then you can give different objects different display orders, and then when retrieving objects use "ORDER BY DBObject.displayOrder ASC" in your SQL.</remarks>
 		public int DisplayOrder
 		{
 			get { return displayOrder; }
@@ -666,10 +668,6 @@ END
 
 
 			
-			// If there is an indexed view, ARITHABORT must be set to ON
-			// prior to executing the query.
-			DBUtils.ExecuteSqlCommand("SET ARITHABORT ON");
-
 
 			if (isNew)
 			{
@@ -717,7 +715,7 @@ END
 						}
 						else
 						{
-							throw sqlEx;
+							throw;
 						}
 					}
 				}
@@ -763,7 +761,7 @@ END
 
 
 		/// <summary>Gets a String representation of this object</summary>
-		public override String ToString()
+		public override string ToString()
 		{
 			return "[" + GetType().FullName + ":" + id + "]";
 		}
@@ -774,17 +772,24 @@ END
 			return id.GetHashCode();
 		}
 
-		/// <summary>Specifies that two DBObjects are equal</summary>
+		/// <summary>
+		/// Specifies whether this DBObject is equal to another
+		/// </summary>
+		/// <returns>True if the <see cref="Id" />s of each object are equal, and greater than 0</returns>
+		public virtual bool Equals(DBObject another)
+		{
+			return this.id == another.id && this.id > 0;
+		}
+
+		/// <summary>Specifies whether this object is equal to another</summary>
 		public override bool Equals(Object another)
 		{
-			if (another is DBObject)
+			DBObject otherDBO = another as DBObject;
+			if (otherDBO != null)
 			{
-				return (((DBObject)another).id == id && id > 0);
+				return this.Equals(otherDBO);
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 
 
@@ -830,29 +835,14 @@ END
 		/// <remarks>The base type is the type that all the objects being retrieved extend. For example, if Notebook and Desktop both extend Computer, then the base type is Computer if getting all Notebooks and Desktops. The returned objects are then created as the type that they should be (ie. Notebooks and Desktops), and fully populated if the type is included in the extendingTypes array. However, if the type is not included then it is only partially populated up to the level of the base type (ie. Computer).</remarks>
 		/// <param Name="baseType">The type of the lowest level DBObject.</param>
 		/// <param Name="extendingTypes">An optional array containing the extended types of objects that may be returned - if included then the returned objects will be fully populated.</param>
-		/// <param Name="useView">If this is true, then it is assumed that a view exists that contains the base type LEFT JOINED with all the extendingTypes. This is then used in the FROM clause.</param>
 		/// <param Name="where">The SQL WHERE query</param>
-		public static DBObject[] GetObjects(Type baseType, Type[] extendingTypes, bool useView, String where)
+		public static DBObject[] GetObjects(Type baseType, Type[] extendingTypes, string where)
 		{
 
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(baseType);
 
 
-			String query;
-
-			if (useView)
-			{
-				String viewName = ObjectInfo.GetObjectInfo(baseType).GetDirectTable().Name;
-				for (int i = 0; i < extendingTypes.Length; i++)
-				{
-					viewName += "_" + ObjectInfo.GetObjectInfo(extendingTypes[i]).GetDirectTable().Name;
-				}
-				query = "SELECT * FROM " + viewName + " " + where;
-			}
-			else
-			{
-				query = "SELECT " + oi.GetJoinedColumnClause(extendingTypes) + " FROM " + oi.GetJoinedFromClause(extendingTypes) + " " + where;
-			}
+			string query = "SELECT " + oi.GetJoinedColumnClause(extendingTypes) + " FROM " + oi.GetJoinedFromClause(extendingTypes) + " " + where;
 
 			SqlDataReader sdr = DBUtils.ExecuteSqlQuery(query);
 			List<DBObject> objects = new List<DBObject>();
@@ -903,7 +893,7 @@ END
 		public static DBObject GetObject(string query)
 		{
 
-			if (query.Length == 0)
+			if (query.Length == 0 || query.IndexOf("--") > -1 || query.IndexOf(')') < query.IndexOf('('))
 			{
 				throw new ObjectDoesNotExistException();
 			}
@@ -933,6 +923,63 @@ END
 
 			return obj;
 
+
+		}
+
+
+
+
+		/// <summary>Gets and populates a single DBObject with the supplied ID</summary>
+		/// <remarks>This is a useful method when you do not know the type of object you will get back.</remarks>
+		/// <exception cref="ObjectDoesNotExistException">Thrown if the specified ID is not found in the database.</exception>
+		/// <returns>Returns a fully populated DBObject</returns>
+		public static DBObject GetObject(int id)
+		{
+
+			if (id < 1)
+			{
+				throw new ObjectDoesNotExistException();
+			}
+
+			SqlDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT [className] FROM [DBObject] WHERE [id] = " + id);
+
+			if (!sdr.Read())
+			{
+				sdr.Close();
+				throw new ObjectDoesNotExistException("An object with the Id " + id + " does not exist.");
+			}
+
+			string className = sdr[0].ToString();
+
+
+			sdr.Close();
+
+			DBObject obj = CreateObject(Assembly.GetCallingAssembly(), className);
+			obj.id = id;
+			obj.Populate();
+
+			return obj;
+
+		}
+
+
+		/// <summary>Gets and populates a single DBObject of the given type with the supplied ID</summary>
+		/// <remarks>Use this method when you know the type as it is faster than <see cref="GetObject(int)" /></remarks>
+		/// <exception cref="ObjectDoesNotExistException">Thrown if the specified ID is not found in the database.</exception>
+		/// <returns>Returns a fully populated DBObject</returns>
+		public static DBObject GetObject(int id, Type objectType)
+		{
+
+			if (id < 1)
+			{
+				throw new ObjectDoesNotExistException();
+			}
+
+			DBObject obj = CreateObject(Assembly.GetCallingAssembly(), objectType.FullName);
+			obj.id = id;
+			obj.Populate();
+
+			return obj;
 
 		}
 

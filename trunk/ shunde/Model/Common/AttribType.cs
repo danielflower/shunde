@@ -141,7 +141,16 @@ namespace Shunde.Common
 			set { useRichTextEditor = value; }
 		}
 
-
+		/// <summary>
+		/// Gets the friendly name of this object
+		/// </summary>
+		public override string FriendlyName
+		{
+			get
+			{
+				return name;
+			}
+		}
 
 
 		/// <summary>Sets up the <see cref="Shunde.Framework.ObjectInfo" /> for this class</summary>

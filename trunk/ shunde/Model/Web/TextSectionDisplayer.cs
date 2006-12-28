@@ -8,9 +8,9 @@ using System.Web.UI.WebControls;
 using Shunde.Common;
 using Shunde.Utilities;
 
-[assembly: TagPrefix("Shunde.WebControls", "Shunde")]
+[assembly: TagPrefix("Shunde.Web", "Shunde")]
 
-namespace Shunde.WebControls
+namespace Shunde.Web
 {
 	/// <summary>
 	/// A control to render a TextSection to an HTML page

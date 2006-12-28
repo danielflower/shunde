@@ -60,7 +60,7 @@
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="Common\TextSection.cs" />
-    <Compile Include="Common\WebPage.cs">
+    <Compile Include="Web\WebPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Enumerations.cs" />
@@ -79,9 +79,10 @@
     <Compile Include="Utilities\PagingUtil.cs" />
     <Compile Include="Utilities\TextUtils.cs" />
     <Compile Include="Utilities\WebUtils.cs" />
-    <Compile Include="WebControls\ObjectEditor.cs" />
-    <Compile Include="WebControls\TextSectionDisplayer.cs" />
-    <Compile Include="WebControls\TreeDisplayer.cs" />
+    <Compile Include="Web\ButtonPanel.cs" />
+    <Compile Include="Web\ObjectEditor.cs" />
+    <Compile Include="Web\TextSectionDisplayer.cs" />
+    <Compile Include="Web\TreeDisplayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shunde.snk" />

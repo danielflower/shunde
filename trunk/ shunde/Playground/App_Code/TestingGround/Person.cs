@@ -25,6 +25,18 @@ namespace TestingGround
 			set { surname = value; }
 		}
 
+		private string password;
+
+		/// <summary>
+		/// password
+		/// </summary>
+		public string Password
+		{
+			get { return password; }
+			set { password = value; }
+		}
+	
+
 		public override string FriendlyName
 		{
 			get
@@ -39,7 +51,8 @@ namespace TestingGround
 
 			DBTable tbl = new DBTable("Person", new DBColumn[] {
 				new DBColumn( "firstName", typeof(string), 1, 200 ),
-				new DBColumn( "surname", typeof(string), 1, 200 )
+				new DBColumn( "surname", typeof(string), 1, 200 ),
+				new DBColumn( "password", typeof(string), 1, 100 )
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(Person), tbl);
