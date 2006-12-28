@@ -14,9 +14,9 @@ using Shunde.Framework;
 using Shunde.Utilities;
 using System.ComponentModel;
 
-[assembly: TagPrefix("Shunde.WebControls", "Shunde")]
+[assembly: TagPrefix("Shunde.Web", "Shunde")]
 
-namespace Shunde.WebControls
+namespace Shunde.Web
 {
 
 
@@ -51,6 +51,18 @@ namespace Shunde.WebControls
 			get { return obj; }
 			set { obj = value; }
 		}
+
+		private List<Control> extraControls = new List<Control>();
+
+		/// <summary>
+		/// A list of controls to place between the last input field and the submit buttons
+		/// </summary>
+		public List<Control> ExtraControls
+		{
+			get { return extraControls; }
+			set { extraControls = value; }
+		}
+	
 		
 
 		private Unit numberTextBoxWidth = new Unit("70px");
@@ -157,31 +169,17 @@ namespace Shunde.WebControls
 			set { autoPopulateSelections = value; }
 		}
 
+		private ButtonPanel buttonPanel;
 
-		private Button saveButton;
-
-		/// <summary>The save button</summary>
-		public Button SaveButton
+		/// <summary>
+		/// The button panel
+		/// </summary>
+		public ButtonPanel ButtonPanel
 		{
-			get { return saveButton; }
+			get { return buttonPanel; }
+			set { buttonPanel = value; }
 		}
-
-		private Button cancelButton;
-
-		/// <summary>The cancel button</summary>
-		public Button CancelButton
-		{
-			get { return cancelButton; }
-		}
-
-		private Button deleteButton;
-
-		/// <summary>The delete button</summary>
-		public Button DeleteButton
-		{
-			get { return deleteButton; }
-			set { deleteButton = value; }
-		}
+	
 
 
 		private BeforeSaveDelegate beforeSaveDelegate = null;
@@ -278,27 +276,9 @@ namespace Shunde.WebControls
 			infoMessage.CssClass = "infoMessage";
 			this.Controls.Add(infoMessage);
 
-			saveButton = new Button();
-			saveButton.ID = "saveButton";
-			saveButton.Text = "Save Details";
-			saveButton.TabIndex = 1;
-			saveButton.Click += new EventHandler(saveButton_Click);
+			buttonPanel = new ButtonPanel();
 
 
-			cancelButton = new Button();
-			cancelButton.ID = "cancelButton";
-			cancelButton.Text = "Cancel";
-			cancelButton.TabIndex = 1;
-			cancelButton.CausesValidation = false;
-			cancelButton.Click += new EventHandler(cancelButton_Click);
-
-			deleteButton = new Button();
-			deleteButton.ID = "deleteButton";
-			deleteButton.Text = "Delete";
-			deleteButton.TabIndex = 1;
-			deleteButton.CausesValidation = false;
-			deleteButton.Attributes["onclick"] = "return confirm('Are you sure you want to delete this?');";
-			deleteButton.Click += new EventHandler(deleteButton_Click);
 
 
 
@@ -375,7 +355,6 @@ namespace Shunde.WebControls
 			}
 
 
-			DBObject.LastUpdatedBy = UpdaterName;
 
 
 			try
@@ -398,7 +377,8 @@ namespace Shunde.WebControls
 			}
 			catch (Exception ex)
 			{
-				infoMessage.Text = ((WebPage)Page).HandleException(ex, Page.Request, "Error while saving " + DBObject);
+				string exceptionHandled = ((WebPage)Page).HandleException(ex, Page.Request, "Error while saving " + DBObject);
+				infoMessage.Text = "There was an error while saving that. " + exceptionHandled;
 			}
 		}
 
@@ -441,9 +421,9 @@ namespace Shunde.WebControls
 			this.Controls.Add( new LiteralControl(@"
 <SCRIPT LANGUAGE=""JavaScript"">
 
-	var scriptLoaded = ('function' == typeof oe_getScriptVersion);
+	var " + controlId + @"_scriptLoaded = ('function' == typeof oe_getScriptVersion);
 
-	if (scriptLoaded) {
+	if (" + controlId + @"_scriptLoaded) {
 		if ( oe_getScriptVersion() != '" + currentJavascriptVersion + @"' ) {
 			alert( 'Warning, the Object Editor requires Object Editor Script File version " + currentJavascriptVersion + @", however the loaded version is ' + oe_getScriptVersion() );
 		}
@@ -539,10 +519,11 @@ namespace Shunde.WebControls
 					object value = fi.GetValue(DBObject);
 
 					string label = friendlyName;
-					if (!col.AllowNulls)
+					if (!col.AllowNulls || ci.RequiredField == RequiredField.Yes)
 					{
 						label += "<font color=red>*</font>";
 					}
+					
 
 
 					if (ci.IsInvisible)
@@ -577,11 +558,21 @@ namespace Shunde.WebControls
 					else if (col.Type.Equals(typeof(string)) || col.Type.Equals(typeof(short)) || col.Type.Equals(typeof(int)) || col.Type.Equals(typeof(long)) || col.Type.Equals(typeof(float)) || col.Type.Equals(typeof(double)))
 					{
 
+						TableCell tc = new TableCell();
+						TableCell th = null;
 
-						TableHeaderCell th = new TableHeaderCell();
-						th.Controls.Add( new LiteralControl( label ) );
-						row.Cells.Add(th);
-
+						if (ci.UseRichTextEditor)
+						{
+							th = tc;
+							th.Controls.Add(new LiteralControl("<div><strong>" + label + "</strong></div>"));
+							tc.ColumnSpan = 2;
+						}
+						else
+						{
+							th = new TableHeaderCell();
+							th.Controls.Add(new LiteralControl(label));
+							row.Cells.Add(th);
+						}
 						TextBox tb = new TextBox();
 						tb.Text = (DBColumn.IsColumnNull(value)) ? "" : value.ToString();
 						tb.ID = col.Name;
@@ -595,11 +586,23 @@ namespace Shunde.WebControls
 							if (col.MaxLength == -1)
 							{
 								tb.TextMode = TextBoxMode.MultiLine;
-								tb.Height = (ci.TexboxHeight.IsEmpty) ? multilineTextBoxHeight : ci.TexboxHeight;
+								if (ci.UseRichTextEditor)
+								{
+									tb.Attributes["UseRichTextEditor"] = "true";
+									tb.Height = (ci.TexboxHeight.IsEmpty) ? multilineTextBoxHeight : new Unit(300);
+								}
+								else
+								{
+									tb.Height = (ci.TexboxHeight.IsEmpty) ? multilineTextBoxHeight : ci.TexboxHeight;
+								}
 							}
 							else
 							{
 								tb.MaxLength = col.MaxLength;
+								if (col.Name.Equals("password"))
+								{
+									tb.TextMode = TextBoxMode.Password;
+								}
 							}
 
 						}
@@ -624,14 +627,37 @@ namespace Shunde.WebControls
 
 
 						// add validation
-						if (!col.AllowNulls && !(col.Type.Equals(typeof(String)) && col.MinLength == 0))
+						if (ci.RequiredField == RequiredField.Yes || (ci.RequiredField == RequiredField.UseColumnDefault && !col.AllowNulls && !(col.Type.Equals(typeof(String)) && col.MinLength == 0)))
 						{
-							RequiredFieldValidator rfv = new RequiredFieldValidator();
-							rfv.ControlToValidate = tb.ID;
-							rfv.ErrorMessage = "Please enter a value for " + friendlyName;
-							rfv.Display = ValidatorDisplay.Static;
-							rfv.Text = "*";
-							th.Controls.Add(rfv);
+
+							// but, don't make it required if it's a password and it already exists
+							if (tb.TextMode == TextBoxMode.Password && DBObject.Exists())
+							{
+								ci.MoreInfo += "<div>You may leave this blank to keep your existing password.</div>";
+							}
+							else
+							{
+								RequiredFieldValidator rfv = new RequiredFieldValidator();
+								rfv.ControlToValidate = tb.ID;
+								rfv.ErrorMessage = "Please enter a value for " + friendlyName;
+								rfv.Display = ValidatorDisplay.Static;
+								rfv.Text = "*";
+								rfv.SetFocusOnError = true;
+								th.Controls.Add(rfv);
+							}
+						}
+
+						if (col.RegularExpression != null)
+						{
+							RegularExpressionValidator rev = new RegularExpressionValidator();
+							rev.ControlToValidate = tb.ID;
+							string msg = (col.RegularExpressionErrorMessage != null) ? col.RegularExpressionErrorMessage : "The value for " + ci.FriendlyName + " is not allowed.";
+							rev.ErrorMessage = msg;
+							rev.Display = ValidatorDisplay.Dynamic;
+							rev.Text = "*";
+							rev.ValidationExpression = col.RegularExpression;
+							rev.SetFocusOnError = true;
+							th.Controls.Add(rev);
 						}
 
 						if (ci.ValidationRegex.Length > 0)
@@ -642,6 +668,7 @@ namespace Shunde.WebControls
 							rev.Display = ValidatorDisplay.Dynamic;
 							rev.Text = "*";
 							rev.ValidationExpression = ci.ValidationRegex;
+							rev.SetFocusOnError = true;
 							th.Controls.Add(rev);
 						}
 
@@ -666,6 +693,7 @@ namespace Shunde.WebControls
 							rv.ControlToValidate = tb.ID;
 							rv.Display = ValidatorDisplay.Dynamic;
 							rv.Text = "*";
+							rv.SetFocusOnError = true;
 
 							if (col.MinAllowed != null && col.MaxAllowed != null)
 							{
@@ -690,12 +718,53 @@ namespace Shunde.WebControls
 						}
 
 
-						TableCell tc = new TableCell();
 						tc.Controls.Add(tb);
+
+
 
 						if (ci.MoreInfo.Length > 0)
 						{
 							tc.Controls.Add(new LiteralControl("<div class=\"moreInfo\">" + ci.MoreInfo + "</div>"));
+						}
+
+						if (tb.TextMode == TextBoxMode.Password)
+						{
+
+							HtmlGenericControl confirmDiv = new HtmlGenericControl("div");
+							confirmDiv.Controls.Add(new LiteralControl("Please confirm your password:"));
+							confirmDiv.ID = tb.ID + "PasswordConfirmDiv";
+
+
+							tb.Attributes["onkeyup"] = "document.getElementById(this.id + 'PasswordConfirmDiv').style.display = (this.value.length == 0) ? 'none' : 'block';";
+							confirmDiv.Style[HtmlTextWriterStyle.Display] = "none";
+
+							tc.Controls.Add(confirmDiv);
+							TextBox passwordConfirmTB = new TextBox();
+							passwordConfirmTB.ID = tb.ID + "PasswordConfirm";
+							passwordConfirmTB.TextMode = TextBoxMode.Password;
+							passwordConfirmTB.Width = tb.Width;
+							passwordConfirmTB.TabIndex = 1;
+
+							CompareValidator cv = new CompareValidator();
+							cv.ControlToCompare = tb.ID;
+							cv.ControlToValidate = passwordConfirmTB.ID;
+							cv.ErrorMessage = "Your passwords did not match";
+							cv.Text = " * ";
+							cv.SetFocusOnError = true;
+
+							if (!DBObject.Exists())
+							{
+								RequiredFieldValidator rfv = new RequiredFieldValidator();
+								rfv.ControlToValidate = passwordConfirmTB.ID;
+								rfv.ErrorMessage = "Please enter a value for the confirmation password field";
+								rfv.Display = ValidatorDisplay.Static;
+								rfv.Text = "*";
+								rfv.SetFocusOnError = true;
+								confirmDiv.Controls.Add(rfv);
+							}
+
+							confirmDiv.Controls.Add(cv);
+							confirmDiv.Controls.Add(passwordConfirmTB);
 						}
 
 						row.Cells.Add(tc);
@@ -772,7 +841,7 @@ namespace Shunde.WebControls
 
 
 
-						string calName = "cal_" + col.Name;
+						string calName = controlId + "_cal_" + col.Name;
 						string tbName = controlId + "_" + tb.ClientID;
 
 						Literal lit2 = new Literal();
@@ -782,13 +851,13 @@ namespace Shunde.WebControls
 						tc.Controls.Add(tb);
 
 
-						string anchorName = "anchor" + uniqueNumber + "xx";
-						string divName = "caldiv" + uniqueNumber;
+						string anchorName = controlId + "_anchor" + uniqueNumber + "xx";
+						string divName = controlId + "_caldiv" + uniqueNumber;
 
 						Literal javascriptStuff = new Literal();
 						javascriptStuff.Text = @"
 <SCRIPT LANGUAGE=""JavaScript"">
-if (scriptLoaded) {
+if (" + controlId + @"_scriptLoaded) {
 	var " + calName + @" = new CalendarPopup(""" + divName + @""");
 	" + calName + @".showYearNavigation();
 	" + calName + @".showYearNavigationInput();
@@ -1154,29 +1223,57 @@ if (scriptLoaded) {
 				Table table = new Table();
 				table.CssClass = "ObjectEditorTable";
 				table.Width = new Unit("100%");
+				table.Style["table-layout"] = "fixed";
+
+				{
+					TableRow tr = new TableRow();
+					table.Rows.Add(tr);
+					{
+						TableCell tc = new TableCell();
+						tc.Style[HtmlTextWriterStyle.Width] = "33%";
+						tc.Style[HtmlTextWriterStyle.Height] = "1px";
+						tr.Cells.Add(tc);
+					}
+					{
+						TableCell tc = new TableCell();
+						tc.Style[HtmlTextWriterStyle.Width] = "67%";
+						tc.Style[HtmlTextWriterStyle.Height] = "1px";
+						tr.Cells.Add(tc);
+					}
+				}
 
 				foreach (ComparableRow tr in panels)
 				{
 					table.Rows.Add(tr);
 				}
 
+				if (extraControls.Count > 0)
+				{
+					TableRow extraControlsRow = new TableRow();
+					table.Rows.Add(extraControlsRow);
+					TableCell ecc = new TableCell();
+					ecc.ColumnSpan = 2;
+					extraControlsRow.Cells.Add(ecc);
+					foreach (Control c in extraControls)
+					{
+						ecc.Controls.Add(c);
+					}
+				}
+
 				TableRow buttonRow = new TableRow();
 				buttonRow.Cells.Add(new TableHeaderCell());
 
-				TableCell tc = new TableCell();
-
-
-				tc.Controls.Add(saveButton);
-
-
-				bool showDeleteButton = false;
-				if (DBObject.Exists())
 				{
-					tc.Controls.Add(deleteButton);
-					showDeleteButton = true;
+					TableCell tc = new TableCell();
+					buttonRow.Cells.Add(tc);
+
+					tc.Controls.Add(buttonPanel);
 				}
-				tc.Controls.Add(cancelButton);
-				buttonRow.Cells.Add(tc);
+
+				if (!DBObject.Exists())
+				{
+					buttonPanel.DeleteButton.Visible = false;
+				}
 
 				table.Rows.Add(buttonRow);
 
@@ -1185,18 +1282,13 @@ if (scriptLoaded) {
 
 
 
-
-				string deleteButtonJs = (showDeleteButton) ? ", '" + deleteButton.ClientID + "'" : "";
-				string disableJS = "oe_disableControls( new Array('" + saveButton.ClientID + "', '" + cancelButton.ClientID + "'" + deleteButtonJs + ") );";
-				saveButton.Attributes["onclick"] = "if (typeof(Page_ClientValidate) == 'function') if (!Page_ClientValidate()) return false; " + disableJS + this.Page.ClientScript.GetPostBackEventReference(saveButton, saveButton.ClientID);
-				cancelButton.Attributes["onclick"] = disableJS + this.Page.ClientScript.GetPostBackEventReference(cancelButton, cancelButton.ClientID);
-				if (DBObject.Exists())
-				{
-					deleteButton.Attributes["onclick"] = disableJS + this.Page.ClientScript.GetPostBackEventReference(deleteButton, deleteButton.ClientID);
-				}
-
-				
 			}
+
+
+
+			buttonPanel.SaveButton.Click += new EventHandler(saveButton_Click);
+			buttonPanel.CancelButton.Click += new EventHandler(cancelButton_Click);
+			buttonPanel.DeleteButton.Click += new EventHandler(deleteButton_Click);
 
 		}
 
@@ -1279,7 +1371,11 @@ if (scriptLoaded) {
 						Object val = tb.Text;
 						if (tb.Text.Trim().Length == 0)
 						{
-							if (col.Type.Equals(typeof(string)) && col.AllowNulls)
+							if (tb.TextMode == TextBoxMode.Password && DBObject.Exists())
+							{
+								val = fi.GetValue(DBObject);
+							}
+							else if (col.Type.Equals(typeof(string)) && col.AllowNulls)
 							{
 								val = null;
 							}
@@ -1300,6 +1396,14 @@ if (scriptLoaded) {
 							else if (col.Type.Equals(typeof(float)))
 							{
 								val = DBColumn.FloatNullValue;
+							}
+						}
+						else if (tb.TextMode == TextBoxMode.Password)
+						{
+							TextBox confirmTB = (TextBox)panel.FindControl(col.Name + "PasswordConfirm");
+							if (confirmTB.Text != tb.Text)
+							{
+								throw new ValidationException("Your passwords did not match.");
 							}
 						}
 

@@ -10,22 +10,14 @@ namespace Shunde.Framework
 	public sealed class ObjectInfo
 	{
 
-		/// <summary>The text to appear in an SQL FROM clause. Either the joined tables that make up this object, or the Name of a view if one is used.</summary>		
+		/// <summary>The text to appear in an SQL FROM clause, i.e. the joined tables that make up this object.</summary>		
 		private string fromClause;
 
-		/// <summary>
-		/// The Name of the Sql Server View, applicable if a view is used for this object info
-		/// </summary>
-		public string ViewName
-		{
-			get { return fromClause; }
-		}
 
 		/// <summary>The column names that are in the SELECT query</summary>
 		private string columnClause;
 
 		/// <summary>The base Table Name</summary>
-		/// <remarks>This will be DBObject unless there is an Indexed View in use on one of the tables making up this object, in which case it will be the Name of a view</remarks>
 		private string baseTableName = "DBObject";
 
 		/// <summary>The tables that make up this object</summary>
@@ -36,14 +28,6 @@ namespace Shunde.Framework
 
 		private DBTable[] tables;
 
-		private bool useView = false;
-
-		/// <summary>Specifies that a view exists for this Table. The view is the equivalent of the joined tables.</summary>
-		public bool UseView
-		{
-			get { return useView; }
-			set { useView = value; }
-		}
 
 		/// <summary>The Type of the object that this ObjectInfo represents</summary>
 		public Type DBObjectType {
@@ -62,13 +46,9 @@ namespace Shunde.Framework
 
 
 
-		/// <summary>Creates a new ObjectInfo class and populates the fromClause</summary>
-		public ObjectInfo(Type type, DBTable table) : this(type, table, false) { }
-
-		/// <summary>Creates a new ObjectInfo class and populates the fromClause, with the option of specifying that this object uses a Database view.</summary>
-		public ObjectInfo(Type type, DBTable table, bool useView)
+		/// <summary>Creates a new ObjectInfo class and populates the fromClause.</summary>
+		public ObjectInfo(Type type, DBTable table)
 		{
-			this.useView = useView;
 			this.type = type;
 
 			if (!type.Equals(typeof(DBObject)))
@@ -186,25 +166,12 @@ namespace Shunde.Framework
 
 
 		/// <summary>Sets up an object info object</summary>
-		/// <remarks>Creates the FROM and COLUMN clauses. This is called by the constructor and is only necessary if something like useView has its Value changed</remarks>
-		public static void SetupObjectInfo(ObjectInfo oi)
+		/// <remarks>Creates the FROM and COLUMN clauses. This is called by the constructor.</remarks>
+		private static void SetupObjectInfo(ObjectInfo oi)
 		{
 
 			SetupFromClause(oi);
 			SetupColumnClause(oi);
-
-			// now set up base Table Name
-			ObjectInfo cur = oi;
-			while (!cur.type.Equals(typeof(DBObject)))
-			{
-				if (cur.useView)
-				{
-					oi.baseTableName = cur.fromClause;
-					break;
-				}
-				cur = ObjectInfo.GetObjectInfo(cur.type.BaseType);
-			}
-
 
 		}
 
@@ -217,9 +184,8 @@ namespace Shunde.Framework
 
 			int numOODBObjs = 0;
 
-			string viewName = (oi.useView) ? oi.fromClause : "";
 
-			string columnClause = (oi.useView) ? viewName + ".[id]" : "[DBObject].[id]";
+			string columnClause = "[DBObject].[id]";
 
 			int counter = 1;
 			foreach( DBTable table in dbTables )
@@ -231,14 +197,7 @@ namespace Shunde.Framework
 					if (!(col.Type.Equals(typeof(BinaryData))))
 					{
 						// we handle binary data differently (see below)
-						if (oi.useView)
-						{
-							columnClause += ", [" + viewName + "].[" + col.GetColumnName() + "]";
-						}
-						else
-						{
-							columnClause += ", [" + table.Name + "].[" + col.GetColumnName() + "]";
-						}
+						columnClause += ", [" + table.Name + "].[" + col.GetColumnName() + "]";
 					}
 					col.sdrIndex = counter;
 					counter++;
@@ -246,14 +205,7 @@ namespace Shunde.Framework
 					// this is a reference to another object, so here we select the class Name of the object
 					if (col.isDBObjectType)
 					{
-						if (oi.useView)
-						{
-							columnClause += ", [" + viewName + "].[" + col.Name + "ClassName]";
-						}
-						else
-						{
-							columnClause += ", [" + table.Name + "].[" + col.Name + "ClassName]";
-						}
+						columnClause += ", [" + table.Name + "].[" + col.Name + "ClassName]";
 						counter++;
 						numOODBObjs++;
 					}
@@ -262,18 +214,9 @@ namespace Shunde.Framework
 						// rather than getting the data with each population, we just get the size of the data
 						// this is to reduce network bandwidth.
 						// A call to DBObject.populatBinaryData() will truly populate the data
-						if (oi.useView)
-						{
-							columnClause += ", DATALENGTH([" + viewName + "].[" + col.GetColumnName() + "]) AS [" + col.GetColumnName() + "]";
-							columnClause += ", [" + viewName + "].[" + col.Name + "MimeType]";
-							columnClause += ", [" + viewName + "].[" + col.Name + "Filename]";
-						}
-						else
-						{
-							columnClause += ", DATALENGTH([" + table.Name + "].[" + col.GetColumnName() + "]) AS [" + col.GetColumnName() + "]";
-							columnClause += ", [" + table.Name + "].[" + col.Name + "MimeType]";
-							columnClause += ", [" + table.Name + "].[" + col.Name + "Filename]";
-						}
+						columnClause += ", DATALENGTH([" + table.Name + "].[" + col.GetColumnName() + "]) AS [" + col.GetColumnName() + "]";
+						columnClause += ", [" + table.Name + "].[" + col.Name + "MimeType]";
+						columnClause += ", [" + table.Name + "].[" + col.Name + "Filename]";
 						counter += 2;
 					}
 
@@ -293,12 +236,6 @@ namespace Shunde.Framework
 		/// <summary>Gets a comma separated list of the Table names that make up this object</summary>
 		private static void SetupFromClause(ObjectInfo oi)
 		{
-
-			if (oi.useView)
-			{
-				oi.fromClause = oi.GetDirectTable().Name + "View";
-				return;
-			}
 
 			DBTable[] dbTables = oi.tables;
 			string fromClause = dbTables[0].Name;

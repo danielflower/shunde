@@ -11,6 +11,8 @@ namespace Shunde.Common
 	{
 
 
+
+
 		private DBObject visitor;
 
 		/// <summary>
@@ -101,6 +103,16 @@ namespace Shunde.Common
 		}
 
 
+		private string countryCode;
+
+		/// <summary>
+		/// The country code the visit originated from
+		/// </summary>
+		public string CountryCode
+		{
+			get { return countryCode; }
+			set { countryCode = value; }
+		}
 
 
 		/// <summary>Sets up the <see cref="Shunde.Framework.ObjectInfo" /> for this class</summary>
@@ -116,6 +128,7 @@ namespace Shunde.Common
 				new DBColumn( "searchString", typeof(string), 0, 200 ),
 				new DBColumn( "ipAddress", typeof(string), 0, 50 ),
 				new DBColumn( "userHostName", typeof(string), 0, 200 ),
+				new DBColumn( "countryCode", typeof(string), 0, 4 ),
 				new DBColumn( "numberOfPagesViewed", typeof(int), false )
 			});
 
@@ -213,6 +226,14 @@ namespace Shunde.Common
 		public void SetUserHostName()
 		{
 			userHostName = WebUtils.GetHostName(ipAddress);
+			if (userHostName.Length > 3 && userHostName.IndexOf('.') > 0)
+			{
+				countryCode = userHostName.Substring(userHostName.LastIndexOf('.') + 1);
+				if (countryCode.Length > 4)
+				{
+					countryCode = "";
+				}
+			}
 		}
 
 	}

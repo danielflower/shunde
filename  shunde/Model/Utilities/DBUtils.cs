@@ -270,7 +270,7 @@ namespace Shunde.Utilities
 				if (returnString.Length == 0)
 					returnString = "null";
 				else
-					returnString = "'" + returnString + "'";
+					returnString = "N'" + returnString + "'";
 			}
 			return returnString;
 		}

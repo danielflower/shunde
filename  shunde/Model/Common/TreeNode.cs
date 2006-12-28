@@ -188,7 +188,7 @@ namespace Shunde.Common
 		/// <summary>Gets all the tree nodes in the database</summary>
 		public static TreeNode[] GetTreeNodesAsForest(string where, Type baseType, Type[] catTypes)
 		{
-			TreeNode[] nodes = (TreeNode[])DBObject.GetObjects(baseType, catTypes, false, where);
+			TreeNode[] nodes = (TreeNode[])DBObject.GetObjects(baseType, catTypes, where);
 			return ConvertToForest(nodes, baseType);
 		}
 
@@ -224,7 +224,11 @@ namespace Shunde.Common
 				}
 				else
 				{
-					int parentIndex = (int)dictionary[cat.Parent.Id];
+					if (!dictionary.ContainsKey(cat.Parent.Id))
+					{
+						continue;
+					}
+					int parentIndex = dictionary[cat.Parent.Id];
 					cat.Parent = allCats[parentIndex];
 
 

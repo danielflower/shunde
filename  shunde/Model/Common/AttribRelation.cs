@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Shunde.Framework;
+using Shunde.Utilities;
 
 namespace Shunde.Common
 {
@@ -59,6 +60,30 @@ namespace Shunde.Common
 			Type t = typeof(Attrib);
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(t);
 			string sql = oi.GetSelectStatement() + " WHERE DBObject.isDeleted = 0 AND Attrib.Id IN (SELECT [AttribRelation].[AttribId] FROM AttribRelation INNER JOIN DBObject ON AttribRelation.[id] = DBObject.[id] WHERE DBObject.isDeleted = 0 AND AttribRelation.dbObjectId = " + relatedObject.Id + ")";
+			return (Attrib[])GetObjects(sql, t);
+
+			/*
+			string where = 
+
+			Attrib[] objs = (Attrib[])TreeNode.GetTreeNodesAsForest(where, typeof(Attrib), new Type[0]);
+
+			return (Attrib[])TreeNode.ConvertToFlatArray(objs, typeof(Attrib));
+			 * */
+		}
+
+		/// <summary>Gets and populates all the Attribs that are related (by an <see cref="AttribRelation" />) to the given Object and which are one of the given types</summary>
+		/// <returns>Returns an array of 0 or more Attrib objects</returns>
+		public static Attrib[] GetAttribsRelatedTo(DBObject relatedObject, AttribType[] attribTypes)
+		{
+
+			if (attribTypes.Length == 0)
+			{
+				return new Attrib[0];
+			}
+
+			Type t = typeof(Attrib);
+			ObjectInfo oi = ObjectInfo.GetObjectInfo(t);
+			string sql = oi.GetSelectStatement() + " WHERE DBObject.isDeleted = 0 AND Attrib.Id IN (SELECT [AttribRelation].[AttribId] FROM AttribRelation INNER JOIN DBObject ON AttribRelation.[id] = DBObject.[id] WHERE DBObject.isDeleted = 0 AND AttribRelation.dbObjectId = " + relatedObject.Id + ") AND [Attrib].[attribTypeId] IN (" + ObjectUtils.GetIDsAsCSV(attribTypes) + ")";
 			return (Attrib[])GetObjects(sql, t);
 
 			/*

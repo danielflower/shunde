@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using Shunde.Utilities;
+using System.Text.RegularExpressions;
 
 namespace Shunde.Framework
 {
@@ -12,7 +13,7 @@ namespace Shunde.Framework
 
 		/// <summary>The C# short Value that represents the database NULL Value</summary>
 		/// <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
-		public const int ShortNullValue = short.MinValue;
+		public const short ShortNullValue = short.MinValue;
 
 		/// <summary>The C# integer Value that represents the database NULL Value</summary>
 		/// <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
@@ -165,6 +166,30 @@ namespace Shunde.Framework
 		}
 
 		private bool allowNulls = false;
+
+
+		private string regularExpression = null;
+
+		/// <summary>
+		/// A regular expression to validate string data against (ignored if the value is string.Empty and 0-length strings are allowed)
+		/// </summary>
+		public string RegularExpression
+		{
+			get { return regularExpression; }
+			set { regularExpression = value; }
+		}
+
+		private string regularExpressionErrorMessage = null;
+
+		/// <summary>
+		/// An error message to display if the string does not match the regular expression
+		/// </summary>
+		public string RegularExpressionErrorMessage
+		{
+			get { return regularExpressionErrorMessage; }
+			set { regularExpressionErrorMessage = value; }
+		}
+	
 	
 
 		/// <summary>This specifies the index into the SqlDataReader that this column's Value will be in.</summary>
@@ -187,6 +212,11 @@ namespace Shunde.Framework
 		}
 
 		private string constraints = "";
+
+		/// <summary>Creates a new DBColumn with the values specified, which cannot be null. Also sets the Value of <see cref="isDBObjectType" />.</summary>
+		public DBColumn(string name, Type type) : this(name, type, false)
+		{
+		}
 
 		/// <summary>Creates a new DBColumn with the values specified. Also sets the Value of <see cref="isDBObjectType" />.</summary>
 		public DBColumn(string name, Type type, bool allowNulls)
@@ -228,16 +258,28 @@ namespace Shunde.Framework
 		/// <summary>Creates a new DBColumn with the values specified. Also sets the Value of <see cref="isDBObjectType" />.</summary>
 		/// <remarks>This constructor is normally used for string types where a minimum and/or maximum string length is needed. It sets <see cref="allowNulls" /> to false.</remarks>
 		public DBColumn(string name, Type type, int minLength, int maxLength)
+			: this(name, type, minLength, maxLength, null, null)
+		{
+		}
+
+
+		/// <summary>Creates a new DBColumn with the values specified. Also sets the Value of <see cref="isDBObjectType" />.</summary>
+		/// <remarks>This constructor is normally used for string types where a minimum and/or maximum string length is needed. It sets <see cref="allowNulls" /> to false.</remarks>
+		public DBColumn(string name, Type type, int minLength, int maxLength, string regularExpression, string regularExpressionErrorMessage)
 			: this(name, type, false)
 		{
 			this.minLength = minLength;
 			this.maxLength = maxLength;
 			this.allowNulls = (minLength == 0);
+
+			this.regularExpression = regularExpression;
+			this.regularExpressionErrorMessage = regularExpressionErrorMessage;
+
 		}
 
 		/// <summary>Gets the Value of this object in a suitable manner for use in SQL statements</summary>
 		/// <remarks>string values will have apostrophes escaped, and be enclosed by apostrophes. Varchar columns will also have the <see cref="string.Trim()">string.Trim</see> method called on them. Null values will be returned as "null", and all other types are converted to an appropriate string representation.</remarks>
-		public string GetSqlText(Object value)
+		public string GetSqlText(object value)
 		{
 			if (IsColumnNull(value))
 			{
@@ -286,18 +328,62 @@ namespace Shunde.Framework
 
 		}
 
+
 		/// <summary>Determines whether the given object should be considered to be null by the database.</summary>
 		/// <remarks>This is true if the Value is null, but also if an int has the Value <see cref="IntegerNullValue" /> etc.</remarks>
-		public static bool IsColumnNull(Object value)
+		public static bool IsColumnNull(object value)
 		{
 			if (value is BinaryData)
 			{
-				return !((BinaryData)value).Exists;
+				return !IsColumnNull((BinaryData)value);
 			}
 			else
 			{
 				return (value == null || value.Equals(DBNull.Value) || value.Equals(DBColumn.ShortNullValue) || value.Equals(DBColumn.IntegerNullValue) || value.Equals(DBColumn.LongNullValue) || value.Equals(DBColumn.DateTimeNullValue) || value.Equals(DBColumn.FloatNullValue) || value.Equals(DBColumn.DoubleNullValue) || value.Equals(""));
 			}
+		}
+
+
+		/// <summary>Determines whether the given BinaryData is considered to be null.</summary>
+		/// <remarks>This is true if <see cref="BinaryData.Exists"/> is false.</remarks>
+		public static bool IsColumnNull(BinaryData value)
+		{
+			return !value.Exists;
+		}
+
+		/// <summary>Determines whether the given short is considered to be null.</summary>
+		/// <remarks>This is true if value equals <see cref="ShortNullValue" />.</remarks>
+		public static bool IsColumnNull(short value)
+		{
+			return value == DBColumn.ShortNullValue;
+		}
+
+		/// <summary>Determines whether the given int is considered to be null.</summary>
+		/// <remarks>This is true if value equals <see cref="IntegerNullValue" />.</remarks>
+		public static bool IsColumnNull(int value)
+		{
+			return value == DBColumn.IntegerNullValue;
+		}
+		
+		/// <summary>Determines whether the given long is considered to be null.</summary>
+		/// <remarks>This is true if value equals <see cref="LongNullValue" />.</remarks>
+		public static bool IsColumnNull(long value)
+		{
+			return value == DBColumn.LongNullValue;
+		}
+
+		/// <summary>Determines whether the given float is considered to be null.</summary>
+		/// <remarks>This is true if value equals <see cref="FloatNullValue" />.</remarks>
+		public static bool IsColumnNull(float value)
+		{
+			return value == DBColumn.FloatNullValue;
+		}
+
+		/// <summary>Determines whether the given double is considered to be null.</summary>
+		/// <remarks>This is true if value equals <see cref="DoubleNullValue" />.</remarks>
+		public static bool IsColumnNull(double value)
+		{
+			return value == DBColumn.DoubleNullValue;
 		}
 
 		/// <summary>Checks that the given Value is within the constraints placed upon it by this column.</summary>
@@ -364,6 +450,20 @@ namespace Shunde.Framework
 						throw new ValidationException("The minimum length allowed for \"" + friendlyName + "\" is " + minLength + " character" + ((minLength == 1) ? "" : "s") + ". You have written " + len + " characters.");
 					}
 				}
+
+				if (regularExpression != null)
+				{
+					if (!Regex.IsMatch((string)value, regularExpression))
+					{
+						string msg = "The value \"" + value + "\" entered for \"" + friendlyName + "\" is invalid.";
+						if (regularExpressionErrorMessage != null)
+						{
+							msg += " " + regularExpressionErrorMessage;
+						}
+						throw new ValidationException(msg);
+					}
+				}
+
 			}
 
 		}
@@ -383,4 +483,78 @@ namespace Shunde.Framework
 		}
 
 	}
+
+	/// <summary>
+	/// Regular expressions, with error messages
+	/// </summary>
+	public sealed class RegularExpressionConstants
+	{
+
+		/// <summary>
+		/// Checks that the string is an email address
+		/// </summary>
+		public const string Email = @"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*";
+
+		/// <summary>
+		/// The error message for when an email address is not entered correctly
+		/// </summary>
+		public const string EmailErrorMessage = "Please enter a valid email address.";
+
+
+
+		/// <summary>
+		/// Checks that the string has no HTML in it (actually, checks for the &lt; and &gt; symbols)
+		/// </summary>
+		public const string NoHtml = @"^[^<>]*$";
+
+		/// <summary>
+		/// The error message for when a string contains HTML
+		/// </summary>
+		public const string NoHtmlErrorMessage = "Sorry, HTML, or the \"&lt;\" and \"&gt;\" signs are not allowed.";
+
+
+
+		/// <summary>
+		/// Checks that the string contains only digits
+		/// </summary>
+		public const string Numeric = @"^[0-9]*$";
+
+		/// <summary>
+		/// The error message for when a string does not contain only digits
+		/// </summary>
+		public const string NumericErrorMessage = "Only digits from 0-9 are allowed.";
+
+
+
+		/// <summary>
+		/// Checks that the string contains only letters from the English alphabet
+		/// </summary>
+		public const string Alphabetical = @"^[a-zA-Z]*$";
+
+		/// <summary>
+		/// The error message for when a string Checks that the string does not contain only letters from the English alphabet
+		/// </summary>
+		public const string AlphabeticalErrorMessage = "Only alphabetical characters are allowed.";
+
+
+
+
+
+		/// <summary>
+		/// Checks that the string contains only letters from the English alphabet and/or digits from 0-9
+		/// </summary>
+		public const string Alphanumerical = @"^[a-zA-Z0-9]*$";
+
+		/// <summary>
+		/// The error message for when a string Checks that the string does not contain only letters from the English alphabet and/or digits
+		/// </summary>
+		public const string AlphanumericalErrorMessage = "Only alphabetical characters and digits are allowed.";
+
+
+
+
+
+		private RegularExpressionConstants() { }
+	}
+
 }

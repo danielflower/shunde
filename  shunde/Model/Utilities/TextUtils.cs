@@ -35,6 +35,10 @@ namespace Shunde.Utilities
 		/// </summary>
 		public static string ToHtml(string text)
 		{
+			if (text == null)
+			{
+				return "";
+			}
 			return text.Replace("\n", "<br/>\n");
 		}
 
@@ -252,23 +256,29 @@ namespace Shunde.Utilities
 
 
 
-		/// <summary>Cuts a string to end at the end of a word. It appends "..." to the end if the text is cut (that is, if <i>length</i> is greater than the length of the string.</summary>
+		/// <summary>Cuts a string to end at the end of a word. It appends "..." to the end if the text is cut (that is, if <i>length</i> is greater than the length of the string).</summary>
 		/// <param Name="str">The string to be cut</param>
 		/// <param Name="length">The number of characters that the string should be cut at</param>
 		/// <returns>A string cut at the specified point</returns>
 		public static string CutText(string str, int length)
 		{
-			if (str == null || length < 0)
+			if (str == null || length < 2)
 			{
 				return "";
 			}
+			if (length == 2)
+			{
+				return "..";
+			}
 			if (length < str.Length)
 			{
-				int cutPoint = str.IndexOf(" ", length);
-				if (cutPoint > -1)
+				str = str.Substring(0, str.Length - 3) + "...";
+				int cutPoint = str.LastIndexOf(' ', length);
+				if (cutPoint < 3)
 				{
-					str = str.Substring(0, cutPoint) + "...";
+					cutPoint = length - 3;
 				}
+				str = str.Substring(0, cutPoint) + "...";
 			}
 			return str;
 

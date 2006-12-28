@@ -264,7 +264,7 @@ namespace " + namespaceTB.Text + @" {
 
 			Type t = typeof(" + className + @");
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(t);
-			String sql = oi.GetSelectStatement() + "" WHERE [DBObject].[isDeleted] = 0 ORDER BY [DBObject].[displayOrder] ASC"";
+			string sql = oi.GetSelectStatement() + "" WHERE [DBObject].[isDeleted] = 0 ORDER BY [DBObject].[displayOrder] ASC"";
 			return (" + className + @"[])DBObject.GetObjects(sql, t);
 
 		}
@@ -284,7 +284,7 @@ namespace " + namespaceTB.Text + @" {
 
 			Type t = typeof(" + className + @");
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(t);
-			String sql = oi.GetSelectStatement() + "" WHERE [DBObject].[isDeleted] = 0 AND [" + className + @"].[" + name + @"Id] = "" + " + name + @".Id + "" ORDER BY [DBObject].[displayOrder] ASC"";
+			string sql = oi.GetSelectStatement() + "" WHERE [DBObject].[isDeleted] = 0 AND [" + className + @"].[" + name + @"Id] = "" + " + name + @".Id + "" ORDER BY [DBObject].[displayOrder] ASC"";
 			return (" + className + @"[])DBObject.GetObjects(sql, t);
 
 		}

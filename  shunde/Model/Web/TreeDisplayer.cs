@@ -10,9 +10,9 @@ using Shunde.Common;
 using Shunde.Utilities;
 using System.Web.UI.HtmlControls;
 
-[assembly: TagPrefix("Shunde.WebControls", "Shunde")]
+[assembly: TagPrefix("Shunde.Web", "Shunde")]
 
-namespace Shunde.WebControls
+namespace Shunde.Web
 {
 
 	/// <summary>

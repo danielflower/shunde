@@ -4,8 +4,9 @@ using System.Net.Mail;
 using System.Text;
 using System.Web;
 using Shunde.Utilities;
+using Shunde.Common;
 
-namespace Shunde.Common
+namespace Shunde.Web
 {
 	/// <summary>The base of each webpage.</summary>
 	/// <remarks>This is inherited by each ASP.NET page. It exposes certain properties and methods needed throughout a website</remarks>
@@ -87,6 +88,21 @@ namespace Shunde.Common
 			Response.Redirect(url);
 		}
 
+		/// <summary>Gets a short from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
+		/// <param Name="paramName">The Name of the querystring parameter</param>
+		/// <returns>Returns retrieved parameter as a short</returns>
+		public short GetShortParam(string paramName)
+		{
+			try
+			{
+				return System.Convert.ToInt16(Request.Params[paramName]);
+			}
+			catch
+			{
+				return (short)-1;
+			}
+		}
+
 		/// <summary>Gets an int from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
 		/// <param Name="paramName">The Name of the querystring parameter</param>
 		/// <returns>Returns retrieved parameter as an int</returns>
@@ -99,6 +115,37 @@ namespace Shunde.Common
 			catch
 			{
 				return -1;
+			}
+		}
+
+		/// <summary>Gets a long from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
+		/// <param Name="paramName">The Name of the querystring parameter</param>
+		/// <returns>Returns retrieved parameter as a long</returns>
+		public long GetLongParam(string paramName)
+		{
+			try
+			{
+				return System.Convert.ToInt64(Request.Params[paramName]);
+			}
+			catch
+			{
+				return (long)-1;
+			}
+		}
+
+
+		/// <summary>Gets a float from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
+		/// <param Name="paramName">The Name of the querystring parameter</param>
+		/// <returns>Returns retrieved parameter as a float</returns>
+		public float GetFloatParam(string paramName)
+		{
+			try
+			{
+				return System.Convert.ToSingle(Request.Params[paramName]);
+			}
+			catch
+			{
+				return -1.0f;
 			}
 		}
 

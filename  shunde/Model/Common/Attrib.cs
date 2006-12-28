@@ -73,38 +73,13 @@ namespace Shunde.Common
 		}
 
 
-		private BinaryData thumbnail;
-
-		/// <summary>
-		/// The thumbnail for this attribute, if available
-		/// </summary>
-		public BinaryData Thumbnail
-		{
-			get { return thumbnail; }
-			set { thumbnail = value; }
-		}
-
-
-		private BinaryData largeImage;
-
-		/// <summary>
-		/// The thumbnail for this attribute, if available
-		/// </summary>
-		public BinaryData LargeImage
-		{
-			get { return largeImage; }
-			set { largeImage = value; }
-		}
-
 		/// <summary>Sets up the <see cref="Shunde.Framework.ObjectInfo" /> for this class</summary>
 		static Attrib()
 		{
 
 			DBTable tbl = new DBTable("Attrib", new DBColumn[] {
 				new DBColumn( "attribType", typeof(AttribType), false ),
-				new DBColumn( "dataValue", typeof(BinaryData), true ),
-				new DBColumn( "thumbnail", typeof(BinaryData), true ),
-				new DBColumn( "largeImage", typeof(BinaryData), true )
+				new DBColumn( "dataValue", typeof(BinaryData), true )
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(Attrib), tbl);
@@ -112,49 +87,7 @@ namespace Shunde.Common
 		}
 
 
-		/// <summary>
-		/// Attempts to create a thumbnail using the value in <see cref="Value" />, returning true if successful
-		/// </summary>
-		public bool CreateImagesFromDataValue(System.Drawing.Size largeImageSize, System.Drawing.Size thumbnailSize, bool useWhiteSpace)
-		{
-			if (!dataValue.Exists)
-			{
-				return false;
-			}
-			if (dataValue.MimeType.StartsWith("image"))
-			{
-				try
-				{
-					System.Drawing.Image image = ImageUtils.CreateFromBinaryData(dataValue);
-					
-					this.thumbnail = new BinaryData();
-					this.thumbnail.Filename = System.IO.Path.GetFileNameWithoutExtension(dataValue.Filename).Replace(' ', '_') + "_thumbnail.jpg";
-					this.thumbnail.MimeType = ImageUtils.GetJpgCodec().MimeType;
-					this.thumbnail.Data = ImageUtils.GetBytes(ImageUtils.CreatedResizedCopy(image, thumbnailSize, useWhiteSpace), 90);
 
-					if (largeImageSize.Width < image.Width || largeImageSize.Height < image.Height)
-					{
-						this.largeImage = new BinaryData();
-						this.largeImage.Filename = System.IO.Path.GetFileNameWithoutExtension(dataValue.Filename).Replace(' ', '_') + "_large.jpg";
-						this.largeImage.MimeType = ImageUtils.GetJpgCodec().MimeType;
-						this.largeImage.Data = ImageUtils.GetBytes(ImageUtils.CreatedResizedCopy(image, largeImageSize, useWhiteSpace), 90);
-					}
-					else
-					{
-						this.largeImage = new BinaryData(dataValue.Data, dataValue.MimeType, dataValue.Filename);
-					}
-					return true;
-				}
-				catch
-				{
-					return false;
-				}
-			}
-
-			// TODO insert code to create thumbnail from movies etc
-
-			return false;
-		}
 
 
 		/// <summary>

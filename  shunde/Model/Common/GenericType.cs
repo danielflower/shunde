@@ -138,6 +138,28 @@ namespace Shunde.Common
 
 		}
 
+
+
+		/// <summary>Gets the GenericType with the given <see cref="Code" /></summary>
+		public static GenericType GetGenericType(int code)
+		{
+
+			try
+			{
+				return (GenericType)DBObject.GetObject("SELECT gt.[id] FROM GenericType gt INNER JOIN DBObject obj ON obj.id = gt.id WHERE obj.isDeleted = 0 AND gt.code = " + code);
+			}
+			catch (ValidationException vex)
+			{
+				// a validation exception is thrown if more than one row is returned
+				// in this case, we change to a ShundeException because this shouldn't
+				// occur on the website
+				throw new ShundeException(vex.Message);
+			}
+
+		}
+
+
+
 	}
 
 }

@@ -111,7 +111,7 @@ namespace Shunde.Common
 		/// <summary>
 		/// Gets all the text sections that have a value specified for administrators
 		/// </summary>
-		public TextSection[] GetTextSectionsForAdministration()
+		public static TextSection[] GetTextSectionsForAdministration()
 		{
 			Type t = typeof(TextSection);
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(t);
