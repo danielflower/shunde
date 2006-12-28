@@ -7,11 +7,11 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-using Shunde.Common;
+using Shunde.Web;
 /// <summary>
 /// Summary description for PageBase
 /// </summary>
-public abstract class PageBase : WebPage
+public abstract class PageBase : ShundePageBase
 {
 	public override sealed void Page_Load(object Sender, EventArgs e)
 	{

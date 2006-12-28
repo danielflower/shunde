@@ -309,7 +309,7 @@ namespace Shunde.Web
 			}
 			catch (Exception ex)
 			{
-				infoMessage.Text = ((WebPage)Page).HandleException(ex, Page.Request, "Error while deleting " + DBObject);
+				infoMessage.Text = ((ShundePageBase)Page).HandleException(ex, Page.Request, "Error while deleting " + DBObject);
 			}
 		}
 
@@ -377,7 +377,7 @@ namespace Shunde.Web
 			}
 			catch (Exception ex)
 			{
-				string exceptionHandled = ((WebPage)Page).HandleException(ex, Page.Request, "Error while saving " + DBObject);
+				string exceptionHandled = ((ShundePageBase)Page).HandleException(ex, Page.Request, "Error while saving " + DBObject);
 				infoMessage.Text = "There was an error while saving that. " + exceptionHandled;
 			}
 		}

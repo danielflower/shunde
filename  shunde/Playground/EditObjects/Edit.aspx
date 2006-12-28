@@ -1,6 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/Template.master" AutoEventWireup="true" CodeFile="Edit.aspx.cs" Inherits="EditObjects_Edit" Title="Untitled Page" %>
 
-<%@ Register Assembly="Shunde" Namespace="Shunde.WebControls" TagPrefix="Shunde" %>
+<%@ Register Assembly="Shunde" Namespace="Shunde.Web" TagPrefix="Shunde" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="PageBody" Runat="Server">
 
 <h1 runat="server" id="headerTag" />

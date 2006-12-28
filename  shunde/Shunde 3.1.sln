@@ -5,10 +5,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\Playground\", "Playground", "{6E58A54F-4B78-470C-831E-CD0C6210DD9B}"
 	ProjectSection(WebsiteProperties) = preProject
-		SccProjectName = ""$/Shunde 3.0.root/Playground", ACAAAAAA"
+		SccProjectName = ""
 		SccAuxPath = ""
-		SccLocalPath = "."
-		SccProvider = "MSSCCI:Microsoft Visual SourceSafe"
+		SccLocalPath = ""
+		SccProvider = ""
 		ProjectReferences = "{11CAADB6-843B-42B2-8E08-3FBDD066F84E}|Shunde.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/Playground 3.0"
 		Debug.AspNetCompiler.PhysicalPath = "Playground\"
@@ -29,20 +29,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\Playground\", "Playg
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 3
-		SccProjectUniqueName0 = Model\\Model.csproj
-		SccLocalPath0 = .
-		SccProjectFilePathRelativizedFromConnection0 = Model\\
-		SccWebProject1 = true
-		SccProjectUniqueName1 = Playground
-		SccProjectName1 = \u0022$/Shunde\u00203.0.root/Playground\u0022,\u0020ACAAAAAA
-		SccLocalPath1 = Playground
-		SccProjectEnlistmentChoice1 = 2
-		SccProjectName2 = \u0022$/Shunde\u00203.0.root/Shunde\u00203.0\u0022,\u0020CAAAAAAA
-		SccLocalPath2 = .
-		SccProvider2 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|.NET = Debug|.NET
 		Debug|Any CPU = Debug|Any CPU
