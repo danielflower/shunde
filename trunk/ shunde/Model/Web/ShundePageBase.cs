@@ -10,7 +10,7 @@ namespace Shunde.Web
 {
 	/// <summary>The base of each webpage.</summary>
 	/// <remarks>This is inherited by each ASP.NET page. It exposes certain properties and methods needed throughout a website</remarks>
-	public abstract class WebPage : System.Web.UI.Page
+	public abstract class ShundePageBase : System.Web.UI.Page
 	{
 
 

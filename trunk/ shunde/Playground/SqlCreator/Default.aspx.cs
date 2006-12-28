@@ -121,7 +121,6 @@ public partial class SqlCreator_Default : PageBase
 	{
 
 		String tbls = "";
-		String views = "";
 		String fks = "";
 
 		List<string> checker = new List<string>();
@@ -143,12 +142,11 @@ public partial class SqlCreator_Default : PageBase
 					return;
 				}
 
-				views += DBCreation.GetCreateView(t);
 				fks += DBCreation.GetForeignKeyConstraints(t);
 			}
 		}
 
-		sqlLiteral.Text = Server.HtmlEncode(tbls + "\n" + fks + "\n" + views + "\n\n");
+		sqlLiteral.Text = Server.HtmlEncode(tbls + "\n" + fks + "\n\n");
 
 	}
 

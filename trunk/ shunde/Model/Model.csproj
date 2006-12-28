@@ -9,10 +9,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Shunde</RootNamespace>
     <AssemblyName>Shunde</AssemblyName>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Shunde.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -60,7 +64,7 @@
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="Common\TextSection.cs" />
-    <Compile Include="Web\WebPage.cs">
+    <Compile Include="Web\ShundePageBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Enumerations.cs" />
