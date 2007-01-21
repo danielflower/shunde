@@ -3,18 +3,32 @@ using System.Collections.Generic;
 using System.Text;
 using Shunde.Framework;
 using System.Web.UI.WebControls;
+using System.Reflection;
+using Shunde.Utilities;
 
-namespace Shunde.Utilities
+namespace Shunde.Web
 {
 	/// <summary>A Utility class for specifying values of a <see cref="DBColumn" /> for programmatically creating ASP.NET controls.</summary>
-	public class ColumnInfo
+	public class ObjectEditorRow : IComparable
 	{
+		private DBColumn dbColumn;
 
-		/// <summary>The regular expression that matches an email address in SQL Server</summary>
-		public static string SqlEmailRegex = "_%@_%._%";
+		/// <summary>
+		/// The DBColumn this row is for
+		/// </summary>
+		public DBColumn DBColumn
+		{
+			get { return dbColumn; }
+		}
 
-		/// <summary>The regular expression that matches an email address in standard Regular Expression syntax</summary>
-		public static string EmailRegex = "..*@..*\\...*";
+		
+		/// <summary>
+		/// Gets a unique ID for this row
+		/// </summary>
+		public string Id
+		{
+			get { return dbColumn.Name; }
+		}
 
 
 
@@ -30,12 +44,12 @@ namespace Shunde.Utilities
 		}
 
 
-		private RequiredField requiredField = RequiredField.UseColumnDefault;
+		private bool requiredField = false;
 
 		/// <summary>
 		/// Specifies whether to make this field required; by default the value specified in the DBTable for this column is used.
 		/// </summary>
-		public RequiredField RequiredField
+		public bool RequiredField
 		{
 			get { return requiredField; }
 			set { requiredField = value; }
@@ -43,26 +57,26 @@ namespace Shunde.Utilities
 	
 
 
-		private SelectionMode selectionMode = SelectionMode.Default;
+		private InputMode inputMode = InputMode.Unspecified;
 
 		/// <summary>
 		/// If this is a selections column, then this specifies the mode to use to select objects.
 		/// </summary>
-		public SelectionMode SelectionMode
+		public InputMode InputMode
 		{
-			get { return selectionMode; }
-			set { selectionMode = value; }
+			get { return inputMode; }
+			set { inputMode = value; }
 		}
 
 
-		private string friendlyName = "";
+		private string header = "";
 
 		/// <summary>The Name to show end users, rather than the database Name</summary>
 		/// <remarks>If left blank, then this gets populated automatically using <see cref="TextUtils.MakeFriendly(string)" /> on the column Name</remarks>
-		public string FriendlyName
+		public string Header
 		{
-			get { return friendlyName; }
-			set { friendlyName = value; }
+			get { return header; }
+			set { header = value; }
 		}
 
 		private string moreInfo = "";
@@ -92,23 +106,15 @@ namespace Shunde.Utilities
 			set { regexErrorMessage = value; }
 		}
 
-		private bool showThisColumn = true;
+		private bool visible = true;
 
 		/// <summary>Specifies whether to display this column to the end user</summary>
-		public bool ShowThisColumn
+		public bool Visible
 		{
-			get { return showThisColumn; }
-			set { showThisColumn = value; }
+			get { return visible; }
+			set { visible = value; }
 		}
 
-		private bool isInvisible = false;
-
-		/// <summary>Specifies that this column should be made into a text box in the form, however it should be invisible to the user (by using an Html hidden input field).</summary>
-		public bool IsInvisible
-		{
-			get { return isInvisible; }
-			set { isInvisible = value; }
-		}
 
 		private bool showTimeWithDate = true;
 
@@ -139,7 +145,7 @@ namespace Shunde.Utilities
 
 
 
-		private int displayOrder = 1000000;
+		private int displayOrder = 0;
 
 		/// <summary>The order to display this column in, relative to others</summary>
 		public int DisplayOrder
@@ -166,14 +172,6 @@ namespace Shunde.Utilities
 			set { addOnTheFly = value; }
 		}
 
-		private String defaultValue = "";
-
-		/// <summary>The default Value of the column</summary>
-		public String DefaultValue
-		{
-			get { return defaultValue; }
-			set { defaultValue = value; }
-		}
 
 		private bool autoPopulate = false;
 
@@ -184,13 +182,13 @@ namespace Shunde.Utilities
 			set { autoPopulate = value; }
 		}
 
-		private IList<DBObject> selections = null;
+		private List<ListItem> listItems = null;
 
 		/// <summary>The available selections for a drop-down list</summary>
-		public IList<DBObject> Selections
+		public List<ListItem> ListItems
 		{
-			get { return selections; }
-			set { selections = value; }
+			get { return listItems; }
+			set { listItems = value; }
 		}
 
 		private bool useRichTextEditor = false;
@@ -202,14 +200,6 @@ namespace Shunde.Utilities
 			set { useRichTextEditor = value; }
 		}
 
-		private int maxAllowedInDropDown = int.MaxValue;
-
-		/// <summary>The maximum number of options in a drop down allowed before a popup window is used to select an object. To force the use of a pop up window, set this to -1</summary>
-		public int MaxAllowedInDropDown
-		{
-			get { return maxAllowedInDropDown; }
-			set { maxAllowedInDropDown = value; }
-		}
 
 		private string selectionsPopupUrl = "";
 
@@ -240,9 +230,134 @@ namespace Shunde.Utilities
 			set { viewBinaryDataUrl = value; }
 		}
 
+		/// <summary>
+		/// Gets the object editor that this row is part of
+		/// </summary>
+		public ObjectEditor ObjectEditor
+		{
+			get { return this.objectEditor; }
+		}
+
+
+		private ObjectEditor objectEditor;
+
+
+		/// <summary>
+		/// Creates a new ObjectEditor row, using the specified name to get the DBColumn reference
+		/// </summary>
+		public ObjectEditorRow(ObjectEditor objectEditor, string name)
+		{
+			this.objectEditor = objectEditor;
+			ObjectInfo oi = ObjectInfo.GetObjectInfo(this.objectEditor.DBObject.GetType());
+			this.dbColumn = oi.FindDBColumn(name);
+			this.RequiredField = !dbColumn.AllowNulls;
+			this.AutoDetectAndSetInputMode();
+		}
+
+		/// <summary>
+		/// Creates a new ObjectEditor row for the given column
+		/// </summary>
+		public ObjectEditorRow(ObjectEditor objectEditor, DBColumn dbColumn)
+		{
+			this.objectEditor = objectEditor;
+			this.dbColumn = dbColumn;
+			this.RequiredField = !dbColumn.AllowNulls;
+			this.AutoDetectAndSetInputMode();
+		}
+
+		/// <summary>
+		/// Sets the ListItems for this row, basing it on DBObjects
+		/// </summary>
+		public void SetListItems(IEnumerable<DBObject> dbObjects, DBObject selectedObject)
+		{
+			SetListItems(dbObjects, selectedObject, "FriendlyName");
+		}
+
+		/// <summary>
+		/// Sets the ListItems for this row, basing it on DBObjects
+		/// </summary>
+		public void SetListItems(IEnumerable<DBObject> dbObjects, DBObject selectedObject, string textProperty)
+		{
+			if (this.ListItems == null)
+			{
+				this.ListItems = new List<ListItem>();
+			}
+			foreach (DBObject obj in dbObjects)
+			{
+				ListItem li = new ListItem();
+				li.Value = obj.Id.ToString();
+				li.Selected = (selectedObject != null && selectedObject.Equals(obj));
+				if (textProperty == "FriendlyName")
+				{
+					li.Text = obj.FriendlyName; // why do this? it's faster than reflection, and will normally (?) be used
+				}
+				else
+				{
+					PropertyInfo propertyInfo = obj.GetType().GetProperty(textProperty, BindingFlags.Public | BindingFlags.Instance);
+					if (propertyInfo == null)
+					{
+						throw new Exception("The property " + textProperty + " could not be found on the type " + obj.GetType().FullName);
+					}
+					li.Text = (string)propertyInfo.GetValue(obj, null);
+				}
+				this.ListItems.Add(li);
+			}
+		}
+
+		/// <summary>
+		/// Guesses which input mode should be given, based on the DBColumn's object type, and sets the <see cref="ObjectEditorRow.InputMode" />.
+		/// </summary>
+		public void AutoDetectAndSetInputMode()
+		{
+			Type t = this.DBColumn.Type;
+			if (t == typeof(bool))
+			{
+				this.inputMode = InputMode.Checkbox;
+			}
+			else if (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double))
+			{
+				this.inputMode = InputMode.NumberTextBox;
+			}
+			else if (t == typeof(string))
+			{
+				if (this.DBColumn.MaxLength < 0)
+				{
+					this.inputMode = InputMode.MultilineTextBox;
+				}
+				else if (this.dbColumn.Name.ToLower().Contains("password"))
+				{
+					this.inputMode = InputMode.Password;
+					if (!this.DBColumn.AllowNulls && this.ObjectEditor.DBObject.Exists())
+					{
+						this.RequiredField = false;
+					}
+				}
+				else
+				{
+					this.inputMode = InputMode.TextBox;
+				}
+			}
+			else if (t == typeof(BinaryData))
+			{
+				this.inputMode = InputMode.FileUpload;
+			}
+			else if (t == typeof(DBObject) || t.IsSubclassOf(typeof(DBObject)))
+			{
+				this.inputMode = InputMode.DropDownList;
+			}
+			else if (t == typeof(DateTime))
+			{
+				this.inputMode = InputMode.DateTimePicker;
+			}
+			else
+			{
+				throw new ShundeException("No input mode could be set for column " + this.DBColumn.Name);
+			}
+		}
+
 
 		/// <summary>Gets the html to create a link which invokes a javascript alert containing the <see cref="MoreInfo" /> details</summary>
-		public String GetMoreInfoAsJavascriptPopupHtml()
+		public string GetMoreInfoAsJavascriptPopupHtml()
 		{
 			if (moreInfo.Length == 0)
 			{
@@ -252,56 +367,91 @@ namespace Shunde.Utilities
 		}
 
 
+
+		#region IComparable Members
+
+		/// <summary>
+		/// Compares this column options object to another based on the display order
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public int CompareTo(object obj)
+		{
+			ObjectEditorRow co = obj as ObjectEditorRow;
+			if (co == null) {
+				return 0;
+			}
+			return this.DisplayOrder.CompareTo(co.DisplayOrder);
+		}
+
+		#endregion
 	}
 
 	/// <summary>
-	/// These are the different modes available for selecting an object in the ObjectEditor
+	/// These are the different modes available for inputting an object in the ObjectEditor
 	/// </summary>
-	public enum SelectionMode
+	public enum InputMode
 	{
 		
 		/// <summary>
+		/// The input mode has not been specified
+		/// </summary>
+		Unspecified,
+
+		/// <summary>
+		/// Auto-detect the best input mode based on the column's data type
+		/// </summary>
+		Checkbox,
+
+		/// <summary>
 		/// Uses a dropdown list to select the object.
 		/// </summary>
-		DropDownList = 1,
+		DropDownList,
 
 		/// <summary>
 		/// Uses a radiobuttonlist. This is best when there are only a few options to choose from.
 		/// </summary>
-		RadioButtonList = 2,
+		RadioButtonList,
+
+		/// <summary>
+		/// Uses a ComboBox
+		/// </summary>
+		ComboBox,
 
 		/// <summary>
 		/// Uses a textbox to allow the user to enter in a name to find the object. If a url for a popup window is given, then it uses a popup window. This is best when there are hundreds or more objects, or some advanced search is required to find the object. If an XML search url is specified, then as they write, matching objects are displayed, allowing them to select an object.
 		/// </summary>
-		TextBox = 3,
+		TextBox,
 
 		/// <summary>
-		/// The default action is to use a dropdown list, unless a specified threshold is passed.
+		/// Users a multi-line textbox
 		/// </summary>
-		Default = 4
-
-	}
-
-	/// <summary>
-	/// Specifies whether to make a field required or not
-	/// </summary>
-	public enum RequiredField
-	{
+		MultilineTextBox,
 
 		/// <summary>
-		/// Use the default for the column, as specified in the DBTable for the object
+		/// A textbox for entering numbers
 		/// </summary>
-		UseColumnDefault,
+		NumberTextBox,
 
 		/// <summary>
-		/// Make the field required
+		/// Binary file upload
 		/// </summary>
-		Yes,
+		FileUpload,
 
 		/// <summary>
-		/// Make the field not required
+		/// Date and/or time picker
 		/// </summary>
-		No
+		DateTimePicker,
+
+		/// <summary>
+		/// Rendered as an HTML hidden input field
+		/// </summary>
+		HiddenField,
+
+		/// <summary>
+		/// Rendered as password control, with a confirmation password input
+		/// </summary>
+		Password
 
 	}
 
