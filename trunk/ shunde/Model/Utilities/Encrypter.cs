@@ -18,16 +18,10 @@ namespace Shunde.Utilities
 
 
 		/// <summary>Makes a one-way encryption on a string</summary>
-		/// <param name="hash">A hash key to blend in with the input</param>
 		/// <param name="input">The string to encrypt</param>
 		/// <returns>Returns an encrypted string which should be nearly impossible to return to the original string</returns>
-		public static string EncryptOneWay(string hash, string input)
+		public static string EncryptOneWay(string input)
 		{
-
-			if (hash.Length > 2)
-			{
-				input = hash.Substring(0, hash.Length / 2) + input + hash.Substring(hash.Length / 2);
-			}
 
 			byte[] bytes = System.Text.Encoding.UTF8.GetBytes(input);
 

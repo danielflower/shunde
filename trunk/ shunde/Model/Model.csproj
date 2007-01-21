@@ -59,11 +59,12 @@
     <Compile Include="Common\GenericTypeType.cs" />
     <Compile Include="Common\IAttribRelation.cs" />
     <Compile Include="Common\TreeNode.cs" />
-    <Compile Include="Common\WebsiteVisit.cs" />
-    <Compile Include="Common\WebsiteVisitAction.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="Common\TextSection.cs" />
+    <Compile Include="Web\ColorPicker.cs" />
+    <Compile Include="Web\ComboBox.cs" />
+    <Compile Include="Web\ControlCreator.cs" />
     <Compile Include="Web\ShundePageBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -75,8 +76,7 @@
     <Compile Include="Framework\DBTable.cs" />
     <Compile Include="Framework\ObjectInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\ComparablePanel.cs" />
-    <Compile Include="Utilities\DBColumnOptions.cs" />
+    <Compile Include="Web\ObjectEditorRow.cs" />
     <Compile Include="Utilities\DBCreator.cs" />
     <Compile Include="Utilities\DBUtils.cs" />
     <Compile Include="Utilities\ObjectUtils.cs" />
@@ -93,6 +93,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ObjectEditorScripts.js" />
+    <Content Include="Resources\ColorPickerScripts.js" />
+    <EmbeddedResource Include="Resources\ComboBoxScripts.js" />
+    <EmbeddedResource Include="Resources\ObjectEditorScripts.js" />
+    <EmbeddedResource Include="Resources\ShundeScripts.js" />
+    <EmbeddedResource Include="Resources\Calendar.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

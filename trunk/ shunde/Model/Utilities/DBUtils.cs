@@ -285,7 +285,7 @@ namespace Shunde.Utilities
 			}
 			else
 			{
-				return "'" + dateValue.ToString("yyyy/MM/dd HH:mm:ss") + "'";
+				return "'" + dateValue.ToString("yyyy/MM/dd HH:mm:ss.fff") + "'";
 			}
 		}
 

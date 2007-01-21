@@ -27,7 +27,6 @@ namespace Shunde.Web
 	public class ObjectEditor : WebControl, INamingContainer
 	{
 
-		private string currentJavascriptVersion = "1.0.1";
 
 
 		private string updaterName = "Object Editor";
@@ -79,18 +78,6 @@ namespace Shunde.Web
 		}
 
 
-		private Unit dateTextBoxWidth = new Unit("70px");
-
-		/// <summary>
-		/// The default width of date textboxes
-		/// </summary>
-		[Category("Appearance")]
-		[DefaultValue("70px")]
-		public Unit DateTextBoxWidth
-		{
-			get { return dateTextBoxWidth; }
-			set { dateTextBoxWidth = value; }
-		}
 
 
 		private Unit stringTextBoxWidth = new Unit("95%");
@@ -128,7 +115,6 @@ namespace Shunde.Web
 		/// The default width of file uploaders
 		/// </summary>
 		[Category("Appearance")]
-		[DefaultValue("100%")]
 		public Unit FileUploaderWidth
 		{
 			get { return fileUploaderWidth; }
@@ -138,36 +124,8 @@ namespace Shunde.Web
 		/// <summary>
 		/// 
 		/// </summary>
-		private Dictionary<string, ColumnInfo> info = new Dictionary<string, ColumnInfo>();
+		private List<ObjectEditorRow> rows = new List<ObjectEditorRow>();
 		
-		private bool isForPublic = true;
-
-		/// <summary>If set to false, then extra info is given in dropdown boxes. This should be false almost always.</summary>
-		public bool IsForPublic
-		{
-			get { return isForPublic; }
-			set { isForPublic = value; }
-		}
-		
-
-		private bool showOnlySpecified = true;
-
-		/// <summary>If true, then only those columns that have information in the info hashtable will be shown</summary>
-		public bool ShowOnlySpecified
-		{
-			get { return showOnlySpecified; }
-			set { showOnlySpecified = value; }
-		}
-
-		private bool autoPopulateSelections = false;
-
-		/// <summary>If true, then selections will be automatically populated, if they aren't already</summary>
-		/// <remarks>This simply returns all the (non-deleted) objects of the specified type in the database</remarks>
-		public bool AutoPopulateSelections
-		{
-			get { return autoPopulateSelections; }
-			set { autoPopulateSelections = value; }
-		}
 
 		private ButtonPanel buttonPanel;
 
@@ -179,6 +137,18 @@ namespace Shunde.Web
 			get { return buttonPanel; }
 			set { buttonPanel = value; }
 		}
+
+		private string validationGroup = null;
+
+		/// <summary>
+		/// The validation group for the validation controls
+		/// </summary>
+		public string ValidationGroup
+		{
+			get { return validationGroup; }
+			set { validationGroup = value; }
+		}
+	
 	
 
 
@@ -260,7 +230,7 @@ namespace Shunde.Web
 		/// </summary>
 		public ObjectEditor()
 		{
-			this.Width = new Unit("100%");
+			this.Width = new Unit("95%");
 		}
 
 
@@ -272,16 +242,15 @@ namespace Shunde.Web
 		{
 			base.OnInit(e);
 
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(ObjectEditor), "ShundeScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ShundeScripts.js"));
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(ObjectEditor), "ObjectEditorScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ObjectEditorScripts.js"));
+
+
 			infoMessage = new Label();
 			infoMessage.CssClass = "infoMessage";
 			this.Controls.Add(infoMessage);
 
 			buttonPanel = new ButtonPanel();
-
-
-
-
-
 
 		}
 
@@ -364,7 +333,6 @@ namespace Shunde.Web
 				{
 					BeforeSaveDelegate();
 				}
-
 				DBObject.Save();
 				if (AfterObjectSavedDelegate != null)
 				{
@@ -375,10 +343,10 @@ namespace Shunde.Web
 			{
 				infoMessage.Text = vex.Message;
 			}
-			catch (Exception ex)
+			//catch (Exception ex)
 			{
-				string exceptionHandled = ((ShundePageBase)Page).HandleException(ex, Page.Request, "Error while saving " + DBObject);
-				infoMessage.Text = "There was an error while saving that. " + exceptionHandled;
+			//	string exceptionHandled = ((ShundePageBase)Page).HandleException(ex, Page.Request, "Error while saving " + DBObject);
+			//	infoMessage.Text = "There was an error while saving that. " + exceptionHandled;
 			}
 		}
 
@@ -391,23 +359,11 @@ namespace Shunde.Web
 			get { return HtmlTextWriterTag.Div; }
 		}
 
-		/// <summary>
-		/// Renders the begin tag
-		/// </summary>
-		public override void RenderBeginTag(HtmlTextWriter writer)
-		{
-			if (this.Width.IsEmpty)
-			{
-				this.Width = new Unit("95%");
-			}
-			base.RenderBeginTag(writer);
-		}
 
 
 
 
 
-		private string controlId;
 
 		/// <summary>
 		/// Makes the table
@@ -415,874 +371,102 @@ namespace Shunde.Web
 		public void PopulateTable()
 		{
 
-			this.controlId = this.ClientID;
 
 			// write the javascript stuff we need for the calendar dropdowns first
-			this.Controls.Add( new LiteralControl(@"
+			this.Controls.Add(new LiteralControl(@"
 <SCRIPT LANGUAGE=""JavaScript"">
 
-	var " + controlId + @"_scriptLoaded = ('function' == typeof oe_getScriptVersion);
-
-	if (" + controlId + @"_scriptLoaded) {
-		if ( oe_getScriptVersion() != '" + currentJavascriptVersion + @"' ) {
-			alert( 'Warning, the Object Editor requires Object Editor Script File version " + currentJavascriptVersion + @", however the loaded version is ' + oe_getScriptVersion() );
-		}
-		document.write(getCalendarStyles());
-	} else {
-		alert( 'Warning, the Object Editor Javascript File version " + currentJavascriptVersion + @" has not been loaded. Some parts of the editor will not work until this is loaded.' );
-	}
-
+	document.write(getCalendarStyles());
  
 </SCRIPT>
 
-<select id=""oe_searchListBox"" name=""oe_searchListBox"" ondblclick=""oe_doubleClick(this);"" onmouseover=""oe_mouseOver(this, true);"" onmouseout=""oe_mouseOver(this,false);"" onchange=""oe_selectCurrentlySelected();"" multiple=""multiple"" style=""height:150px;position:absolute;left:0px;top:0px;visibility:hidden;""></select>
-
 "
-			) );
+			));
 
+			Table editorTable = new Table();
+			editorTable.Width = new Unit(95, UnitType.Percentage);
+			editorTable.CssClass = "ObjectEditorTable";
+			editorTable.Style["table-layout"] = "fixed";
 
-
-			Type objType = DBObject.GetType();
-			ObjectInfo oi = ObjectInfo.GetObjectInfo(objType);
-
-			List<ComparableRow> panels = new List<ComparableRow>();
-
-
-			// a unique number, which is required in various places
-			int uniqueNumber = 0;
-
-			foreach (DBTable table in oi.Tables)
 			{
-
-
-				uniqueNumber++;
-
-				foreach (DBColumn col in table.Columns)
+				TableRow tr = new TableRow();
+				editorTable.Rows.Add(tr);
 				{
-
-					uniqueNumber++;
-
-
-
-					ColumnInfo ci;
-					if (info.ContainsKey(col.Name))
-					{
-						ci = info[col.Name];
-					}
-					else
-					{
-
-						ci = new ColumnInfo();
-
-
-						// by default, put the Name at the top
-						if (col.Name.Equals("name") && !showOnlySpecified)
-						{
-							ci.DisplayOrder = 0;
-						}
-						else if (col.Name.Equals("updateId"))
-						{
-							ci.IsInvisible = true;
-							info.Add(col.Name, ci);
-						}
-						else if (col.Name.Equals("lastUpdatedBy") || col.Name.Equals("className") || col.Name.Equals("lastUpdate"))
-						{
-							ci.ShowThisColumn = false;
-							info.Add(col.Name, ci);
-						}
-						else if (showOnlySpecified)
-						{
-							ci.ShowThisColumn = false;
-						}
-
-					}
-					if (ci.FriendlyName.Length == 0)
-					{
-						ci.FriendlyName = TextUtils.MakeFriendly(col.Name);
-					}
-
-					string friendlyName = ci.FriendlyName;
-
-					if (!ci.ShowThisColumn)
-					{
-						continue;
-					}
-
-
-
-					ComparableRow row = new ComparableRow();
-					row.DisplayOrder = ci.DisplayOrder;
-
-
-					FieldInfo fi = col.FieldInfo;
-
-					object value = fi.GetValue(DBObject);
-
-					string label = friendlyName;
-					if (!col.AllowNulls || ci.RequiredField == RequiredField.Yes)
-					{
-						label += "<font color=red>*</font>";
-					}
-					
-
-
-					if (ci.IsInvisible)
-					{
-						HtmlInputHidden hih = new HtmlInputHidden();
-						hih.ID = col.Name;
-						hih.Value = value.ToString();
-						this.Controls.Add(hih);
-						row.Visible = false;
-					}
-					else if (col.Type.Equals(typeof(bool)))
-					{
-
-						row.Cells.Add(new TableCell());
-
-						CheckBox cb = new CheckBox();
-						cb.Checked = System.Convert.ToBoolean(value);
-						cb.Text = "<b>" + friendlyName + "</b>";
-						cb.ID = col.Name;
-						cb.TabIndex = 1;
-
-						Literal lit2 = new Literal();
-						lit2.Text = " " + ci.GetMoreInfoAsJavascriptPopupHtml();
-
-
-						TableCell td = new TableCell();
-						td.Controls.Add(cb);
-						td.Controls.Add(lit2);
-						row.Cells.Add(td);
-
-					}
-					else if (col.Type.Equals(typeof(string)) || col.Type.Equals(typeof(short)) || col.Type.Equals(typeof(int)) || col.Type.Equals(typeof(long)) || col.Type.Equals(typeof(float)) || col.Type.Equals(typeof(double)))
-					{
-
-						TableCell tc = new TableCell();
-						TableCell th = null;
-
-						if (ci.UseRichTextEditor)
-						{
-							th = tc;
-							th.Controls.Add(new LiteralControl("<div><strong>" + label + "</strong></div>"));
-							tc.ColumnSpan = 2;
-						}
-						else
-						{
-							th = new TableHeaderCell();
-							th.Controls.Add(new LiteralControl(label));
-							row.Cells.Add(th);
-						}
-						TextBox tb = new TextBox();
-						tb.Text = (DBColumn.IsColumnNull(value)) ? "" : value.ToString();
-						tb.ID = col.Name;
-						tb.TabIndex = 1;
-
-						bool isNull = DBColumn.IsColumnNull(value);
-
-						if (col.Type.Equals(typeof(string)))
-						{
-							tb.Width = (ci.TextboxWidth.IsEmpty) ? stringTextBoxWidth : ci.TextboxWidth;
-							if (col.MaxLength == -1)
-							{
-								tb.TextMode = TextBoxMode.MultiLine;
-								if (ci.UseRichTextEditor)
-								{
-									tb.Attributes["UseRichTextEditor"] = "true";
-									tb.Height = (ci.TexboxHeight.IsEmpty) ? multilineTextBoxHeight : new Unit(300);
-								}
-								else
-								{
-									tb.Height = (ci.TexboxHeight.IsEmpty) ? multilineTextBoxHeight : ci.TexboxHeight;
-								}
-							}
-							else
-							{
-								tb.MaxLength = col.MaxLength;
-								if (col.Name.Equals("password"))
-								{
-									tb.TextMode = TextBoxMode.Password;
-								}
-							}
-
-						}
-						else if (col.Type.Equals(typeof(DateTime)))
-						{
-							tb.Width = (ci.TextboxWidth.IsEmpty) ? dateTextBoxWidth : ci.TextboxWidth;
-							if (isNull)
-							{
-								tb.Text = "";
-							}
-						}
-						else
-						{
-							tb.Width = (ci.TextboxWidth.IsEmpty) ? numberTextBoxWidth : ci.TextboxWidth;
-
-							if (isNull)
-							{
-								tb.Text = "";
-							}
-
-						}
-
-
-						// add validation
-						if (ci.RequiredField == RequiredField.Yes || (ci.RequiredField == RequiredField.UseColumnDefault && !col.AllowNulls && !(col.Type.Equals(typeof(String)) && col.MinLength == 0)))
-						{
-
-							// but, don't make it required if it's a password and it already exists
-							if (tb.TextMode == TextBoxMode.Password && DBObject.Exists())
-							{
-								ci.MoreInfo += "<div>You may leave this blank to keep your existing password.</div>";
-							}
-							else
-							{
-								RequiredFieldValidator rfv = new RequiredFieldValidator();
-								rfv.ControlToValidate = tb.ID;
-								rfv.ErrorMessage = "Please enter a value for " + friendlyName;
-								rfv.Display = ValidatorDisplay.Static;
-								rfv.Text = "*";
-								rfv.SetFocusOnError = true;
-								th.Controls.Add(rfv);
-							}
-						}
-
-						if (col.RegularExpression != null)
-						{
-							RegularExpressionValidator rev = new RegularExpressionValidator();
-							rev.ControlToValidate = tb.ID;
-							string msg = (col.RegularExpressionErrorMessage != null) ? col.RegularExpressionErrorMessage : "The value for " + ci.FriendlyName + " is not allowed.";
-							rev.ErrorMessage = msg;
-							rev.Display = ValidatorDisplay.Dynamic;
-							rev.Text = "*";
-							rev.ValidationExpression = col.RegularExpression;
-							rev.SetFocusOnError = true;
-							th.Controls.Add(rev);
-						}
-
-						if (ci.ValidationRegex.Length > 0)
-						{
-							RegularExpressionValidator rev = new RegularExpressionValidator();
-							rev.ControlToValidate = tb.ID;
-							rev.ErrorMessage = ci.RegexErrorMessage;
-							rev.Display = ValidatorDisplay.Dynamic;
-							rev.Text = "*";
-							rev.ValidationExpression = ci.ValidationRegex;
-							rev.SetFocusOnError = true;
-							th.Controls.Add(rev);
-						}
-
-						if (col.MinAllowed != null || col.MaxAllowed != null)
-						{
-							RangeValidator rv = new RangeValidator();
-							rv.ID = col.Name + "RV";
-
-							if (col.Type.Equals(typeof(string)))
-							{
-								rv.Type = ValidationDataType.String;
-							}
-							else if (col.Type.Equals(typeof(short)) || col.Type.Equals(typeof(int)) || col.Type.Equals(typeof(long)))
-							{
-								rv.Type = ValidationDataType.Integer;
-							}
-							else
-							{
-								rv.Type = ValidationDataType.Double;
-							}
-
-							rv.ControlToValidate = tb.ID;
-							rv.Display = ValidatorDisplay.Dynamic;
-							rv.Text = "*";
-							rv.SetFocusOnError = true;
-
-							if (col.MinAllowed != null && col.MaxAllowed != null)
-							{
-								rv.MinimumValue = col.MinAllowed.ToString();
-								rv.MaximumValue = col.MaxAllowed.ToString();
-								rv.ErrorMessage = "The value of " + friendlyName + " must be between " + col.MinAllowed + " and " + col.MaxAllowed + " (inclusive).";
-							}
-							else if (col.MinAllowed != null)
-							{
-								rv.MinimumValue = col.MinAllowed.ToString();
-								rv.MaximumValue = int.MaxValue.ToString();
-								rv.ErrorMessage = "The minimum value allowed for " + friendlyName + " is " + col.MinAllowed;
-							}
-							else
-							{
-								rv.MaximumValue = col.MaxAllowed.ToString();
-								rv.MinimumValue = int.MinValue.ToString();
-								rv.ErrorMessage = "The maximum value allowed for " + friendlyName + " is " + col.MaxAllowed;
-							}
-
-							th.Controls.Add(rv);
-						}
-
-
-						tc.Controls.Add(tb);
-
-
-
-						if (ci.MoreInfo.Length > 0)
-						{
-							tc.Controls.Add(new LiteralControl("<div class=\"moreInfo\">" + ci.MoreInfo + "</div>"));
-						}
-
-						if (tb.TextMode == TextBoxMode.Password)
-						{
-
-							HtmlGenericControl confirmDiv = new HtmlGenericControl("div");
-							confirmDiv.Controls.Add(new LiteralControl("Please confirm your password:"));
-							confirmDiv.ID = tb.ID + "PasswordConfirmDiv";
-
-
-							tb.Attributes["onkeyup"] = "document.getElementById(this.id + 'PasswordConfirmDiv').style.display = (this.value.length == 0) ? 'none' : 'block';";
-							confirmDiv.Style[HtmlTextWriterStyle.Display] = "none";
-
-							tc.Controls.Add(confirmDiv);
-							TextBox passwordConfirmTB = new TextBox();
-							passwordConfirmTB.ID = tb.ID + "PasswordConfirm";
-							passwordConfirmTB.TextMode = TextBoxMode.Password;
-							passwordConfirmTB.Width = tb.Width;
-							passwordConfirmTB.TabIndex = 1;
-
-							CompareValidator cv = new CompareValidator();
-							cv.ControlToCompare = tb.ID;
-							cv.ControlToValidate = passwordConfirmTB.ID;
-							cv.ErrorMessage = "Your passwords did not match";
-							cv.Text = " * ";
-							cv.SetFocusOnError = true;
-
-							if (!DBObject.Exists())
-							{
-								RequiredFieldValidator rfv = new RequiredFieldValidator();
-								rfv.ControlToValidate = passwordConfirmTB.ID;
-								rfv.ErrorMessage = "Please enter a value for the confirmation password field";
-								rfv.Display = ValidatorDisplay.Static;
-								rfv.Text = "*";
-								rfv.SetFocusOnError = true;
-								confirmDiv.Controls.Add(rfv);
-							}
-
-							confirmDiv.Controls.Add(cv);
-							confirmDiv.Controls.Add(passwordConfirmTB);
-						}
-
-						row.Cells.Add(tc);
-
-
-					}
-					else if (col.Type.Equals(typeof(DateTime)))
-					{
-
-
-						DateTime dt = Convert.ToDateTime(value);
-
-						TableHeaderCell th = new TableHeaderCell();
-						th.Controls.Add(new LiteralControl(label + ci.GetMoreInfoAsJavascriptPopupHtml()));
-
-						row.Cells.Add(th);
-
-						TableCell tc = new TableCell();
-						row.Cells.Add(tc);
-
-						TextBox tb = new TextBox();
-
-						tb.Text = (dt.Equals(DBColumn.DateTimeNullValue)) ? "" : dt.ToString("dd/MM/yyyy");
-						tb.ID = col.Name;
-						tb.TabIndex = 1;
-						tb.Width = (ci.TextboxWidth.IsEmpty) ? dateTextBoxWidth : ci.TextboxWidth;
-
-
-						// add validation
-						if (!col.AllowNulls)
-						{
-							RequiredFieldValidator rfv = new RequiredFieldValidator();
-							rfv.ControlToValidate = tb.ID;
-							rfv.ErrorMessage = "Please enter a value for " + friendlyName;
-							rfv.Display = ValidatorDisplay.Static;
-							rfv.Text = "*";
-							th.Controls.Add(rfv);
-						}
-
-						if (col.MinAllowed != null || col.MaxAllowed != null)
-						{
-							RangeValidator rv = new RangeValidator();
-							rv.ID = col.Name + "RV";
-							rv.Type = ValidationDataType.Date;
-							rv.ControlToValidate = tb.ID;
-							rv.Display = ValidatorDisplay.Dynamic;
-							rv.Text = "*";
-
-							if (col.MinAllowed != null & col.MaxAllowed != null)
-							{
-								rv.MinimumValue = ((DateTime)col.MinAllowed).ToString("yyyy/MM/dd");
-								rv.MaximumValue = ((DateTime)col.MaxAllowed).ToString("yyyy/MM/dd");
-								rv.ErrorMessage = "The value of " + friendlyName + " must be between " + col.MinAllowed + " and " + col.MaxAllowed + " (inclusive).";
-							}
-							else if (col.MinAllowed != null)
-							{
-								rv.MinimumValue = ((DateTime)col.MinAllowed).ToString("yyyy/MM/dd");
-								rv.MaximumValue = "2500/01/01";
-								rv.ErrorMessage = "The minimum value allowed for " + friendlyName + " is " + col.MinAllowed;
-							}
-							else
-							{
-								rv.MaximumValue = ((DateTime)col.MaxAllowed).ToString("yyyy/MM/dd");
-								rv.MinimumValue = "1900/01/01";
-								rv.ErrorMessage = "The maximum value allowed for " + friendlyName + " is " + col.MaxAllowed;
-							}
-
-							th.Controls.Add(rv);
-
-
-						}
-
-
-
-
-
-						string calName = controlId + "_cal_" + col.Name;
-						string tbName = controlId + "_" + tb.ClientID;
-
-						Literal lit2 = new Literal();
-						lit2.Text = "<b>Date:</b> <font size=\"1\">(dd/mm/yyyy) </font>";
-						tc.Controls.Add(lit2);
-
-						tc.Controls.Add(tb);
-
-
-						string anchorName = controlId + "_anchor" + uniqueNumber + "xx";
-						string divName = controlId + "_caldiv" + uniqueNumber;
-
-						Literal javascriptStuff = new Literal();
-						javascriptStuff.Text = @"
-<SCRIPT LANGUAGE=""JavaScript"">
-if (" + controlId + @"_scriptLoaded) {
-	var " + calName + @" = new CalendarPopup(""" + divName + @""");
-	" + calName + @".showYearNavigation();
-	" + calName + @".showYearNavigationInput();
-}
-<" + @"/SCRIPT>
-					";
-
-						
-
-						Literal calendarDivText = new Literal();
-						calendarDivText.Text = "<DIV ID=\"" + divName + "\" STYLE=\"position:absolute;visibility:hidden;background-color:white;\"></DIV>";
-
-						Literal lit3 = new Literal();
-						lit3.Text = @"
-<A HREF=""javascript:void(null);"" onClick=""" + calName + @".select(document.getElementById('" + tbName + @"'),'" + anchorName + @"','dd/MM/yyyy'); return false;"" NAME=""" + anchorName + @""" ID=""" + anchorName + @"""><img src=""" + Page.Request.ApplicationPath + @"/images/calendar.gif"" height=""21"" width=""21"" border=""0"" style=""border:none;margin:0px 0px 0px 0px;"" align=""absmiddle"" /></A>
-					";
-
-						tc.Controls.Add(lit3);
-
-						this.Controls.Add(javascriptStuff);
-						this.Controls.Add(calendarDivText);
-
-
-						if (ci.ShowTimeWithDate)
-						{
-							Literal timeLit = new Literal();
-							timeLit.Text = "&nbsp;&nbsp;<b>Time:</b> <font size=\"1\">(h:mm) </font>";
-							tc.Controls.Add(timeLit);
-							TextBox timeTB = new TextBox();
-							timeTB.Text = (dt.Equals(DBColumn.DateTimeNullValue) || TextUtils.IsMidnight(dt)) ? "" : dt.ToString("h:mm");
-							timeTB.ID = col.Name + "_shundeTime";
-							timeTB.TabIndex = 1;
-							timeTB.Width = new Unit("40px");
-							tc.Controls.Add(timeTB);
-
-							DropDownList ampmDDL = new DropDownList();
-							ampmDDL.ID = col.Name + "_ampmDDL";
-							ampmDDL.Items.Add(new ListItem("am", "0"));
-							ampmDDL.Items.Add(new ListItem("pm", "12"));
-							ampmDDL.TabIndex = 1;
-							ampmDDL.SelectedIndex = (dt.Hour > 12) ? 1 : 0;
-							tc.Controls.Add(ampmDDL);
-
-						}
-
-
-
-					}
-					else if (col.Type.Equals(typeof(BinaryData)))
-					{
-
-
-						TableHeaderCell th = new TableHeaderCell();
-						th.Controls.Add(new LiteralControl(label + " " + ci.GetMoreInfoAsJavascriptPopupHtml()));
-
-						
-						HtmlInputFile hif = new HtmlInputFile();
-						hif.ID = col.Name;
-						Unit width = ((ci.TextboxWidth.IsEmpty) ? fileUploaderWidth : ci.TextboxWidth);
-						hif.Style["width"] = width.ToString();
-						hif.Attributes["TabIndex"] = "1";
-
-						TableCell tc = new TableCell();
-						tc.Controls.Add(hif);
-
-						if (DBColumn.IsColumnNull(value))
-						{
-							// add validation if nulls are not allowed
-							if (!col.AllowNulls)
-							{
-								RequiredFieldValidator rfv = new RequiredFieldValidator();
-								rfv.ControlToValidate = hif.ID;
-								rfv.ErrorMessage = "Please select a file for " + friendlyName;
-								rfv.Display = ValidatorDisplay.Static;
-								rfv.Text = "*";
-								th.Controls.Add(rfv);
-							}
-
-						}
-						else
-						{
-							BinaryData bd = (BinaryData)value;
-
-							Literal curFileLit = new Literal();
-							curFileLit.Text = "<br/>Current file type: " + bd.MimeType + " (" + TextUtils.GetFriendlyFileSize(bd.Size) + ") ";
-
-							if (ci.ViewBinaryDataUrl.Length > 0)
-							{
-								curFileLit.Text += "<a href=\"" + ci.ViewBinaryDataUrl + DBObject.Id + "&fieldName=" + col.Name + "\" target=\"_blank\">[view]</a> ";
-							}
-
-
-							tc.Controls.Add(curFileLit);
-
-							if (col.AllowNulls)
-							{
-								CheckBox cb = new CheckBox();
-								cb.ID = col.Name + "_deleteFile";
-								cb.Checked = false;
-								cb.Text = " <b>Delete</b>";
-								tc.Controls.Add(cb);
-							}
-
-						}
-
-						row.Cells.Add(th);
-						row.Cells.Add(tc);
-
-
-					}
-					else if (col.Type.Equals(typeof(DBObject)) || col.Type.IsSubclassOf(typeof(DBObject)))
-					{
-
-						
-
-						// populate if required
-						if (ci.Selections == null && (ci.AutoPopulate || autoPopulateSelections))
-						{
-							ObjectInfo foreignOI = ObjectInfo.GetObjectInfo(col.Type);
-							ci.Selections = DBObject.GetObjects(foreignOI.GetSelectStatement(ci.MaxAllowedInDropDown + 1) + " WHERE isDeleted = 0 ORDER BY displayOrder ASC", col.Type);
-						}
-
-
-
-
-						if (ci.Selections != null)
-						{
-
-							string cur = (value == null) ? "" : ((DBObject)value).Id.ToString();
-
-
-							TableHeaderCell th = new TableHeaderCell();
-							th.Controls.Add(new LiteralControl(label + ci.GetMoreInfoAsJavascriptPopupHtml()));
-							row.Cells.Add(th);
-
-							TableCell inputCell = new TableCell();
-							row.Cells.Add(inputCell);
-
-							if (ci.SelectionMode == SelectionMode.TextBox || (ci.SelectionMode == SelectionMode.Default && ci.Selections.Count > ci.MaxAllowedInDropDown && ci.SelectionsPopupUrl.Length > 0))
-							{
-
-								// *******************************
-								// Use a textbox window to select
-								// *******************************
-
-								Literal popupLit = new Literal();
-								Literal javascriptLiteral = new Literal();
-
-								string curName = "";
-								if (value != null)
-								{
-									DBObject curObj = DBObject.GetObject(cur);
-									curName = curObj.FriendlyName;
-								}
-
-
-								HtmlInputHidden hih = new HtmlInputHidden();
-								hih.ID = col.Name;
-								hih.Value = cur;
-
-								javascriptLiteral.Text = @"
-
-<script language=""JavaScript"">
-
-	function object" + uniqueNumber + @"Selected( objectId, objectName ) {
-		var idField  = document.getElementById( '" + controlId + "_" + hih.ClientID + @"' );
-		idField.value = objectId;
-
-		var nameField = document.getElementById( '" + controlId + "_" + col.Name + @"_cosmeticName' );
-		nameField.value = objectName;
-
-		if (idField.onchange) {
-			idField.onchange();
-		}
-		if (nameField.onchange) {
-			nameField.onchange();
-		}
-		//object" + uniqueNumber + @"NameDiv.innerHTML = objectName;
-	}
-
-</" + @"script>
-								";
-
-								if (ci.SelectionsPopupUrl.Length > 0)
-								{
-									popupLit.Text = @"
-
-<a href=""javascript:popupFor" + this.ID + "( '" + ci.SelectionsPopupUrl + @"object" + uniqueNumber + @"Selected&type=" + HttpUtility.UrlEncode(col.Type.FullName) + @"&assName=" + HttpUtility.UrlEncode(col.Type.Assembly.FullName) + @"&dbName=" + HttpUtility.UrlEncode(DBUtils.GetSqlConnection().Database) + @"', 'selectObjectWindow', 600, 800 );"">[select]</a>
-
-<a href=""javascript:object" + uniqueNumber + @"Selected( '', '' );"">[un-select]</a>
-
-								";
-								}
-
-								inputCell.Controls.Add(popupLit);
-								this.Controls.Add(javascriptLiteral);
-								this.Controls.Add(hih);
-
-								TextBox curNameTB = new TextBox();
-								curNameTB.ID = col.Name + "_cosmeticName";
-								curNameTB.Text = curName;
-
-								if (ci.SearchBoxUrl.Length == 0)
-								{
-									curNameTB.Attributes["style"] = "border: none;width: 300px;background: none;";
-								}
-								else
-								{
-									curNameTB.Attributes["onfocus"] = "oe_searchBoxUpdate(this, document.getElementById('" + hih.ClientID + "'), '" + ci.SearchBoxUrl + "');";
-									curNameTB.Attributes["onkeyup"] = "oe_searchBoxUpdate(this, document.getElementById('" + hih.ClientID + "'), '" + ci.SearchBoxUrl + "');";
-									curNameTB.Attributes["onkeydown"] = "return oe_searchKeyDown(event);";
-									curNameTB.Attributes["onblur"] = "oe_unselectResultsBox();";
-									curNameTB.Attributes["autocomplete"] = "off";
-									curNameTB.TabIndex = 1;
-									curNameTB.Width = new Unit("200px");
-								}
-
-								inputCell.Controls.Add(curNameTB);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-							} else
-							{
-
-								// *******************************
-								// Use a drop down list
-								// *******************************
-
-
-								ListControl ddl = (ci.SelectionMode == SelectionMode.RadioButtonList) ? (ListControl) new RadioButtonList() : (ListControl) new DropDownList();
-								ddl.ID = col.Name;
-								ddl.TabIndex = 1;
-
-								// add validation
-								if (!col.AllowNulls)
-								{
-									RequiredFieldValidator rfv = new RequiredFieldValidator();
-									rfv.ControlToValidate = ddl.ID;
-									rfv.ErrorMessage = "Please select a value for " + friendlyName;
-									rfv.Display = ValidatorDisplay.Dynamic;
-									rfv.Text = "*";
-									th.Controls.Add(rfv);
-								}
-
-								if (col.AllowNulls)
-								{
-									string name = (ddl is DropDownList) ? ci.NoSelectionName : HttpUtility.HtmlEncode(ci.NoSelectionName);
-									ListItem li = new ListItem( name, "");
-									li.Selected = (cur.Length == 0);
-									ddl.Items.Add(li);
-								}
-								else if (ddl is DropDownList)
-								{
-									ddl.Items.Add(new ListItem("<Select One>", ""));
-								}
-
-
-
-
-								foreach (DBObject selectObj in ci.Selections)
-								{
-
-									string selectObjId = selectObj.Id.ToString();
-
-
-									string oName;
-									Type ot = selectObj.GetType();
-
-									if (isForPublic)
-									{
-										oName = selectObj.FriendlyName;
-									}
-									else
-									{
-										oName = selectObj.Id.ToString() + ") " + selectObj.FriendlyName + " (" + ot.FullName + ")";
-									}
-
-
-									ListItem li = new ListItem(oName, selectObjId + "," + ot.FullName);
-									if (selectObjId.Equals(cur))
-									{
-										li.Selected = true;
-									}
-									ddl.Items.Add(li);
-								}
-
-								inputCell.Controls.Add(ddl);
-
-							}
-
-
-
-
-
-
-						}
-						else
-						{
-
-							TableCell tc = new TableCell();
-							tc.ColumnSpan = 2;
-							tc.Text = "<font color=red><b>" + ci.FriendlyName + "</b></font>";
-							row.Cells.Add(tc);
-						}
-						
-												
-						
-					}
-					else
-					{
-						throw new ShundeException("ObjectEditor has come across this foreign type: " + col.Type);
-					}
-
-					panels.Add(row);
-
-					
-
+					TableCell tc = new TableCell();
+					tc.Style[HtmlTextWriterStyle.Width] = "33%";
+					tc.Style[HtmlTextWriterStyle.Height] = "1px";
+					tr.Cells.Add(tc);
 				}
-
+				{
+					TableCell tc = new TableCell();
+					tc.Style[HtmlTextWriterStyle.Width] = "67%";
+					tc.Style[HtmlTextWriterStyle.Height] = "1px";
+					tr.Cells.Add(tc);
+				}
 			}
 
-			// now add the text/hr lines
-			foreach (KeyValuePair<string,ColumnInfo> keyValuePair in info)
+
+
+			this.Controls.Add(editorTable);
+
+
+			this.rows.Sort();
+			foreach (ObjectEditorRow row in this.rows)
 			{
-				if (!keyValuePair.Key.StartsWith("-"))
+
+				if (!row.Visible)
 				{
 					continue;
 				}
-				ComparableRow cr = new ComparableRow();
-				TableCell infoCell = new TableCell();
-				infoCell.ColumnSpan = 2;
 
-				if (keyValuePair.Value.MoreInfo.Length == 0)
-				{
-					infoCell.Text = "<hr />";
-				}
-				else
-				{
-					infoCell.Text = keyValuePair.Value.MoreInfo;
-				}
 
-				cr.Cells.Add(infoCell);
-				cr.DisplayOrder = keyValuePair.Value.DisplayOrder;
-				panels.Add(cr);
+				object value = row.DBColumn.FieldInfo.GetValue(DBObject);
+
+
+				TableRow tableRow = new TableRow();
+				editorTable.Rows.Add(tableRow);
+				ControlCreator.CreateObjectEditorTableRow(row, tableRow, value);
 			}
 
-			panels.Sort();
+
+
+
+
+			if (extraControls.Count > 0)
+			{
+				TableRow extraControlsRow = new TableRow();
+				editorTable.Rows.Add(extraControlsRow);
+				TableCell ecc = new TableCell();
+				ecc.ColumnSpan = 2;
+				extraControlsRow.Cells.Add(ecc);
+				foreach (Control c in extraControls)
+				{
+					ecc.Controls.Add(c);
+				}
+			}
+
+			TableRow buttonRow = new TableRow();
+			buttonRow.Cells.Add(new TableHeaderCell());
 
 			{
-				Table table = new Table();
-				table.CssClass = "ObjectEditorTable";
-				table.Width = new Unit("100%");
-				table.Style["table-layout"] = "fixed";
+				TableCell tc = new TableCell();
+				buttonRow.Cells.Add(tc);
 
-				{
-					TableRow tr = new TableRow();
-					table.Rows.Add(tr);
-					{
-						TableCell tc = new TableCell();
-						tc.Style[HtmlTextWriterStyle.Width] = "33%";
-						tc.Style[HtmlTextWriterStyle.Height] = "1px";
-						tr.Cells.Add(tc);
-					}
-					{
-						TableCell tc = new TableCell();
-						tc.Style[HtmlTextWriterStyle.Width] = "67%";
-						tc.Style[HtmlTextWriterStyle.Height] = "1px";
-						tr.Cells.Add(tc);
-					}
-				}
-
-				foreach (ComparableRow tr in panels)
-				{
-					table.Rows.Add(tr);
-				}
-
-				if (extraControls.Count > 0)
-				{
-					TableRow extraControlsRow = new TableRow();
-					table.Rows.Add(extraControlsRow);
-					TableCell ecc = new TableCell();
-					ecc.ColumnSpan = 2;
-					extraControlsRow.Cells.Add(ecc);
-					foreach (Control c in extraControls)
-					{
-						ecc.Controls.Add(c);
-					}
-				}
-
-				TableRow buttonRow = new TableRow();
-				buttonRow.Cells.Add(new TableHeaderCell());
-
-				{
-					TableCell tc = new TableCell();
-					buttonRow.Cells.Add(tc);
-
-					tc.Controls.Add(buttonPanel);
-				}
-
-				if (!DBObject.Exists())
-				{
-					buttonPanel.DeleteButton.Visible = false;
-				}
-
-				table.Rows.Add(buttonRow);
-
-				this.Controls.Add(table);
-
-
-
-
+				tc.Controls.Add(buttonPanel);
 			}
+
+			if (!DBObject.Exists())
+			{
+				buttonPanel.DeleteButton.Visible = false;
+			}
+
+			editorTable.Rows.Add(buttonRow);
+
+
+
+
+
+
 
 
 
@@ -1305,6 +489,26 @@ if (" + controlId + @"_scriptLoaded) {
 		public void SaveUserInputToObject()
 		{
 
+			this.rows.Sort();
+			foreach (ObjectEditorRow row in this.rows)
+			{
+
+				if (!row.Visible)
+				{
+					continue;
+				}
+
+
+				object value = Convert.ChangeType(ControlCreator.GetValueFromControl(row), row.DBColumn.Type);
+
+
+
+				row.DBColumn.FieldInfo.SetValue(DBObject, value);
+
+			}
+
+
+			/*
 
 			Type objType = DBObject.GetType();
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(objType);
@@ -1574,53 +778,76 @@ if (" + controlId + @"_scriptLoaded) {
 				}
 
 			}
-
+			*/
 		}
 
 
 
+		ObjectEditorRow FindRow(string fieldName)
+		{
+			foreach (ObjectEditorRow row in this.rows)
+			{
+				if (row.DBColumn.Name.Equals(row))
+				{
+					return row;
+				}
+			}
+			return null;
+		}
 
 
 		/// <summary>Pass an array of strings and column infos for each string will be made with display order in ascending order</summary>
-		public void SetOrders(string[] names)
+		public void SetRows(IEnumerable<string> fieldNames)
 		{
-			int disOrd = 100;
-			for (int i = 0; i < names.Length; i++)
+			int disOrd = (this.rows.Count == 0) ? 0 : this.rows[this.rows.Count - 1].DisplayOrder;
+			foreach(string fieldName in fieldNames)
 			{
-				string name = names[i];
-				if (name.Equals("-"))
-				{
-					name += disOrd.ToString();
-				}
-				ColumnInfo ci = GetCI(name);
-				ci.DisplayOrder = disOrd;
-				ci.AddOnTheFly = true;
+				ObjectEditorRow row = GetRow(fieldName);
+				row.DisplayOrder = disOrd;
 				disOrd += 10;
 			}
 		}
 
 		/// <summary>
-		/// Gets the column info of a column
+		/// Adds the field with the given name to the rows
 		/// </summary>
-		public ColumnInfo GetCI(string columnName)
+		/// <param name="fieldName"></param>
+		public ObjectEditorRow AddRow(string fieldName)
 		{
-			if (info.ContainsKey(columnName))
+			if (FindRow(fieldName) != null)
 			{
-				return info[columnName];
+				throw new ShundeException(fieldName + " has already been added.");
 			}
-			ColumnInfo ci = new ColumnInfo();
-			info[columnName] = ci;
-			
-			return ci;
+			ObjectEditorRow row = new ObjectEditorRow(this, fieldName);
+			row.Header = TextUtils.MakeFriendly(fieldName);
+			if (this.rows.Count > 0)
+			{
+				row.DisplayOrder = this.rows[this.rows.Count - 1].DisplayOrder + 100;
+			}
+			rows.Add(row);
+			return row;
 		}
 
 		/// <summary>
-		/// Sets the friendly Name of a database column
+		/// Gets the column info of a column
 		/// </summary>
-		public void SetFriendlyName(string columnName, string friendlyName)
+		public ObjectEditorRow GetRow(string fieldName)
 		{
-			ColumnInfo ci = GetCI(columnName);
-			ci.FriendlyName = friendlyName;
+			ObjectEditorRow row = FindRow(fieldName);
+			if (row == null)
+			{
+				row = AddRow(fieldName);
+			}
+			return row;
+		}
+
+
+		/// <summary>
+		/// Sets the header for a column
+		/// </summary>
+		public void SetHeader(string fieldName, string header)
+		{
+			GetRow(fieldName).Header = header;
 		}
 
 
@@ -1670,7 +897,7 @@ if (" + controlId + @"_scriptLoaded) {
 		</tr><tr>
 			<th>Picture </th><td><input name=""ObjectEditor$picture"" type=""file"" id=""ObjectEditor_picture""  style=""width:" + fileUploaderWidth.ToString() + @""" TabIndex=""1"" /></td>
 		</tr><tr>
-			<th>Date Imported</th><td><b>Date:</b> (dd/mm/yyyy) <input name=""ObjectEditor$dateImported"" type=""text"" value=""16/02/2006""  style=""width:" + DateTextBoxWidth.ToString() + @""" id=""ObjectEditor_dateImported"" tabindex=""1"" />
+			<th>Date Imported</th><td><b>Date:</b> (dd/mm/yyyy) <input name=""ObjectEditor$dateImported"" type=""text"" value=""16/02/2006""  style=""width:70px"" id=""ObjectEditor_dateImported"" tabindex=""1"" />
 <A HREF=""javascript:void(null);"" onClick=""cal_dateImported.select(document.getElementById('ObjectEditor_dateImported'),'anchor12xx','dd/MM/yyyy'); return false;"" NAME=""anchor12xx"" ID=""anchor12xx""><img src=""images/calendar.gif"" height=""21"" width=""21"" border=""0"" style=""border:none;margin:0px 0px 0px 0px;"" align=""absmiddle"" /></A>
 					&nbsp;&nbsp;<b>Time:</b> (h:mm) <input name=""ObjectEditor$dateImported_shundeTime"" type=""text"" value=""2:32"" size=""4"" id=""ObjectEditor_dateImported_shundeTime"" tabindex=""1"" /><select name=""ObjectEditor$dateImported_ampmDDL"" id=""ObjectEditor_dateImported_ampmDDL"" tabindex=""1"">
 				<option value=""0"">am</option>

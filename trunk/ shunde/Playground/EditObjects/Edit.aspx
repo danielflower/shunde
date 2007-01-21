@@ -5,7 +5,7 @@
 
 <h1 runat="server" id="headerTag" />
 	<asp:ValidationSummary ID="ValidationSummary1" runat="server" />
-<Shunde:ObjectEditor ID="ObjectEditor" runat="server" NumberColumnWidth="500px" DateTextBoxWidth="70px" FileUploaderWidth="1000%" NumberTextBoxWidth="70px" />
+<Shunde:ObjectEditor ID="ObjectEditor" runat="server" NumberColumnWidth="500px" DateTextBoxWidth="70px" FileUploaderWidth="100%" NumberTextBoxWidth="70px" />
 
 </asp:Content>
 

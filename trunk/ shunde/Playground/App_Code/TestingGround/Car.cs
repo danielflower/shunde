@@ -56,7 +56,7 @@ namespace TestingGround {
 
 			DBTable tbl = new DBTable("Car", new DBColumn[] {
 				new DBColumn( "make", typeof(string), 1, 200 ),
-				new DBColumn( "year", typeof(short), false ),
+				new DBColumn( "year", typeof(short), false, (short)1000, (short)2000 ),
 				new DBColumn( "person", typeof(Person), true ),
 				new DBColumn( "dateImported", typeof(DateTime), true ),
 				new DBColumn( "picture", typeof(BinaryData), true )

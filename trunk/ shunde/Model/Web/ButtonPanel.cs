@@ -45,6 +45,20 @@ namespace Shunde.Web
 			get { return deleteButton; }
 		}
 
+
+
+		private string validationGroup = null;
+
+		/// <summary>
+		/// The validation group for the validation controls
+		/// </summary>
+		public string ValidationGroup
+		{
+			get { return validationGroup; }
+			set { validationGroup = value; }
+		}
+
+
 		/// <summary>
 		/// Creates a new button panel
 		/// </summary>
@@ -54,6 +68,7 @@ namespace Shunde.Web
 			saveButton.ID = "saveButton";
 			saveButton.Text = "Save Details";
 			saveButton.TabIndex = 1;
+			saveButton.ValidationGroup = validationGroup;
 
 			cancelButton = new Button();
 			cancelButton.ID = "cancelButton";
@@ -61,6 +76,7 @@ namespace Shunde.Web
 			cancelButton.TabIndex = 1;
 			cancelButton.UseSubmitBehavior = false;
 			cancelButton.CausesValidation = false;
+			cancelButton.ValidationGroup = validationGroup;
 
 			deleteButton = new Button();
 			deleteButton.ID = "deleteButton";
@@ -68,6 +84,7 @@ namespace Shunde.Web
 			deleteButton.TabIndex = 1;
 			cancelButton.UseSubmitBehavior = false;
 			deleteButton.CausesValidation = false;
+			deleteButton.ValidationGroup = validationGroup;
 			deleteButton.Attributes["onclick"] = "return confirm('Are you sure you want to delete this?');";
 
 		}

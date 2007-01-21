@@ -23,7 +23,7 @@ public abstract class PageBase : ShundePageBase
 
 	public override string ConnectionString
 	{
-		get { return "server=dev;database=TrainingGround;Trusted_Connection=yes"; }
+		get { return ConfigurationManager.ConnectionStrings["PlaygroundConnectionString"].ConnectionString; }
 	}
 
 	public override string ErrorsEmail

@@ -71,25 +71,25 @@ namespace Shunde.Framework
 		{
 			get
 			{
-				
-				if (fieldInfo == null)
+				if (this.fieldInfo == null)
 				{
-					Type t = this.dbTable.ObjectInfo.DBObjectType;
-					fieldInfo = t.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance);
-				}
-				if (fieldInfo == null)
-				{
-					Type t = this.dbTable.ObjectInfo.DBObjectType;
-					FieldInfo[] fields = t.GetFields();
-					string h = "";
-					foreach (FieldInfo fi in fields)
-					{
-						h += fi.Name + ": " + fi.ToString() + "\n";
-					}
-					throw new ShundeException("Field info not found for column " + this.name + ".Type: " + t.FullName + "\n\nAll fields:\n" + h);
+					fieldInfo = GetDBObjectField(this.dbTable.ObjectInfo.DBObjectType, this.name);
 				}
 				return fieldInfo;
 			}
+		}
+
+		/// <summary>
+		/// Gets the field with the given name for the given type, and throws a ShundeException if not found
+		/// </summary>
+		public static FieldInfo GetDBObjectField(Type type, string fieldName)
+		{
+			FieldInfo fi = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+			if (fi == null)
+			{
+				throw new ShundeException("Field " + fieldName + " not found for type " + type.FullName);
+			}
+			return fi;
 		}
 
 
@@ -335,7 +335,7 @@ namespace Shunde.Framework
 		{
 			if (value is BinaryData)
 			{
-				return !IsColumnNull((BinaryData)value);
+				return IsColumnNull((BinaryData)value);
 			}
 			else
 			{
@@ -356,6 +356,13 @@ namespace Shunde.Framework
 		public static bool IsColumnNull(short value)
 		{
 			return value == DBColumn.ShortNullValue;
+		}
+
+		/// <summary>Determines whether the given string is considered to be null.</summary>
+		/// <remarks>This is true if value equals <see cref="string.Empty" />.</remarks>
+		public static bool IsColumnNull(string value)
+		{
+			return value.Equals(string.Empty);
 		}
 
 		/// <summary>Determines whether the given int is considered to be null.</summary>
