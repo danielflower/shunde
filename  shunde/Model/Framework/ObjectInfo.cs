@@ -87,6 +87,23 @@ namespace Shunde.Framework
 		}
 
 
+		/// <summary>
+		/// Finds the DBColumn with the given name, and throws a ShundeException if one cannot be found
+		/// </summary>
+		public DBColumn FindDBColumn(string name)
+		{
+			foreach (DBTable table in this.tables)
+			{
+				foreach (DBColumn col in table.Columns)
+				{
+					if (col.Name.Equals(name))
+					{
+						return col;
+					}
+				}
+			}
+			throw new ShundeException("The column " + name + " could not be found for type " + DBObjectType.FullName);
+		}
 
 
 		/// <summary>Creates a SELECT statement for this object with no WHERE clause</summary>

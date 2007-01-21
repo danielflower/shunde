@@ -207,7 +207,7 @@ namespace Shunde.Framework
 					if (mimeType.Length == 0)
 					{
 						// no data has been uploaded
-						bd = null;
+						bd = new BinaryData(new byte[0], "", "");
 					}
 					else
 					{
@@ -218,6 +218,24 @@ namespace Shunde.Framework
 
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets the value of the field with the given fieldName for this object
+		/// </summary>
+		/// <exception cref="Shunde.ShundeException">Thrown if the field name cannot be found</exception>
+		public object Get(string fieldName)
+		{
+			return DBColumn.GetDBObjectField(this.GetType(), fieldName).GetValue(this);
+		}
+
+		/// <summary>
+		/// Sets the value of the field with the given fieldName for this object
+		/// </summary>
+		/// <exception cref="Shunde.ShundeException">Thrown if the field name cannot be found</exception>
+		public void Set(string fieldName, object value)
+		{
+			DBColumn.GetDBObjectField(this.GetType(), fieldName).SetValue(this, value);
 		}
 
 
@@ -519,7 +537,7 @@ END
 				foreach (DBColumn col in table.Columns)
 				{
 
-					Object value = col.FieldInfo.GetValue(this);
+					object value = col.FieldInfo.GetValue(this);
 
 
 					try

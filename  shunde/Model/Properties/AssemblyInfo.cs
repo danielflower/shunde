@@ -15,6 +15,15 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 
 
+
+// Resources section
+[assembly: System.Web.UI.WebResource("Shunde.Resources.Calendar.gif", "image/gif")]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.ShundeScripts.js", "text/javascript", PerformSubstitution = false)]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.ObjectEditorScripts.js", "text/javascript", PerformSubstitution = false)]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.ComboBoxScripts.js", "text/javascript", PerformSubstitution = false)]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.ColorPickerScripts.js", "text/javascript", PerformSubstitution = false)]
+
+
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.

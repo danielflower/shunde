@@ -13,7 +13,8 @@
     <div>
 		<a href="~/EditObjects/Default.aspx" runat="server">[Edit Objects]</a> |
 		<a id="A2" href="~/ClassCreator/Default.aspx" runat="server">[Create Classes]</a> |
-		<a id="A1" href="~/SqlCreator/Default.aspx" runat="server">[Create Sql]</a>
+		<a id="A3" href="~/SqlCreator/Default.aspx" runat="server">[Create Sql]</a>
+		<a id="A1" href="~/Test.aspx" runat="server">[Test]</a>
     <hr />
     </div>
     <div>

@@ -11,6 +11,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Web;
 
 public partial class EditObjects_Edit : PageBase
 {
@@ -47,8 +48,6 @@ public partial class EditObjects_Edit : PageBase
 		Page.Title = "Edit " + obj.FriendlyName;
 
 		this.ObjectEditor.DBObject = obj;
-		this.ObjectEditor.ShowOnlySpecified = false;
-		this.ObjectEditor.AutoPopulateSelections = true;
 		this.ObjectEditor.EditCancelledDelegate = RedirectorDelegate;
 		this.ObjectEditor.AfterObjectDeletedDelegate = RedirectorDelegate;
 		this.ObjectEditor.AfterObjectSavedDelegate = RedirectorDelegate;
@@ -62,26 +61,32 @@ public partial class EditObjects_Edit : PageBase
 		{
 			foreach (DBColumn col in table.Columns)
 			{
-				
+				if (col.Name.Equals("className") || col.Name.Equals("updateId") || col.Name.Equals("lastUpdatedBy") || col.Name.Equals("lastUpdate"))
+				{
+					continue;
+				}
+
+				ObjectEditorRow row = this.ObjectEditor.GetRow(col.Name);
+
 				if (col.Type.Equals(typeof(DBObject)) || col.Type.IsSubclassOf(typeof(DBObject)))
 				{
-					
-					ColumnInfo ci = this.ObjectEditor.GetCI(col.Name);
-					
-					
-					ci.SelectionsPopupUrl = "SelectObject.aspx?functionName=";
-					ci.SearchBoxUrl = "xmlSearch.aspx?type=" + col.Type.FullName;
-					ci.SelectionMode = SelectionMode.DropDownList;
-					ci.AutoPopulate = true;
-					ci.AddOnTheFly = true;
-					ci.FindObjectDelegate = FindPerson;
+					ObjectInfo foreignOI = ObjectInfo.GetObjectInfo(col.Type);
+					DBObject[] selections = DBObject.GetObjects(foreignOI.GetSelectStatement() + " WHERE isDeleted = 0 ORDER BY displayOrder ASC", col.Type);
+					row.SetListItems(selections, (DBObject)obj.Get(col.Name), "FriendlyName");
+
+
+					row.SelectionsPopupUrl = "SelectObject.aspx?functionName=";
+					row.SearchBoxUrl = "xmlSearch.aspx?type=" + col.Type.FullName;
+					row.InputMode = InputMode.ComboBox;
+					row.AddOnTheFly = true;
+					row.FindObjectDelegate = FindPerson;
 				
 				}
 				else if (col.Type.Equals(typeof(BinaryData)))
 				{
-					ColumnInfo ci = this.ObjectEditor.GetCI(col.Name);
-					ci.ViewBinaryDataUrl = "ViewBinaryData.aspx?objectId=";
+					row.ViewBinaryDataUrl = "ViewBinaryData.aspx?objectId=";
 				}
+
 
 			}
 
@@ -90,7 +95,6 @@ public partial class EditObjects_Edit : PageBase
 
 
 
-		this.ObjectEditor.IsForPublic = false;
 		this.ObjectEditor.PopulateTable();
 
 		headerTag.InnerHtml = "Edit a " + obj.GetType().Name;
