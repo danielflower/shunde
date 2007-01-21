@@ -1,13 +1,10 @@
-
-function oe_getScriptVersion() {
-	return '1.0.1';
-}
-
 var lastLength = -1;
 var currentNameBox = null;
 var currentIdBox = null;
 var req;
 var mouseIsOverResultsBox = false;
+
+
 
 
 function oe_disableControls(controls) {
