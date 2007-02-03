@@ -207,7 +207,7 @@ namespace Shunde.Framework
 					if (mimeType.Length == 0)
 					{
 						// no data has been uploaded
-						bd = new BinaryData(new byte[0], "", "");
+						bd = null;
 					}
 					else
 					{
@@ -292,34 +292,19 @@ namespace Shunde.Framework
 
 						if (value == DBNull.Value)
 						{
-							if (col.Type.Equals(typeof(short)))
-							{
-								value = DBColumn.ShortNullValue;
-							}
-							else if (col.Type.Equals(typeof(int)))
-							{
-								value = DBColumn.IntegerNullValue;
-							}
-							else if (col.Type.Equals(typeof(long)))
-							{
-								value = DBColumn.LongNullValue;
-							}
-							else if (col.Type.Equals(typeof(DateTime)))
-							{
-								value = DBColumn.DateTimeNullValue;
-							}
-							else if (col.Type.Equals(typeof(float)))
-							{
-								value = DBColumn.FloatNullValue;
-							}
-							else if (col.Type.Equals(typeof(double)))
-							{
-								value = DBColumn.DoubleNullValue;
-							}
-							else if (col.Type.Equals(typeof(string)))
+							if (col.Type.Equals(typeof(string)))
 							{
 								value = "";
 							}
+							else
+							{
+								value = null;
+							}
+						}
+						else if (!col.Type.IsEnum && FrameworkUtils.IsEnumOrNullableEnum(col.Type))
+						{
+							Type underlyingType = Nullable.GetUnderlyingType(col.Type);
+							value = Enum.Parse(underlyingType, value.ToString());
 						}
 
 					}
@@ -628,9 +613,9 @@ END
 
 						if (DBColumn.IsColumnNull(value))
 						{
-							mimeTypeParam.Value = value;
-							filenameParam.Value = value;
-							param.Value = value;
+							mimeTypeParam.Value = DBNull.Value;
+							filenameParam.Value = DBNull.Value;
+							param.Value = DBNull.Value;
 						}
 						else
 						{

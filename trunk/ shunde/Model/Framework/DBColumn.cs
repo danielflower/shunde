@@ -11,29 +11,6 @@ namespace Shunde.Framework
 	public sealed class DBColumn
 	{
 
-		/// <summary>The C# short Value that represents the database NULL Value</summary>
-		/// <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
-		public const short ShortNullValue = short.MinValue;
-
-		/// <summary>The C# integer Value that represents the database NULL Value</summary>
-		/// <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
-		public const int IntegerNullValue = int.MinValue;
-
-		/// <summary>The C# long Value that represents the database NULL Value</summary>
-		/// <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
-		public const long LongNullValue = long.MinValue;
-
-		/// <summary>The C# DateTime Value that represents the database NULL Value</summary>
-		/// <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
-		public static DateTime DateTimeNullValue = DateTime.MinValue;
-
-		/// <summary>The C# double Value that represents the database NULL Value</summary>
-		/// <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
-		public const double DoubleNullValue = double.MinValue;
-
-		/// <summary>The C# float Value that represents the database NULL Value</summary>
-		/// <remarks>Setting a column's Value to this Value will cause this column to be set to NULL when saving to the database</remarks>
-		public const float FloatNullValue = float.MinValue;
 
 		/// <summary>The Name of this column</summary>
 		public string Name
@@ -84,12 +61,19 @@ namespace Shunde.Framework
 		/// </summary>
 		public static FieldInfo GetDBObjectField(Type type, string fieldName)
 		{
-			FieldInfo fi = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-			if (fi == null)
+			FieldInfo fi = null;
+			Type t = type;
+			while (fi == null && t != null)
 			{
-				throw new ShundeException("Field " + fieldName + " not found for type " + type.FullName);
+				fi = t.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+				if (fi != null) {
+					return fi;
+				}
+				t = t.BaseType;
 			}
-			return fi;
+
+			throw new ShundeException("Field " + fieldName + " not found for type " + type.FullName);
+
 		}
 
 
@@ -330,33 +314,23 @@ namespace Shunde.Framework
 
 
 		/// <summary>Determines whether the given object should be considered to be null by the database.</summary>
-		/// <remarks>This is true if the Value is null, but also if an int has the Value <see cref="IntegerNullValue" /> etc.</remarks>
+		/// <remarks>This is true if the Value is null, but also if a string is equal to <see cref="string.Empty" />.</remarks>
 		public static bool IsColumnNull(object value)
 		{
-			if (value is BinaryData)
+			if (value is string)
 			{
-				return IsColumnNull((BinaryData)value);
+				return value.Equals(string.Empty);
 			}
-			else
+
+			if (value == null || value is DBNull)
 			{
-				return (value == null || value.Equals(DBNull.Value) || value.Equals(DBColumn.ShortNullValue) || value.Equals(DBColumn.IntegerNullValue) || value.Equals(DBColumn.LongNullValue) || value.Equals(DBColumn.DateTimeNullValue) || value.Equals(DBColumn.FloatNullValue) || value.Equals(DBColumn.DoubleNullValue) || value.Equals(""));
+				return true;
 			}
+
+			return value == null;
 		}
 
 
-		/// <summary>Determines whether the given BinaryData is considered to be null.</summary>
-		/// <remarks>This is true if <see cref="BinaryData.Exists"/> is false.</remarks>
-		public static bool IsColumnNull(BinaryData value)
-		{
-			return !value.Exists;
-		}
-
-		/// <summary>Determines whether the given short is considered to be null.</summary>
-		/// <remarks>This is true if value equals <see cref="ShortNullValue" />.</remarks>
-		public static bool IsColumnNull(short value)
-		{
-			return value == DBColumn.ShortNullValue;
-		}
 
 		/// <summary>Determines whether the given string is considered to be null.</summary>
 		/// <remarks>This is true if value equals <see cref="string.Empty" />.</remarks>
@@ -365,38 +339,11 @@ namespace Shunde.Framework
 			return value.Equals(string.Empty);
 		}
 
-		/// <summary>Determines whether the given int is considered to be null.</summary>
-		/// <remarks>This is true if value equals <see cref="IntegerNullValue" />.</remarks>
-		public static bool IsColumnNull(int value)
-		{
-			return value == DBColumn.IntegerNullValue;
-		}
-		
-		/// <summary>Determines whether the given long is considered to be null.</summary>
-		/// <remarks>This is true if value equals <see cref="LongNullValue" />.</remarks>
-		public static bool IsColumnNull(long value)
-		{
-			return value == DBColumn.LongNullValue;
-		}
-
-		/// <summary>Determines whether the given float is considered to be null.</summary>
-		/// <remarks>This is true if value equals <see cref="FloatNullValue" />.</remarks>
-		public static bool IsColumnNull(float value)
-		{
-			return value == DBColumn.FloatNullValue;
-		}
-
-		/// <summary>Determines whether the given double is considered to be null.</summary>
-		/// <remarks>This is true if value equals <see cref="DoubleNullValue" />.</remarks>
-		public static bool IsColumnNull(double value)
-		{
-			return value == DBColumn.DoubleNullValue;
-		}
 
 		/// <summary>Checks that the given Value is within the constraints placed upon it by this column.</summary>
 		/// <remarks>This does not check the specific constraints specified in the <see cref="constraints" /> field. A Value violating those constraints will be found when attempting to save the object.</remarks>
 		/// <exception cref="ValidationException">Thrown if the Value violates the constraints of this column. The Message property contains a friendly error message, suitable to show to end users, on why the validation failed.</exception>
-		public void Validate(DBObject obj, Object value)
+		public void Validate(DBObject obj, object value)
 		{
 
 			string friendlyName = TextUtils.MakeFriendly(name);
@@ -489,7 +436,20 @@ namespace Shunde.Framework
 			return !DBUtils.HasRows(sql);
 		}
 
+		/// <summary>
+		/// Returns true if the given type is a number, or a nullable number
+		/// </summary>
+		public static bool IsNumberOrNullableNumber(Type t)
+		{
+			if (t.IsClass || t == typeof(string))
+			{
+				return false;
+			}
+			return t== typeof(int) || t == typeof(short?) || t == typeof(int?) || t == typeof(long?) || t == typeof(float?) || t == typeof(double?) || t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double);
+		}
+
 	}
+
 
 	/// <summary>
 	/// Regular expressions, with error messages

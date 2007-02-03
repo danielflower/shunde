@@ -54,18 +54,21 @@ namespace Shunde.Utilities
 		}
 
 		/// <summary>Gets, as text, the start and end date and time for a start date and end date using the format strings for the month and year</summary>
-		public static String GetFriendlyDateRange(DateTime start, DateTime end, String monthFormat, String yearFormat)
+		public static String GetFriendlyDateRange(DateTime? startDate, DateTime? endDate, string monthFormat, string yearFormat)
 		{
 
-			if (start == DBColumn.DateTimeNullValue)
+			if (startDate == null)
 			{
 				return "";
 			}
 
-			if (AreSameDay(start, end) || end == DateTime.MinValue)
+			DateTime start = startDate.Value;
+			DateTime end = endDate.Value;
+
+			if (AreSameDay(start, end) || end == null)
 			{
 
-				if (AreSameTime(start, end) || end == DateTime.MinValue)
+				if (AreSameTime(start, end) || end == null)
 				{
 					if (IsMidnight(start))
 					{
@@ -133,20 +136,37 @@ namespace Shunde.Utilities
 
 		/// <summary>Returns true if the time is midnight</summary>
 		/// <remarks>Ignores the seconds and milliseconds</remarks>
-		public static bool IsMidnight(DateTime d)
+		public static bool IsMidnight(DateTime? date)
 		{
+			if (date == null)
+			{
+				return false;
+			}
+			DateTime d = date.Value;
 			return (d.Hour == 0 && d.Minute == 0);
 		}
 
 		/// <summary>Returns true if 2 date times are on the same day</summary>
-		public static bool AreSameDay(DateTime d1, DateTime d2)
+		public static bool AreSameDay(DateTime? date1, DateTime? date2)
 		{
+			if (date1 == null || date2 == null)
+			{
+				return false;
+			}
+			DateTime d1 = date1.Value;
+			DateTime d2 = date2.Value;
 			return (d1.Year == d2.Year && d1.Month == d2.Month && d1.Day == d2.Day);
 		}
 
 		/// <summary>Returns true if 2 date times have the same Hour and Minute values</summary>
-		public static bool AreSameTime(DateTime d1, DateTime d2)
+		public static bool AreSameTime(DateTime? date1, DateTime? date2)
 		{
+			if (date1 == null || date2 == null)
+			{
+				return false;
+			}
+			DateTime d1 = date1.Value;
+			DateTime d2 = date2.Value;
 			return (d1.Hour == d2.Hour && d1.Minute == d2.Minute);
 		}
 

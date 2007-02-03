@@ -74,10 +74,10 @@ namespace Shunde.Common
 			set { suffix = value; }
 		}
 
-		private int decimalPlaces = DBColumn.IntegerNullValue;
+		private int? decimalPlaces = null;
 
 		/// <summary>The number of decimal places to round to, for float numbers</summary>
-		public int DecimalPlaces
+		public int? DecimalPlaces
 		{
 			get { return decimalPlaces; }
 			set { decimalPlaces = value; }
@@ -165,7 +165,7 @@ namespace Shunde.Common
 				new DBColumn( "isShared", typeof(bool), false ),
 				new DBColumn( "allowMultiSelections", typeof(bool), false ),
 				new DBColumn( "suffix", typeof(string), 0, 100 ),
-				new DBColumn( "decimalPlaces", typeof(int), true, 0, 100 ),
+				new DBColumn( "decimalPlaces", typeof(int?), true, 0, 100 ),
 				new DBColumn( "isRequired", typeof(bool), false ),
 				new DBColumn( "isImage", typeof(bool), false ),
 				new DBColumn( "isMultiline", typeof(bool), false ),

@@ -18,10 +18,13 @@ using System.Runtime.InteropServices;
 
 // Resources section
 [assembly: System.Web.UI.WebResource("Shunde.Resources.Calendar.gif", "image/gif")]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.Cross.gif", "image/gif")]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.Tick.gif", "image/gif")]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.TransparencyIndicator.gif", "image/gif")]
 [assembly: System.Web.UI.WebResource("Shunde.Resources.ShundeScripts.js", "text/javascript", PerformSubstitution = false)]
 [assembly: System.Web.UI.WebResource("Shunde.Resources.ObjectEditorScripts.js", "text/javascript", PerformSubstitution = false)]
 [assembly: System.Web.UI.WebResource("Shunde.Resources.ComboBoxScripts.js", "text/javascript", PerformSubstitution = false)]
-[assembly: System.Web.UI.WebResource("Shunde.Resources.ColorPickerScripts.js", "text/javascript", PerformSubstitution = false)]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.ColorPickerScripts.js", "text/javascript", PerformSubstitution = true)]
 
 
 // Setting ComVisible to false makes the types in this assembly not visible 

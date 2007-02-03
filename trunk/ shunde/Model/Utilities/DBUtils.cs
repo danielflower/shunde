@@ -277,15 +277,15 @@ namespace Shunde.Utilities
 
 		/// <summary>Parse a date-time, to be put into SQL Server</summary>
 		/// <remarks>Sets Value to Null if DateTime.MinValue</remarks>
-		public static string ParseSql(DateTime dateValue)
+		public static string ParseSql(DateTime? dateValue)
 		{
-			if (dateValue.Equals(DBColumn.DateTimeNullValue))
+			if (dateValue == null)
 			{
 				return "null";
 			}
 			else
 			{
-				return "'" + dateValue.ToString("yyyy/MM/dd HH:mm:ss.fff") + "'";
+				return "'" + dateValue.Value.ToString("yyyy/MM/dd HH:mm:ss.fff") + "'";
 			}
 		}
 
@@ -309,12 +309,12 @@ namespace Shunde.Utilities
 		}
 
 		/// <summary>Gets an int Value from the given SqlDataReader, where the int Value may be null</summary>
-		public static int getIntValueMayBeNull(SqlDataReader sdr, string columnName)
+		public static int? getIntValueMayBeNull(SqlDataReader sdr, string columnName)
 		{
-			Object tempObj = sdr[columnName];
+			object tempObj = sdr[columnName];
 			if (tempObj == DBNull.Value)
 			{
-				return DBColumn.IntegerNullValue;
+				return null;
 			}
 			return Convert.ToInt32(tempObj);
 		}
@@ -348,27 +348,27 @@ namespace Shunde.Utilities
 				}
 			}
 
-			if (t.Equals(typeof(int)))
+			if (t.Equals(typeof(int)) || t.Equals(typeof(int?)))
 			{
 				return SqlDbType.Int;
 			}
 
-			if (t.Equals(typeof(short)))
+			if (t.Equals(typeof(short)) || t.Equals(typeof(short?)))
 			{
 				return SqlDbType.SmallInt;
 			}
 
-			if (t.Equals(typeof(long)))
+			if (t.Equals(typeof(long)) || t.Equals(typeof(long?)))
 			{
 				return SqlDbType.BigInt;
 			}
 
-			if (t.Equals(typeof(float)))
+			if (t.Equals(typeof(float)) || t.Equals(typeof(float?)))
 			{
 				return SqlDbType.Float;
 			}
 
-			if (t.Equals(typeof(double)))
+			if (t.Equals(typeof(double)) || t.Equals(typeof(double?)))
 			{
 				return SqlDbType.Float;
 			}
@@ -378,7 +378,7 @@ namespace Shunde.Utilities
 				return SqlDbType.Bit;
 			}
 
-			if (t.Equals(typeof(DateTime)))
+			if (t.Equals(typeof(DateTime)) || t.Equals(typeof(DateTime?)))
 			{
 				return SqlDbType.DateTime;
 			}
@@ -391,6 +391,11 @@ namespace Shunde.Utilities
 			if (t.Equals(typeof(BinaryData)))
 			{
 				return SqlDbType.Image;
+			}
+
+			if (FrameworkUtils.IsEnumOrNullableEnum(t))
+			{
+				return SqlDbType.Int;
 			}
 
 			throw new ShundeException("No suitable SqlDbType found for the column " + col.Name + " which has a data type of " + col.Type);

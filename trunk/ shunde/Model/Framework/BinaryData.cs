@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Shunde.Framework
 {
-	/// <summary>A structure for holding binary data</summary>
-	public struct BinaryData
+	/// <summary>A class for holding binary data</summary>
+	public class BinaryData
 	{
 
 		/// <summary>The cached size of the data</summary>
@@ -73,16 +73,6 @@ namespace Shunde.Framework
 			}
 		}
 
-		/// <summary>
-		/// Checks whether this BinaryData has any data
-		/// </summary>
-		public bool Exists
-		{
-			get
-			{
-				return Size > 0;
-			}
-		}
 
 	}
 }

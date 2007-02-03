@@ -305,6 +305,42 @@ namespace Shunde.Web
 		}
 
 		/// <summary>
+		/// Sets the ListItems to be the enumeration values in an enumeration
+		/// </summary>
+		/// <param name="type">The type of the enumeration</param>
+		/// <param name="currentValue">The current value</param>
+		public void SetEnumListItems(Type type, Enum currentValue)
+		{
+			if (!FrameworkUtils.IsEnumOrNullableEnum(type))
+			{
+				throw new ArgumentException("The type " + type.FullName + " is not an enumeration", "type");
+			}
+
+			if (this.ListItems == null)
+			{
+				this.ListItems = new List<ListItem>();
+			}
+			Array allValues;
+			if (type.IsEnum)
+			{
+				allValues = Enum.GetValues(type);
+			}
+			else
+			{
+				allValues = Enum.GetValues(Nullable.GetUnderlyingType(type));
+			}
+			foreach (Enum val in allValues)
+			{
+				ListItem li = new ListItem();
+				li.Text = val.ToString();
+				li.Value = Convert.ToInt32(val).ToString();
+				li.Selected = val.Equals(currentValue);
+				this.ListItems.Add(li);
+			}
+
+		}
+
+		/// <summary>
 		/// Guesses which input mode should be given, based on the DBColumn's object type, and sets the <see cref="ObjectEditorRow.InputMode" />.
 		/// </summary>
 		public void AutoDetectAndSetInputMode()
@@ -315,6 +351,10 @@ namespace Shunde.Web
 				this.inputMode = InputMode.Checkbox;
 			}
 			else if (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double))
+			{
+				this.inputMode = InputMode.NumberTextBox;
+			}
+			else if (t == typeof(short?) || t == typeof(int?) || t == typeof(long?) || t == typeof(float?) || t == typeof(double?))
 			{
 				this.inputMode = InputMode.NumberTextBox;
 			}
@@ -345,9 +385,13 @@ namespace Shunde.Web
 			{
 				this.inputMode = InputMode.DropDownList;
 			}
-			else if (t == typeof(DateTime))
+			else if (t == typeof(DateTime) || t == typeof(DateTime?))
 			{
 				this.inputMode = InputMode.DateTimePicker;
+			}
+			else if (FrameworkUtils.IsEnumOrNullableEnum(t))
+			{
+				this.inputMode = InputMode.DropDownList;
 			}
 			else
 			{
@@ -385,6 +429,8 @@ namespace Shunde.Web
 		}
 
 		#endregion
+
+
 	}
 
 	/// <summary>

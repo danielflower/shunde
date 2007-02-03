@@ -86,6 +86,11 @@ public partial class EditObjects_Edit : PageBase
 				{
 					row.ViewBinaryDataUrl = "ViewBinaryData.aspx?objectId=";
 				}
+				else if (FrameworkUtils.IsEnumOrNullableEnum(col.Type))
+				{
+					row.SetEnumListItems(col.Type, (Enum)obj.Get(col.Name));
+					row.InputMode = InputMode.RadioButtonList;
+				}
 
 
 			}

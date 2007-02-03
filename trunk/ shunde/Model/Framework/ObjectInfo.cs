@@ -174,7 +174,7 @@ namespace Shunde.Framework
 				ObjectInfo oi = ObjectInfo.GetObjectInfo(type);
 				DBTable tab = oi.GetDirectTable();
 				string joinTableName = tab.Name;
-				fc = "(" + fc + " LEFT JOIN " + tab.Name + " " + joinTableName + " ON " + joinTableName + ".id = " + baseTableName + ".id) ";
+				fc = "(" + fc + " LEFT JOIN " + tab.Name + " " + joinTableName + " ON " + joinTableName + ".[id] = " + baseTableName + ".[id]) ";
 			}
 
 			return fc;
@@ -230,7 +230,7 @@ namespace Shunde.Framework
 					{
 						// rather than getting the data with each population, we just get the size of the data
 						// this is to reduce network bandwidth.
-						// A call to DBObject.populatBinaryData() will truly populate the data
+						// A call to DBObject.PopulatBinaryData() will truly populate the data
 						columnClause += ", DATALENGTH([" + table.Name + "].[" + col.GetColumnName() + "]) AS [" + col.GetColumnName() + "]";
 						columnClause += ", [" + table.Name + "].[" + col.Name + "MimeType]";
 						columnClause += ", [" + table.Name + "].[" + col.Name + "Filename]";

@@ -36,6 +36,22 @@ var ShundeUtils = {
 		
 
 		return curtop;
+	},
+	
+	
+
+	
+	// Gets the X position which is visible, based on the user's current scroll position
+	getVisibleXPosition: function(preferredX, elementWidth) {
+		return preferredX; // todo make this work
+	},
+	
+	// Gets the X position which is visible, based on the user's current scroll position
+	getVisibleYPosition: function(preferredY, elementHeight) {
+		return preferredY; // todo make this work
 	}
+	
+
+	
 
 }

@@ -242,8 +242,8 @@ namespace Shunde.Web
 		{
 			base.OnInit(e);
 
-			this.Page.ClientScript.RegisterClientScriptInclude(typeof(ObjectEditor), "ShundeScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ShundeScripts.js"));
-			this.Page.ClientScript.RegisterClientScriptInclude(typeof(ObjectEditor), "ObjectEditorScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ObjectEditorScripts.js"));
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(DBObject), "ShundeScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ShundeScripts.js"));
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(DBObject), "ObjectEditorScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ObjectEditorScripts.js"));
 
 
 			infoMessage = new Label();
@@ -499,12 +499,16 @@ namespace Shunde.Web
 				}
 
 
-				object value = Convert.ChangeType(ControlCreator.GetValueFromControl(row), row.DBColumn.Type);
-
-
-
-				row.DBColumn.FieldInfo.SetValue(DBObject, value);
-
+				object valueFromControl = ControlCreator.GetValueFromControl(row);
+				if (valueFromControl == null)
+				{
+					row.DBColumn.FieldInfo.SetValue(DBObject, null);
+				}
+				else
+				{
+					object value = FrameworkUtils.ChangeType(valueFromControl, row.DBColumn.Type);
+					row.DBColumn.FieldInfo.SetValue(DBObject, value);
+				}
 			}
 
 

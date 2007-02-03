@@ -1,11 +1,54 @@
 ﻿body {
 	font-family: Arial;
-	font-size: 11px;
-	margin-top:0px;
-	margin-left:0px;
+	font-size: 10pt;
+	margin:0px;
+	padding:0px;
+	background-color: Gray;
+	background-image:url(/Playground/images/background.gif);
 }
 
-td {
-	font-family: Arial;
-	font-size: 11px;
+#pageContainer 
+{
+	background-color: White;
+	width: 90%;
+	margin: 0px auto 0px auto;
+}
+
+#navigationContainer 
+{
+	background-color: Black;
+	color: White;
+	padding: 8px;
+	font-size: larger;
+	text-align: center;
+}
+
+
+#navigationContainer a:link, a:visited
+{
+	color: White;
+}
+
+#navigationContainer a:hover
+{
+	color: Yellow;
+}
+
+#contentContainer 
+{
+	padding: 10px;
+	padding-bottom:40px;
+}
+
+h1 
+{
+	text-align: center;
+	font-size: 16pt;
+	padding:0px;
+	margin: 5px;
+}
+
+th 
+{
+	text-align: left;
 }
