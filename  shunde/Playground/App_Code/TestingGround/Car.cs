@@ -18,9 +18,9 @@ namespace TestingGround {
 			set { make = value; }
 		}
 
-		private short year;
+		private short? year;
 
-		public short Year
+		public short? Year
 		{
 			get { return year; }
 			set { year = value; }
@@ -34,9 +34,9 @@ namespace TestingGround {
 			set { person = value; }
 		}
 
-		private DateTime dateImported = DBColumn.DateTimeNullValue;
+		private DateTime? dateImported;
 
-		public DateTime DateImported
+		public DateTime? DateImported
 		{
 			get { return dateImported; }
 			set { dateImported = value; }
@@ -56,9 +56,9 @@ namespace TestingGround {
 
 			DBTable tbl = new DBTable("Car", new DBColumn[] {
 				new DBColumn( "make", typeof(string), 1, 200 ),
-				new DBColumn( "year", typeof(short), false, (short)1000, (short)2000 ),
+				new DBColumn( "year", typeof(short?), true, (short?)1000, (short?)2000 ),
 				new DBColumn( "person", typeof(Person), true ),
-				new DBColumn( "dateImported", typeof(DateTime), true ),
+				new DBColumn( "dateImported", typeof(DateTime?), true ),
 				new DBColumn( "picture", typeof(BinaryData), true )
 			});
 

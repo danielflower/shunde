@@ -60,6 +60,7 @@
     <Compile Include="Common\IAttribRelation.cs" />
     <Compile Include="Common\TreeNode.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
+    <Compile Include="Utilities\FrameworkUtils.cs" />
     <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="Common\TextSection.cs" />
     <Compile Include="Web\ColorPicker.cs" />
@@ -93,11 +94,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ObjectEditorScripts.js" />
-    <Content Include="Resources\ColorPickerScripts.js" />
+    <EmbeddedResource Include="Resources\Cross.gif" />
+    <EmbeddedResource Include="Resources\Tick.gif" />
+    <EmbeddedResource Include="Resources\TransparencyIndicator.gif" />
+    <EmbeddedResource Include="Resources\ColorPickerScripts.js" />
     <EmbeddedResource Include="Resources\ComboBoxScripts.js" />
     <EmbeddedResource Include="Resources\ObjectEditorScripts.js" />
     <EmbeddedResource Include="Resources\ShundeScripts.js" />
     <EmbeddedResource Include="Resources\Calendar.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Framework\Columns\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

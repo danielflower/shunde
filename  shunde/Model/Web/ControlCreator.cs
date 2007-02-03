@@ -46,7 +46,8 @@ namespace Shunde.Web
 			}
 			else if (row.InputMode == InputMode.DateTimePicker)
 			{
-				CreateDateTimePicker(row, tableRow, Convert.ToDateTime(initialValue));
+				DateTime? date = (initialValue == null) ? (DateTime?)null : (DateTime?)Convert.ToDateTime(initialValue);
+				CreateDateTimePicker(row, tableRow, date);
 			}
 			else if (row.InputMode == InputMode.FileUpload)
 			{
@@ -98,7 +99,7 @@ namespace Shunde.Web
 			{
 				value = GetFileUploaderValue(row);
 			}
-			else if (row.InputMode == InputMode.DropDownList || row.InputMode == InputMode.RadioButtonList)
+			else if (row.InputMode == InputMode.DropDownList || row.InputMode == InputMode.RadioButtonList || row.InputMode == InputMode.ComboBox)
 			{
 				value = GetListControlValue(row);
 			}
@@ -113,8 +114,8 @@ namespace Shunde.Web
 
 
 			// We now have a value from a web control, however, this does not necessarily correspond
-			// to a suitable value.  For example, a reference to another DBObject will have value
-			// being it's ID as a string; we need the actual object.
+			// to a suitable value.  For example, a reference to another DBObject will have a value
+			// being its ID as a string; we need the actual object.
 
 			Type t = row.DBColumn.Type;
 
@@ -140,30 +141,6 @@ namespace Shunde.Web
 				if (t.Equals(typeof(string)))
 				{
 					return "";
-				}
-				else if (t.Equals(typeof(int)))
-				{
-					return DBColumn.IntegerNullValue;
-				}
-				else if (t.Equals(typeof(double)))
-				{
-					return DBColumn.DoubleNullValue;
-				}
-				else if (t.Equals(typeof(short)))
-				{
-					return DBColumn.ShortNullValue;
-				}
-				else if (t.Equals(typeof(long)))
-				{
-					return DBColumn.LongNullValue;
-				}
-				else if (t.Equals(typeof(float)))
-				{
-					return DBColumn.FloatNullValue;
-				}
-				else if (t.Equals(typeof(BinaryData)))
-				{
-					return new BinaryData();
 				}
 				else
 				{
@@ -203,7 +180,7 @@ namespace Shunde.Web
 					return value;
 				}
 			}
-			else if (t == typeof(DateTime))
+			else if (t == typeof(DateTime) || t == typeof(DateTime?))
 			{
 				if (value is DateTime)
 				{
@@ -218,7 +195,7 @@ namespace Shunde.Web
 					throw new ValidationException("The value " + value + " is not a valid date for " + row.Header);
 				}
 			}
-			else if (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double))
+			else if (DBColumn.IsNumberOrNullableNumber(t))
 			{
 				object intermediateValue = value;
 				if (value is ListItem)
@@ -236,13 +213,35 @@ namespace Shunde.Web
 
 				try
 				{
-					return Convert.ChangeType(intermediateValue, t);
+					return FrameworkUtils.ChangeType(intermediateValue, t);
 				}
 				catch
 				{
 					throw new ValidationException("The value " + value + " is not a valid number for " + row.Header);
 				}
 
+			}
+			else if (FrameworkUtils.IsEnumOrNullableEnum(t))
+			{
+				string intermediateValue;
+				if (value is ListItem)
+				{
+					intermediateValue = ((ListItem)value).Value;
+				}
+				else
+				{
+					intermediateValue = value.ToString();
+				}
+
+				try
+				{
+					Type enumType = (t.IsEnum) ? t : Nullable.GetUnderlyingType(t);
+					return (Enum)Enum.Parse(enumType, intermediateValue);
+				}
+				catch
+				{
+					throw new ValidationException("The value " + value + " is not a valid for " + row.Header);
+				}
 			}
 			else if (t == typeof(BinaryData))
 			{
@@ -344,7 +343,9 @@ namespace Shunde.Web
 			{
 				string name = (lc is DropDownList) ? row.NoSelectionName : HttpUtility.HtmlEncode(row.NoSelectionName);
 				ListItem li = new ListItem(name, "");
+				li.Selected = true;
 				lc.Items.Add(li);
+
 			}
 			else if (lc is DropDownList)
 			{
@@ -362,6 +363,7 @@ namespace Shunde.Web
 			{
 				lc.Items.AddRange(row.ListItems.ToArray());
 			}
+
 
 			span.Controls.Add(lc);
 
@@ -598,7 +600,7 @@ namespace Shunde.Web
 		}
 
 
-		static DateTime GetDateTimePickerValue(ObjectEditorRow row)
+		static DateTime? GetDateTimePickerValue(ObjectEditorRow row)
 		{
 			TextBox dateTB = (TextBox)row.ObjectEditor.FindControl(row.Id);
 			TextBox timeTB = (TextBox)row.ObjectEditor.FindControl(row.Id + "_shundeTime");
@@ -606,7 +608,7 @@ namespace Shunde.Web
 			
 			if (row.DBColumn.AllowNulls && dateTB.Text.Trim().Length == 0)
 			{
-				return DBColumn.DateTimeNullValue;
+				return null;
 			}
 			else
 			{
@@ -740,7 +742,7 @@ namespace Shunde.Web
 				CheckBox deleteCB = (CheckBox)row.ObjectEditor.FindControl(row.Id + "_deleteFile");
 				if (deleteCB != null && deleteCB.Checked)
 				{
-					return new BinaryData(null, "", "");
+					return null;
 				}
 				return (BinaryData)row.DBColumn.FieldInfo.GetValue(row.ObjectEditor.DBObject); // return the existing file
 			}
@@ -793,13 +795,19 @@ namespace Shunde.Web
 			{
 
 				Literal curFileLit = new Literal();
-				curFileLit.Text = "<br/>Current file type: " + initialValue.MimeType + " (" + TextUtils.GetFriendlyFileSize(initialValue.Size) + ") ";
-
+				string filename;
 				if (row.ViewBinaryDataUrl.Length > 0)
 				{
-					curFileLit.Text += "<a href=\"" + row.ViewBinaryDataUrl + row.ObjectEditor.DBObject.Id + "&fieldName=" + row.DBColumn.Name + "\" target=\"_blank\">[view]</a> ";
+					filename = "<a href=\"" + row.ViewBinaryDataUrl + row.ObjectEditor.DBObject.Id + "&fieldName=" + row.DBColumn.Name + "\" target=\"_blank\">" + initialValue.Filename + "</a> ";
+				}
+				else
+				{
+					filename = initialValue.Filename;
 				}
 
+				curFileLit.Text = "<br/>Current file: " + filename + " (" + TextUtils.GetFriendlyFileSize(initialValue.Size) + ")";
+
+				
 
 				span.Controls.Add(curFileLit);
 
@@ -821,7 +829,7 @@ namespace Shunde.Web
 
 
 
-		static void CreateDateTimePicker(ObjectEditorRow row, TableRow tableRow, DateTime initialValue)
+		static void CreateDateTimePicker(ObjectEditorRow row, TableRow tableRow, DateTime? initialValue)
 		{
 
 
@@ -829,7 +837,7 @@ namespace Shunde.Web
 			DBColumn col = row.DBColumn;
 
 			TextBox tb = new TextBox();
-			tb.Text = (initialValue.Equals(DBColumn.DateTimeNullValue)) ? "" : initialValue.ToString("dd/MM/yyyy");
+			tb.Text = (initialValue == null) ? "" : initialValue.Value.ToString("dd/MM/yyyy");
 			tb.ID = row.Id;
 			tb.TabIndex = 1;
 			tb.Width = (row.TextboxWidth.IsEmpty) ? new Unit("70px") : row.TextboxWidth;
@@ -896,7 +904,7 @@ namespace Shunde.Web
 				timeLit.Text = "&nbsp;&nbsp;<b>Time:</b> <font size=\"1\">(h:mm) </font>";
 				span.Controls.Add(timeLit);
 				TextBox timeTB = new TextBox();
-				timeTB.Text = (initialValue.Equals(DBColumn.DateTimeNullValue) || TextUtils.IsMidnight(initialValue)) ? "" : initialValue.ToString("h:mm");
+				timeTB.Text = (initialValue == null || TextUtils.IsMidnight(initialValue)) ? "" : initialValue.Value.ToString("h:mm");
 				timeTB.ID = col.Name + "_shundeTime";
 				timeTB.TabIndex = 1;
 				timeTB.Width = new Unit("40px");
@@ -907,7 +915,7 @@ namespace Shunde.Web
 				ampmDDL.Items.Add(new ListItem("am", "0"));
 				ampmDDL.Items.Add(new ListItem("pm", "12"));
 				ampmDDL.TabIndex = 1;
-				ampmDDL.SelectedIndex = (initialValue.Hour > 12) ? 1 : 0;
+				ampmDDL.SelectedIndex = (initialValue != null && initialValue.Value.Hour > 12) ? 1 : 0;
 				span.Controls.Add(ampmDDL);
 
 			}

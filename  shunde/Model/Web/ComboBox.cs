@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Shunde.Framework;
 
 [assembly: TagPrefix("Shunde.Web", "Shunde")]
 
@@ -39,6 +40,104 @@ namespace Shunde.Web
 		}
 
 		/// <summary>
+		/// Checks whether or not a new value was entered in by the user, rather than selecting one from the drop-down list
+		/// </summary>
+		public bool NewValueEntered
+		{
+			get
+			{
+				return SelectedIndex == -1;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the selected index of the combo box, or -1 if a new value has been entered
+		/// </summary>
+		public override int SelectedIndex
+		{
+			get
+			{
+				string boxValue = textBox.Text.Trim().ToLower();
+				int index = 0;
+				foreach (ListItem li in this.Items)
+				{
+					if (li.Text.ToLower().Trim().Equals(boxValue))
+					{
+						return index;
+					}
+					index++;
+				}
+				return -1;
+			}
+			set
+			{
+				base.SelectedIndex = value;
+				textBox.Text = this.Items[value].Text;
+			}
+		}
+
+
+		/// <summary>
+		/// Gets the value of the ListItem that is selected
+		/// </summary>
+		public override string SelectedValue
+		{
+			get
+			{
+				return SelectedItem.Value;
+			}
+			set
+			{
+				foreach (ListItem li in this.Items)
+				{
+					if (li.Value.Equals(value))
+					{
+						li.Selected = true;
+						textBox.Text = li.Text;
+						return;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the text of the ListItem that is selected
+		/// </summary>
+		public override string Text
+		{
+			get
+			{
+				return SelectedItem.Text;
+			}
+			set
+			{
+				textBox.Text = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets the selected item, or a ListItem with no value if text was entered
+		/// </summary>
+		public override ListItem SelectedItem
+		{
+			get
+			{
+				int selectedIndex = SelectedIndex;
+				if (selectedIndex == -1)
+				{
+					return new ListItem(textBox.Text.Trim(), "");
+				}
+				else
+				{
+					return this.Items[selectedIndex];
+				}
+			}
+		}
+
+
+		TextBox textBox = new TextBox();
+
+		/// <summary>
 		/// Registers the Javascript files
 		/// </summary>
 		/// <param name="e"></param>
@@ -46,8 +145,8 @@ namespace Shunde.Web
 		{
 			base.OnInit(e);
 
-			this.Page.ClientScript.RegisterClientScriptInclude(typeof(ComboBox), "ShundeScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ShundeScripts.js"));
-			this.Page.ClientScript.RegisterClientScriptInclude(typeof(ComboBox), "ComboBoxScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ComboBoxScripts.js"));
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(DBObject), "ShundeScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ShundeScripts.js"));
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(DBObject), "ComboBoxScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ComboBoxScripts.js"));
 
 		}
 
@@ -59,17 +158,25 @@ namespace Shunde.Web
 			base.CreateChildControls();
 
 			ListBox lb = new ListBox();
-			TextBox tb = new TextBox();
+			TextBox tb = textBox;
 
 			ApplyStyles(tb, lb);
 
 			if (!Page.IsPostBack)
 			{
-				foreach (ListItem li in this.Items)
 				{
-					lb.Items.Add(li);
+					int index = 0;
+					foreach (ListItem li in this.Items)
+					{
+						lb.Items.Add(li);
+						if (li.Selected)
+						{
+							this.SelectedIndex = index;
+						}
+						index++;
+					}
 				}
-				
+
 				if (this.SelectedIndex > -1)
 				{
 					tb.Text = this.SelectedItem.Text;
@@ -78,7 +185,7 @@ namespace Shunde.Web
 				{
 					tb.Text = this.Text;
 				}
-				
+
 			}
 
 
@@ -87,6 +194,9 @@ namespace Shunde.Web
 
 			this.Controls.Add(lb);
 			this.Controls.Add(tb);
+
+
+
 
 
 
@@ -114,7 +224,7 @@ namespace Shunde.Web
 			tb.Attributes["autocomplete"] = "off";
 			tb.TabIndex = this.TabIndex;
 
-			Page.ClientScript.RegisterStartupScript(typeof(string), this.ID, "ShundeComboBox.initialise(" + tbVar + ", " + lbVar + ");", true);
+			Page.ClientScript.RegisterStartupScript(typeof(ComboBox), this.ID, "ShundeComboBox.initialise(" + tbVar + ", " + lbVar + ");", true);
 
 
 

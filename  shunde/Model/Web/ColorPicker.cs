@@ -7,6 +7,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Drawing;
 using System.Web.UI.HtmlControls;
+using Shunde.Framework;
 
 [assembly: TagPrefix("Shunde.Web", "Shunde")]
 
@@ -18,6 +19,7 @@ namespace Shunde.Web
 	/// </summary>
 	[DefaultProperty("SelectedColor")]
 	[ToolboxData("<{0}:ColorPicker runat=server></{0}:ColorPicker>")]
+	[ValidationProperty("SelectedColorCode")]
 	public class ColorPicker : WebControl, INamingContainer, IPostBackDataHandler
 	{
 
@@ -74,6 +76,16 @@ namespace Shunde.Web
 
 
 		/// <summary>
+		/// Creates a new ColorPicker object, and sets the default width and height
+		/// </summary>
+		public ColorPicker()
+		{
+			this.Width = new Unit(35, UnitType.Pixel);
+			this.Height = new Unit(17, UnitType.Pixel);
+		}
+
+
+		/// <summary>
 		/// Registers the Javascript files
 		/// </summary>
 		/// <param name="e"></param>
@@ -81,8 +93,8 @@ namespace Shunde.Web
 		{
 			base.OnInit(e);
 
-			this.Page.ClientScript.RegisterClientScriptInclude(typeof(ColorPicker), "ShundeScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ShundeScripts.js"));
-			this.Page.ClientScript.RegisterClientScriptInclude(typeof(ColorPicker), "ColorPickerScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ColorPickerScripts.js"));
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(DBObject), "ShundeScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ShundeScripts.js"));
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(DBObject), "ColorPickerScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ColorPickerScripts.js"));
 
 		}
 
@@ -103,12 +115,14 @@ namespace Shunde.Web
 				colourHF.Value = SelectedColorCode;
 			}
 
+			
 
 			HtmlGenericControl sample = new HtmlGenericControl("div");
 			this.Controls.Add(sample);
 			sample.ID = colourHF.ID + "_sample";
 			sample.Style[HtmlTextWriterStyle.Cursor] = "pointer";
-			sample.Style[HtmlTextWriterStyle.Width] = "40px";
+			sample.Style[HtmlTextWriterStyle.Width] = this.Width.ToString();
+			sample.Style[HtmlTextWriterStyle.Height] = this.Height.ToString();
 			sample.Style["border"] = "1px solid black";
 			sample.Style[HtmlTextWriterStyle.BackgroundColor] = SelectedColorCode;
 			sample.Attributes["title"] = "Select a colour";
@@ -169,5 +183,18 @@ namespace Shunde.Web
 		}
 
 		#endregion
+
+
+		/// <summary>
+		/// Gets a DIV tag
+		/// </summary>
+		protected override HtmlTextWriterTag TagKey
+		{
+			get
+			{
+				return HtmlTextWriterTag.Div;
+			}
+		}
+
 	}
 }

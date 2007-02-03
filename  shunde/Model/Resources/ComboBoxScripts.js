@@ -4,10 +4,9 @@ var ShundeComboBox = {
 	mouseIsOverListbox : Boolean,
 
 	initialise: function(tb, lb) {
-		
+	
 		lb.style.width = parseInt(tb.offsetWidth) + 'px';
 		lb.style.top = (parseInt(ShundeUtils.findPosY(tb)) + parseInt(tb.offsetHeight)) + 'px';
-		
 		mouseIsOverListbox = false;
 		
 	},
@@ -47,8 +46,8 @@ var ShundeComboBox = {
 	onKeyDown: function(tb, lb, keyCode) {
 		
 		if (keyCode == 13) { // pressing enter
-			ShundeComboBox.selectCurrentlySelected(tb, lb);
 			ShundeComboBox.hideListBox(tb, lb);
+			ShundeComboBox.selectCurrentlySelected(tb, lb);
 			return false;
 		} else if (keyCode == 38) { // pressing up
 			if (lb.selectedIndex > 0) {

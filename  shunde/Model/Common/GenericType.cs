@@ -48,12 +48,12 @@ namespace Shunde.Common
 		}
 
 
-		private int code = DBColumn.IntegerNullValue;
+		private int? code = null;
 
 		/// <summary>
 		/// A unique code to identify this GenericType
 		/// </summary>
-		public int Code
+		public int? Code
 		{
 			get { return code; }
 			set { code = value; }
@@ -75,7 +75,7 @@ namespace Shunde.Common
 		static GenericType()
 		{
 
-			DBColumn codeCol = new DBColumn("code", typeof(int), true, 1, null);
+			DBColumn codeCol = new DBColumn("code", typeof(int?), true, 1, null);
 			codeCol.IsUnique = true;
 
 			DBTable tbl = new DBTable("GenericType", new DBColumn[] {

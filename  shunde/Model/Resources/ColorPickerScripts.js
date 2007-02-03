@@ -27,7 +27,7 @@ function cp_setupPicker() {
 	cp_pickerDiv.style.position = 'absolute';
 	cp_pickerDiv.style.left = '-1000px';
 	cp_pickerDiv.style.top = '-1000px';
-	document.body.appendChild(cp_pickerDiv);		
+	document.body.appendChild(cp_pickerDiv);	
 
 
 	var html = '<table style=\"table-layout:fixed;empty-cells:show;border-collapse:collapse;border:1px solid black;\">';
@@ -55,7 +55,7 @@ function cp_setupPicker() {
 	var selectImageWidth = 21;
 	var colsNeededForSelectImage = parseInt((selectImageWidth / cp_colWidth) + 1);
 	
-	html += '<tr style=\"background-color:White;\"><td align=\"right\" colspan=\"' + (cp_tableCols - colsNeededForCloseImage - colsNeededForSelectImage) + '\">#<input id=\"cp_pickerHexTB\" type=\"text\" style=\"height:16px;width:60px;border:1px solid black;\" /> <span style=\"padding-left:30px;border:1px solid black;font-size:15px;margin-right:3px;\" id=\"cp_pickerSample\">&nbsp;</span></td><td colspan=\"' + colsNeededForSelectImage + '\"><a href=\"javascript:cp_selectColour();\"><img src=\"/Site/Images/select.gif\" style=\"border:none;display:block;\" alt=\"select\" /></a></td><td colspan=\"' + colsNeededForCloseImage + '\" align=\"right\"><a href=\"javascript:cp_cancel();\"><img src=\"/Site/Images/close.gif\" style=\"border:none;display:block;\" alt=\"cancel\" /></a></td></tr></table>';
+	html += '<tr style=\"background-color:White;\"><td align=\"right\" colspan=\"' + (cp_tableCols - colsNeededForCloseImage - colsNeededForSelectImage) + '\">#<input id=\"cp_pickerHexTB\" type=\"text\" style=\"height:16px;width:60px;border:1px solid black;\" /> <span style=\"padding-left:30px;border:1px solid black;font-size:15px;margin-right:3px;\" id=\"cp_pickerSample\">&nbsp;</span></td><td colspan=\"' + colsNeededForSelectImage + '\"><a href=\"javascript:cp_selectColour();\"><img src=\"<%=WebResource("Shunde.Resources.Tick.gif")%>\" style=\"border:none;display:block;width:18px;height:18px;\" alt=\"select\" /></a></td><td colspan=\"' + colsNeededForCloseImage + '\" align=\"right\"><a href=\"javascript:cp_cancel();\"><img src=\"<%=WebResource("Shunde.Resources.Cross.gif")%>\" style=\"border:none;display:block;width:18px;height:18px;\" alt=\"cancel\" /></a></td></tr></table>';
 	
 	cp_pickerDiv.innerHTML = html;
 	
@@ -74,7 +74,6 @@ function cp_cancel() {
 }
 
 function cp_closePicker() {
-	unhideSelectObjects(null);
 	cp_pickerDiv.style.left = '-1000px';
 	cp_pickerDiv.style.top = '-1000px';
 	cp_currentTarget = null;
@@ -85,8 +84,20 @@ function cp_selectColour() {
 	var c = cp_pickerHexTB.value;
 	var cssValue = (c == '') ? '' : '#' + c;
 	
+	if (cssValue == '') {
+		cp_currentTarget_sample.style.backgroundColor = '';
+		cp_currentTarget_sample.style.background = 'url(<%=WebResource("Shunde.Resources.TransparencyIndicator.gif")%>)';
+	} else {
+		try {
+			cp_currentTarget_sample.style.backgroundColor = cssValue;
+			cp_currentTarget_sample.style.background = '';
+			cp_currentTarget_sample.style.backgroundColor = cssValue;
+		} catch (ex) {
+			alert('Invalid colour selected');
+			return;
+		}
+	}
 	cp_currentTarget.value = cssValue;
-	cp_currentTarget_sample.style.backgroundColor = cssValue;
 	cp_closePicker();
 }
 
@@ -99,7 +110,6 @@ function cp_setColour(c) {
 }
 
 function cp_pick(link, textboxId) {
-	hideSelectObjects(null);
 	if (!cp_pickerInitialised) {
 		cp_setupPicker();
 	}
@@ -112,9 +122,9 @@ function cp_pick(link, textboxId) {
 	cp_currentTarget = tb;
 	cp_currentTarget_sample = document.getElementById(textboxId + '_sample');
 
-	cp_pickerDiv.style.left = oe_getXPositionToPlace( oe_findPosX(link), cp_pickerDiv.offsetWidth) + 'px';
+	cp_pickerDiv.style.left = ShundeUtils.getVisibleXPosition( ShundeUtils.findPosX(link), cp_pickerDiv.offsetWidth) + 'px';
 	
-	var newTop = oe_getYPositionToPlace(parseInt(oe_findPosY(link)) + parseInt(link.offsetHeight), cp_pickerDiv.offsetHeight);
+	var newTop = ShundeUtils.getVisibleXPosition(parseInt(ShundeUtils.findPosY(link)) + parseInt(link.offsetHeight), cp_pickerDiv.offsetHeight);
 	cp_pickerDiv.style.top = newTop + 'px';
 	
 }

@@ -1,25 +1,28 @@
 <%@ Master Language="C#" AutoEventWireup="true" CodeFile="Template.master.cs" Inherits="Template" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server" id="head">
     <title>Untitled Page</title>
-
     <link rel="stylesheet" type="text/css" href="~/includes/styles.css" runat="server" />
 </head>
 <body>
-    <form id="form1" runat="server">
-    <div>
-		<a href="~/EditObjects/Default.aspx" runat="server">[Edit Objects]</a> |
-		<a id="A2" href="~/ClassCreator/Default.aspx" runat="server">[Create Classes]</a> |
-		<a id="A3" href="~/SqlCreator/Default.aspx" runat="server">[Create Sql]</a>
-		<a id="A1" href="~/Test.aspx" runat="server">[Test]</a>
-    <hr />
+
+	<div id="pageContainer">
+
+		<div id="navigationContainer">
+			<a href="~/EditObjects/Default.aspx" runat="server">[Edit Objects]</a> |
+			<a id="A2" href="~/ClassCreator/Default.aspx" runat="server">[Create Classes]</a> |
+			<a id="A3" href="~/SqlCreator/Default.aspx" runat="server">[Create Sql]</a>
+			<a id="A1" href="~/Test.aspx" runat="server">[Test]</a>
+		</div>
+		<form id="form1" runat="server" style="margin:0px;padding:0px;">
+		<div id="contentContainer">
+			<asp:contentplaceholder id="PageBody" runat="server" />
+		</div>
+		</form>
+    
     </div>
-    <div>
-        <asp:contentplaceholder id="PageBody" runat="server" />
-    </div>
-    </form>
 </body>
 </html>

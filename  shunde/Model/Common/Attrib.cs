@@ -40,7 +40,7 @@ namespace Shunde.Common
 				}
 				else
 				{
-					return Convert.ChangeType(this.Name, t);
+					return FrameworkUtils.ChangeType(this.Name, t);
 				}
 			}
 			set {
@@ -98,7 +98,7 @@ namespace Shunde.Common
 			Type t = attribType.GetDataType();
 			if (t.Equals(typeof(BinaryData)))
 			{
-				if (attribType.IsRequired && !dataValue.Exists)
+				if (attribType.IsRequired && dataValue == null)
 				{
 					throw new ValidationException("Please enter a value for " + attribType.Name);
 				}
