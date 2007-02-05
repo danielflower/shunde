@@ -398,6 +398,11 @@ namespace Shunde.Utilities
 				return SqlDbType.Int;
 			}
 
+			if (t.Equals(typeof(System.Drawing.Color)))
+			{
+				return SqlDbType.VarChar;
+			}
+
 			throw new ShundeException("No suitable SqlDbType found for the column " + col.Name + " which has a data type of " + col.Type);
 
 		}

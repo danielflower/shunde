@@ -287,28 +287,7 @@ namespace Shunde.Framework
 					FieldInfo fi = col.FieldInfo;
 					object value = (useSdrIndex) ? sdr[col.sdrIndex] : sdr[col.GetColumnName()];
 
-					if (!col.isDBObjectType && !col.Type.Equals(typeof(BinaryData)))
-					{
-
-						if (value == DBNull.Value)
-						{
-							if (col.Type.Equals(typeof(string)))
-							{
-								value = "";
-							}
-							else
-							{
-								value = null;
-							}
-						}
-						else if (!col.Type.IsEnum && FrameworkUtils.IsEnumOrNullableEnum(col.Type))
-						{
-							Type underlyingType = Nullable.GetUnderlyingType(col.Type);
-							value = Enum.Parse(underlyingType, value.ToString());
-						}
-
-					}
-					else if (col.isDBObjectType)
+					if (col.isDBObjectType)
 					{
 
 						if (value == DBNull.Value)
@@ -326,7 +305,18 @@ namespace Shunde.Framework
 
 						}
 					}
-					else
+					else if (col.Type == typeof(System.Drawing.Color))
+					{
+						if (value == DBNull.Value)
+						{
+							value = System.Drawing.Color.Empty;
+						}
+						else
+						{
+							value = System.Drawing.ColorTranslator.FromHtml((string)value);
+						}
+					}
+					else if (col.Type == typeof(BinaryData))
 					{
 						if (value == DBNull.Value)
 						{
@@ -336,9 +326,29 @@ namespace Shunde.Framework
 						{
 							string mimeType = (useSdrIndex) ? sdr[col.sdrIndex + 1].ToString() : sdr[col.Name + "MimeType"].ToString();
 							string filename = (useSdrIndex) ? sdr[col.sdrIndex + 2].ToString() : sdr[col.Name + "Filename"].ToString();
-							// the returned Value will not have the data, rather the data size
+							// the returned Value will not have the data; rather the data size
 							BinaryData bd = new BinaryData((int)value, mimeType, filename);
 							value = bd;
+						}
+					}
+					else
+					{
+
+						if (value == DBNull.Value)
+						{
+							if (col.Type.Equals(typeof(string)))
+							{
+								value = "";
+							}
+							else
+							{
+								value = null;
+							}
+						}
+						else if (!col.Type.IsEnum && FrameworkUtils.IsEnumOrNullableEnum(col.Type))
+						{
+							Type underlyingType = Nullable.GetUnderlyingType(col.Type);
+							value = Enum.Parse(underlyingType, value.ToString());
 						}
 					}
 
@@ -625,6 +635,18 @@ END
 							param.Value = bd.Data;
 						}
 
+					}
+					else if (col.Type.Equals(typeof(System.Drawing.Color)))
+					{
+						if (value == DBNull.Value)
+						{
+							param.Value = DBNull.Value;
+						}
+						else
+						{
+							System.Drawing.Color color = (System.Drawing.Color)value;
+							param.Value = System.Drawing.ColorTranslator.ToHtml(color);
+						}
 					}
 					else
 					{

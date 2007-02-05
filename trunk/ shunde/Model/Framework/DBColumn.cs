@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace Shunde.Framework
 {
 	/// <summary>Represents a Database column</summary>
-	public sealed class DBColumn
+	public class DBColumn
 	{
 
 
@@ -320,6 +320,10 @@ namespace Shunde.Framework
 			if (value is string)
 			{
 				return value.Equals(string.Empty);
+			}
+			if (value is System.Drawing.Color)
+			{
+				return ((System.Drawing.Color)value).IsEmpty;
 			}
 
 			if (value == null || value is DBNull)

@@ -48,6 +48,10 @@ namespace Shunde.Web
 			get
 			{
 				Color color = SelectedColor;
+				if (color.IsEmpty)
+				{
+					return "";
+				}
 				return string.Format("#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
 			}
 			set
@@ -124,7 +128,14 @@ namespace Shunde.Web
 			sample.Style[HtmlTextWriterStyle.Width] = this.Width.ToString();
 			sample.Style[HtmlTextWriterStyle.Height] = this.Height.ToString();
 			sample.Style["border"] = "1px solid black";
-			sample.Style[HtmlTextWriterStyle.BackgroundColor] = SelectedColorCode;
+			if (SelectedColor == Color.Empty)
+			{
+				sample.Style[HtmlTextWriterStyle.BackgroundImage] = this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.TransparencyIndicator.gif");
+			}
+			else
+			{
+				sample.Style[HtmlTextWriterStyle.BackgroundColor] = SelectedColorCode;
+			}
 			sample.Attributes["title"] = "Select a colour";
 			sample.Attributes["onclick"] = "cp_pick(this, this.id.replace('_sample', ''));return false;";
 			sample.InnerHtml = "&nbsp;";

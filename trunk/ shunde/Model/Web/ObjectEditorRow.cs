@@ -393,6 +393,10 @@ namespace Shunde.Web
 			{
 				this.inputMode = InputMode.DropDownList;
 			}
+			else if (t == typeof(System.Drawing.Color))
+			{
+				this.inputMode = InputMode.ColorPicker;
+			}
 			else
 			{
 				throw new ShundeException("No input mode could be set for column " + this.DBColumn.Name);
@@ -497,7 +501,12 @@ namespace Shunde.Web
 		/// <summary>
 		/// Rendered as password control, with a confirmation password input
 		/// </summary>
-		Password
+		Password,
+
+		/// <summary>
+		/// The color picker will be used to select a color
+		/// </summary>
+		ColorPicker
 
 	}
 

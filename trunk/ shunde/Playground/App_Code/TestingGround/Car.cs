@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Shunde.Framework;
+using System.Drawing;
 
 /// <summary>
 /// Summary description for Car
@@ -50,6 +51,15 @@ namespace TestingGround {
 			set { picture = value; }
 		}
 
+		private Color color = Color.Empty;
+
+		public Color Color
+		{
+			get { return color; }
+			set { color = value; }
+		}
+
+
 		/// <summary>Sets up the <see cref="ObjectInfo" /> for this class</summary>
 		static Car()
 		{
@@ -59,7 +69,8 @@ namespace TestingGround {
 				new DBColumn( "year", typeof(short?), true, (short?)1000, (short?)2000 ),
 				new DBColumn( "person", typeof(Person), true ),
 				new DBColumn( "dateImported", typeof(DateTime?), true ),
-				new DBColumn( "picture", typeof(BinaryData), true )
+				new DBColumn( "picture", typeof(BinaryData), true ),
+				new DBColumn( "color", typeof(Color), true )
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(Car), tbl);
