@@ -8,6 +8,7 @@ using Shunde.Framework;
 using Shunde.Utilities;
 using System.Web;
 using System.IO;
+using System.Drawing;
 
 namespace Shunde.Web
 {
@@ -56,6 +57,10 @@ namespace Shunde.Web
 			else if (row.InputMode == InputMode.DropDownList || row.InputMode == InputMode.RadioButtonList || row.InputMode == InputMode.ComboBox)
 			{
 				CreateListBox(row, tableRow);
+			}
+			else if (row.InputMode == InputMode.ColorPicker)
+			{
+				CreateColorPickerControl(row, tableRow, (Color)initialValue);
 			}
 			else
 			{
@@ -106,6 +111,10 @@ namespace Shunde.Web
 			else if (row.InputMode == InputMode.Password)
 			{
 				value = GetPasswordValue(row);
+			}
+			else if (row.InputMode == InputMode.ColorPicker)
+			{
+				value = GetColorPickerValue(row);
 			}
 			else
 			{
@@ -263,6 +272,24 @@ namespace Shunde.Web
 					DBObject foreignObj = DBObject.CreateObject(t.Assembly, t.FullName);
 					foreignObj.Id = id;
 					return foreignObj;
+				}
+			}
+			else if (t.Equals(typeof(Color)))
+			{
+				if (value is Color)
+				{
+					return (Color)value;
+				}
+				else if (value is string)
+				{
+					try
+					{
+						return ColorTranslator.FromHtml((string)value);
+					}
+					catch
+					{
+						throw new ValidationException("The value " + value + " is not a valid color.");
+					}
 				}
 			}
 
@@ -451,56 +478,6 @@ namespace Shunde.Web
 			}
 
 
-
-
-
-			/*
-					if (tb.TextMode == TextBoxMode.Password)
-					{
-
-						HtmlGenericControl confirmDiv = new HtmlGenericControl("div");
-						confirmDiv.Controls.Add(new LiteralControl("Please confirm your password:"));
-						confirmDiv.ID = tb.ID + "PasswordConfirmDiv";
-
-
-						tb.Attributes["onkeyup"] = "document.getElementById(this.id + 'PasswordConfirmDiv').style.display = (this.value.length == 0) ? 'none' : 'block';";
-						confirmDiv.Style[HtmlTextWriterStyle.Display] = "none";
-
-						tc.Controls.Add(confirmDiv);
-						TextBox passwordConfirmTB = new TextBox();
-						passwordConfirmTB.ID = tb.ID + "PasswordConfirm";
-						passwordConfirmTB.TextMode = TextBoxMode.Password;
-						passwordConfirmTB.Width = tb.Width;
-						passwordConfirmTB.TabIndex = 1;
-
-						CompareValidator cv = new CompareValidator();
-						cv.ControlToCompare = tb.ID;
-						cv.ControlToValidate = passwordConfirmTB.ID;
-						cv.ErrorMessage = "Your passwords did not match";
-						cv.Text = " * ";
-						cv.SetFocusOnError = true;
-
-						if (!DBObject.Exists())
-						{
-							RequiredFieldValidator rfv = new RequiredFieldValidator();
-							rfv.ControlToValidate = passwordConfirmTB.ID;
-							rfv.ErrorMessage = "Please enter a value for the confirmation password field";
-							rfv.Display = ValidatorDisplay.Static;
-							rfv.Text = "*";
-							rfv.SetFocusOnError = true;
-							confirmDiv.Controls.Add(rfv);
-						}
-
-						confirmDiv.Controls.Add(cv);
-						confirmDiv.Controls.Add(passwordConfirmTB);
-					}
-
-					row.Cells.Add(tc);
-			*/
-
-
-
-			
 			CreateStandardRow(row, headerControls, tableRow, tb);
 		}
 
@@ -593,12 +570,37 @@ namespace Shunde.Web
 		}
 
 
+		static void CreateColorPickerControl(ObjectEditorRow row, TableRow tableRow, Color initialValue)
+		{
+			ColorPicker cp = new ColorPicker();
+			cp.SelectedColor = initialValue;
+			cp.ID = row.Id;
+			cp.TabIndex = 1;
+			cp.Width = new Unit(70, UnitType.Pixel);
+			cp.Height = new Unit(20, UnitType.Pixel);
+
+			List<Control> headerControls = new List<Control>();
+			if (row.RequiredField)
+			{
+				headerControls.Add(CreateRequiredFieldValidator(cp.ID, "Please select a color for " + row.Header, row.ObjectEditor.ValidationGroup));
+			}
+
+			CreateStandardRow(row, headerControls, tableRow, cp);
+		}
+
+
 		static string GetNumberTextControlValue(ObjectEditorRow row)
 		{
 			TextBox tb = (TextBox)row.ObjectEditor.FindControl(row.Id);
 			return tb.Text;
 		}
 
+
+		static Color GetColorPickerValue(ObjectEditorRow row)
+		{
+			ColorPicker cp = (ColorPicker)row.ObjectEditor.FindControl(row.Id);
+			return cp.SelectedColor;
+		}
 
 		static DateTime? GetDateTimePickerValue(ObjectEditorRow row)
 		{
