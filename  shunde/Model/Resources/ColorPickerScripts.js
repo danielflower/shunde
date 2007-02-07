@@ -80,6 +80,8 @@ function cp_closePicker() {
 	cp_currentTarget_sample = null;
 }
 
+var cp_onClientSelectedColorChangedJavascript = '';
+
 function cp_selectColour() {
 	var c = cp_pickerHexTB.value;
 	var cssValue = (c == '') ? '' : '#' + c;
@@ -98,6 +100,12 @@ function cp_selectColour() {
 		}
 	}
 	cp_currentTarget.value = cssValue;
+	
+	if (cp_onClientSelectedColorChangedJavascript != null && cp_onClientSelectedColorChangedJavascript.length > 0) {
+		var color = cssValue;
+		eval(cp_onClientSelectedColorChangedJavascript);
+	}
+	
 	cp_closePicker();
 }
 
@@ -109,7 +117,7 @@ function cp_setColour(c) {
 	}
 }
 
-function cp_pick(link, textboxId) {
+function cp_pick(link, textboxId, onClientSelectedColorChangedJavascript) {
 	if (!cp_pickerInitialised) {
 		cp_setupPicker();
 	}
@@ -120,6 +128,7 @@ function cp_pick(link, textboxId) {
 	cp_pickerHexTB.value = tb.value.replace('#', '');
 	cp_pickerSample.style.backgroundColor = tb.value;
 	cp_currentTarget = tb;
+	cp_onClientSelectedColorChangedJavascript = onClientSelectedColorChangedJavascript;
 	cp_currentTarget_sample = document.getElementById(textboxId + '_sample');
 
 	cp_pickerDiv.style.left = ShundeUtils.getVisibleXPosition( ShundeUtils.findPosX(link), cp_pickerDiv.offsetWidth) + 'px';
