@@ -4,14 +4,14 @@
 
 	<asp:ValidationSummary ID="ValidationSummary1" runat="server" />
 
-<div style="position:absolute;left:200px;top:200px;">
+<div style="position:absolute;left:400px;top:200px;">
 one: <Shunde:ComboBox ID="comboBox1" runat="server" />
 	<Shunde:ColorPicker ID="colorPicker1" runat="server" Width="200px" Height="50px" />
 
 </div>
 
 two: <Shunde:ComboBox ID="comboBox" runat="server" />
-	<Shunde:ColorPicker ID="colorPicker" runat="server" Width="200px" Height="50px" />
+	<Shunde:ColorPicker ID="colorPicker" runat="server" Width="200px" Height="50px" SelectedColor="Red" />
 
 	<asp:RequiredFieldValidator ControlToValidate="colorPicker" runat="server" ErrorMessage="Pick a value for the colour" Display="Dynamic">*</asp:RequiredFieldValidator>
 
@@ -23,6 +23,10 @@ Selected text: <asp:Literal ID="selectedText" runat="server" /><br />
 Selected value: <asp:Literal ID="selectedValue" runat="server" /><br />
 Selected index: <asp:Literal ID="selectedIndex" runat="server" /><br />
 Selected item: <asp:Literal ID="selectedItem" runat="server" /><br />
+</p>
+
+<p>Changed to: 
+<asp:Literal ID="colorChangeLit" runat="server" EnableViewState="false" />
 </p>
 </asp:Content>
 

@@ -16,12 +16,7 @@ public partial class Test : PageBase
 	public override void Start()
 	{
 
-
-		//Enum val = (Enum)Convert.ChangeType((int)1, typeof(HorizontalAlign));
-		Type t = typeof(HorizontalAlign?);
-		Enum val = (HorizontalAlign?)Enum.Parse(Nullable.GetUnderlyingType(t), "1");
-
-		Response.Write("enum: " + val);
+		colorPicker.SelectedColorChanged += new Shunde.Web.SelectedColorChangedEventHandler(colorPicker_SelectedColorChanged);
 
 		if (!IsPostBack)
 		{
@@ -40,6 +35,11 @@ public partial class Test : PageBase
 		}
 
 		goButton.Click += new EventHandler(goButton_Click);
+	}
+
+	void colorPicker_SelectedColorChanged(object sender, Shunde.Web.SelectedColorChangedEventArgs e)
+	{
+		colorChangeLit.Text = e.NewColor.ToString();
 	}
 
 	void goButton_Click(object sender, EventArgs e)
