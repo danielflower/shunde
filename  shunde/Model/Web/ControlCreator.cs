@@ -9,6 +9,7 @@ using Shunde.Utilities;
 using System.Web;
 using System.IO;
 using System.Drawing;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Web
 {
@@ -145,7 +146,7 @@ namespace Shunde.Web
 				}
 			}
 
-			if (value == null || isListItemAndIsNull || DBColumn.IsColumnNull(value))
+			if (value == null || isListItemAndIsNull || row.DBColumn.IsNull(value) || value.Equals(string.Empty))
 			{
 				if (t.Equals(typeof(string)))
 				{
@@ -204,7 +205,7 @@ namespace Shunde.Web
 					throw new ValidationException("The value " + value + " is not a valid date for " + row.Header);
 				}
 			}
-			else if (DBColumn.IsNumberOrNullableNumber(t))
+			else if (NumberColumn.IsNumberOrNullableNumber(t))
 			{
 				object intermediateValue = value;
 				if (value is ListItem)
@@ -220,6 +221,8 @@ namespace Shunde.Web
 					intermediateValue = ((DateTime)value).Ticks;
 				}
 
+				FrameworkUtils.ChangeType(intermediateValue, t);
+				
 				try
 				{
 					return FrameworkUtils.ChangeType(intermediateValue, t);
@@ -230,7 +233,7 @@ namespace Shunde.Web
 				}
 
 			}
-			else if (FrameworkUtils.IsEnumOrNullableEnum(t))
+			else if (EnumColumn.IsEnumOrNullableEnum(t))
 			{
 				string intermediateValue;
 				if (value is ListItem)
@@ -453,7 +456,7 @@ namespace Shunde.Web
 		static void CreateNumberTextControl(ObjectEditorRow row, TableRow tableRow, object initialValue)
 		{
 			TextBox tb = new TextBox();
-			if (Shunde.Framework.DBColumn.IsColumnNull(initialValue))
+			if (row.DBColumn.IsNull(initialValue))
 			{
 				tb.Text = "";
 			}
@@ -464,19 +467,34 @@ namespace Shunde.Web
 			tb.ID = row.Id;
 			tb.TabIndex = 1;
 			tb.Width = (row.TextboxWidth.IsEmpty) ? row.ObjectEditor.NumberTextBoxWidth : row.TextboxWidth;
-			
+
 			List<Control> headerControls = new List<Control>();
 			if (row.RequiredField)
 			{
 				headerControls.Add(CreateRequiredFieldValidator(tb.ID, "Please enter a number for " + row.Header, row.ObjectEditor.ValidationGroup));
 			}
 
-			if (row.DBColumn.MinAllowed != null || row.DBColumn.MaxAllowed != null)
-			{
-				ValidationDataType dataType = (row.DBColumn.Type == typeof(float) || row.DBColumn.Type == typeof(double)) ? ValidationDataType.Double : ValidationDataType.Integer;
-				headerControls.Add(CreateRangeValidator(tb.ID, row.Header, dataType, row.DBColumn.MinAllowed, row.DBColumn.MaxAllowed, row.ObjectEditor.ValidationGroup));
+			if (row.DBColumn is IRangeValidatedColumn) {
+				IRangeValidatedColumn col = (IRangeValidatedColumn)row.DBColumn;
+				if (col.MinimumAllowed != null || col.MaximumAllowed != null)
+				{
+					Type t = row.DBColumn.Type;
+					ValidationDataType dataType;
+					if (t == typeof(float) || t == typeof(double) || t == typeof(float?) || t == typeof(double?))
+					{
+						dataType = ValidationDataType.Double;
+					}
+					else if (t == typeof(DateTime) || t == typeof(DateTime?))
+					{
+						dataType = ValidationDataType.Date;
+					}
+					else
+					{
+						dataType = ValidationDataType.Integer;
+					}
+					headerControls.Add(CreateRangeValidator(tb.ID, row.Header, dataType, col.MinimumAllowed, col.MaximumAllowed, row.ObjectEditor.ValidationGroup));
+				}
 			}
-
 
 			CreateStandardRow(row, headerControls, tableRow, tb);
 		}
@@ -484,12 +502,13 @@ namespace Shunde.Web
 
 		static void CreateSingleLineTextControl(ObjectEditorRow row, TableRow tableRow, string initialValue)
 		{
+			StringColumn dbCol = (StringColumn)row.DBColumn;
 			TextBox tb = new TextBox();
 			tb.Text = initialValue;
 			tb.ID = row.Id;
 			tb.TabIndex = 1;
 			tb.Width = (row.TextboxWidth.IsEmpty) ? row.ObjectEditor.StringTextBoxWidth : row.TextboxWidth;
-			tb.MaxLength = row.DBColumn.MaxLength;
+			tb.MaxLength = dbCol.MaxLength;
 
 			List<Control> headerControls = new List<Control>();
 			if (row.RequiredField)
@@ -497,10 +516,11 @@ namespace Shunde.Web
 				headerControls.Add(CreateRequiredFieldValidator(tb.ID, "Please enter a some text for " + row.Header, row.ObjectEditor.ValidationGroup));
 			}
 
-			if (row.DBColumn.RegularExpression != null)
+
+			if (dbCol.RegularExpression != null)
 			{
-				string msg = (row.DBColumn.RegularExpressionErrorMessage != null) ? row.DBColumn.RegularExpressionErrorMessage : "The value for " + row.Header + " is not allowed.";
-				headerControls.Add(CreateRegularExpressionValidator(tb.ID, row.DBColumn.RegularExpression, msg, row.ObjectEditor.ValidationGroup));
+				string msg = (dbCol.RegularExpressionErrorMessage != null) ? dbCol.RegularExpressionErrorMessage : "The value for " + row.Header + " is not allowed.";
+				headerControls.Add(CreateRegularExpressionValidator(tb.ID, dbCol.RegularExpression, msg, row.ObjectEditor.ValidationGroup));
 			}
 
 			if (row.ValidationRegex.Length > 0)
@@ -781,7 +801,7 @@ namespace Shunde.Web
 			List<Control> headerControls = new List<Control>();
 
 
-			if (DBColumn.IsColumnNull(initialValue))
+			if (row.DBColumn.IsNull(initialValue))
 			{
 				// add validation if nulls are not allowed
 				if (row.RequiredField)
@@ -853,11 +873,14 @@ namespace Shunde.Web
 				headerControls.Add(CreateRequiredFieldValidator(tb.ID, "Please enter a date for " + row.Header, row.ObjectEditor.ValidationGroup));
 			}
 
-			if (row.DBColumn.MinAllowed != null || row.DBColumn.MaxAllowed != null)
+			if (row.DBColumn is IRangeValidatedColumn)
 			{
-				headerControls.Add(CreateRangeValidator(tb.ID, row.Header, ValidationDataType.Date, row.DBColumn.MinAllowed, row.DBColumn.MaxAllowed, row.ObjectEditor.ValidationGroup));
+				IRangeValidatedColumn rvCol = (IRangeValidatedColumn)row.DBColumn;
+				if (rvCol.MinimumAllowed != null || rvCol.MaximumAllowed != null)
+				{
+					headerControls.Add(CreateRangeValidator(tb.ID, row.Header, ValidationDataType.Date, rvCol.MinimumAllowed, rvCol.MaximumAllowed, row.ObjectEditor.ValidationGroup));
+				}
 			}
-
 
 
 			string calName = controlId + "_cal_" + row.Id;

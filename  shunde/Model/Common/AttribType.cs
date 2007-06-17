@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Common
 {
@@ -158,18 +159,18 @@ namespace Shunde.Common
 		{
 
 			DBTable tbl = new DBTable("AttribType", new DBColumn[] {
-				new DBColumn( "owner", typeof(DBObject), false ),
-				new DBColumn( "name", typeof(string), 1, 200 ),
-				new DBColumn( "instructions", typeof(string), true ),
-				new DBColumn( "dataType", typeof(AttribDataType), false ),
-				new DBColumn( "isShared", typeof(bool), false ),
-				new DBColumn( "allowMultiSelections", typeof(bool), false ),
-				new DBColumn( "suffix", typeof(string), 0, 100 ),
-				new DBColumn( "decimalPlaces", typeof(int?), true, 0, 100 ),
-				new DBColumn( "isRequired", typeof(bool), false ),
-				new DBColumn( "isImage", typeof(bool), false ),
-				new DBColumn( "isMultiline", typeof(bool), false ),
-				new DBColumn( "useRichTextEditor", typeof(bool), false )
+				new DBObjectColumn( "owner", typeof(DBObject), false ),
+				new SingleLineString( "name", 1, 200 ),
+				new MultiLineString( "instructions", true ),
+				new DBObjectColumn( "dataType", typeof(AttribDataType), false ),
+				new BoolColumn( "isShared"),
+				new BoolColumn( "allowMultiSelections"),
+				new SingleLineString( "suffix", 0, 20 ),
+				new NumberColumn( "decimalPlaces", typeof(int?), 0, 100 ),
+				new BoolColumn( "isRequired" ),
+				new BoolColumn( "isImage"),
+				new BoolColumn( "isMultiline"),
+				new BoolColumn( "useRichTextEditor" )
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(AttribType), tbl);

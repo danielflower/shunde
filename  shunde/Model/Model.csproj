@@ -59,6 +59,18 @@
     <Compile Include="Common\GenericTypeType.cs" />
     <Compile Include="Common\IAttribRelation.cs" />
     <Compile Include="Common\TreeNode.cs" />
+    <Compile Include="Framework\Columns\BinaryDataColumn.cs" />
+    <Compile Include="Framework\Columns\BoolColumn.cs" />
+    <Compile Include="Framework\Columns\ColorColumn.cs" />
+    <Compile Include="Framework\Columns\DateTimeColumn.cs" />
+    <Compile Include="Framework\Columns\DBObjectColumn.cs" />
+    <Compile Include="Framework\Columns\EnumColumn.cs" />
+    <Compile Include="Framework\Columns\IRangeValidatedColumn.cs" />
+    <Compile Include="Framework\Columns\MultiLineString.cs" />
+    <Compile Include="Framework\Columns\NumberColumn.cs" />
+    <Compile Include="Framework\Columns\SingleLineString.cs" />
+    <Compile Include="Framework\Columns\StringColumn.cs" />
+    <Compile Include="Framework\DBManager.cs" />
     <Compile Include="Utilities\Encrypter.cs" />
     <Compile Include="Utilities\FrameworkUtils.cs" />
     <Compile Include="Utilities\ImageUtils.cs" />
@@ -66,13 +78,14 @@
     <Compile Include="Web\ColorPicker.cs" />
     <Compile Include="Web\ComboBox.cs" />
     <Compile Include="Web\ControlCreator.cs" />
+    <Compile Include="Web\DateTimePicker.cs" />
     <Compile Include="Web\ShundePageBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Enumerations.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Framework\BinaryData.cs" />
-    <Compile Include="Framework\DBColumn.cs" />
+    <Compile Include="Framework\Columns\DBColumn.cs" />
     <Compile Include="Framework\DBObject.cs" />
     <Compile Include="Framework\DBTable.cs" />
     <Compile Include="Framework\ObjectInfo.cs" />
@@ -94,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ObjectEditorScripts.js" />
+    <EmbeddedResource Include="Resources\DateTimePickerScripts.js" />
     <EmbeddedResource Include="Resources\Cross.gif" />
     <EmbeddedResource Include="Resources\Tick.gif" />
     <EmbeddedResource Include="Resources\TransparencyIndicator.gif" />

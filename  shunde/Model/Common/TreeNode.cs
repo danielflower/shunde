@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Common
 {
@@ -19,14 +20,6 @@ namespace Shunde.Common
 			set { name = value; }
 		}
 
-		private string notes;
-
-		/// <summary>Notes pertaining to this TreeNode</summary>
-		public string Notes
-		{
-			get { return notes; }
-			set { notes = value; }
-		}
 
 		private TreeNode parent;
 
@@ -110,10 +103,9 @@ namespace Shunde.Common
 		{
 
 			DBTable tbl = new DBTable("TreeNode", new DBColumn[] {
-				new DBColumn( "name", typeof(string), 1, 200 ),
-				new DBColumn( "notes", typeof(string), true ),
-				new DBColumn( "parent", typeof(TreeNode), true),
-				new DBColumn( "isHidden", typeof(bool), false)
+				new SingleLineString( "name", 1, 200 ),
+				new DBObjectColumn( "parent", typeof(TreeNode), true),
+				new BoolColumn( "isHidden")
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(TreeNode), tbl);
@@ -396,7 +388,7 @@ namespace Shunde.Common
 			String sql = "SELECT id FROM TreeNode WHERE FREETEXT( *, '" + DBUtils.ParseSql(query) + "' )";
 
 			List<TreeNode> al = new List<TreeNode>();
-			SqlDataReader sdr = DBUtils.ExecuteSqlQuery(sql);
+			SqlDataReader sdr = DBManager.ExecuteSqlQuery(sql);
 			while (sdr.Read())
 			{
 				TreeNode curCat = FindTreeNode(cats, System.Convert.ToInt32(sdr["id"]));

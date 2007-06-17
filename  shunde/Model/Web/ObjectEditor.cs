@@ -78,6 +78,22 @@ namespace Shunde.Web
 		}
 
 
+		/// <summary>
+		/// Gets or sets the row with the specified column name
+		/// </summary>
+		/// <param name="columnName">The name of column that this row refers to</param>
+		public ObjectEditorRow this[string columnName]
+		{
+			get
+			{
+				return this.GetRow(columnName);
+			}
+			set
+			{
+				this.AddRow(columnName);
+			}
+		}
+
 
 
 		private Unit stringTextBoxWidth = new Unit("95%");

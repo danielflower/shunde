@@ -20,7 +20,7 @@ public partial class EditObjects_SelectObject : PageBase
 
 		Page.Title = "Select an object";
 
-		DBUtils.GetSqlConnection().ChangeDatabase(GetStringParam("dbName"));
+		DBManager.SqlConnection.ChangeDatabase(GetStringParam("dbName"));
 
 		functionName.Text = GetStringParam("functionName");
 

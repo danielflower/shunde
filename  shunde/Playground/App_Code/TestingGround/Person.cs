@@ -1,5 +1,6 @@
 using System;
 using Shunde.Framework;
+using Shunde.Framework.Columns;
 
 /// <summary>
 /// Summary description for Person
@@ -50,9 +51,9 @@ namespace TestingGround
 		{
 
 			DBTable tbl = new DBTable("Person", new DBColumn[] {
-				new DBColumn( "firstName", typeof(string), 1, 200 ),
-				new DBColumn( "surname", typeof(string), 1, 200 ),
-				new DBColumn( "password", typeof(string), 1, 100 )
+				new SingleLineString( "firstName", 1, 200 ),
+				new SingleLineString( "surname", 1, 200 ),
+				new SingleLineString( "password", 1, 100 )
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(Person), tbl);

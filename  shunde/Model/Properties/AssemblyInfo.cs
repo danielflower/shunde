@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 [assembly: System.Web.UI.WebResource("Shunde.Resources.ObjectEditorScripts.js", "text/javascript", PerformSubstitution = false)]
 [assembly: System.Web.UI.WebResource("Shunde.Resources.ComboBoxScripts.js", "text/javascript", PerformSubstitution = false)]
 [assembly: System.Web.UI.WebResource("Shunde.Resources.ColorPickerScripts.js", "text/javascript", PerformSubstitution = true)]
+[assembly: System.Web.UI.WebResource("Shunde.Resources.DateTimePickerScripts.js", "text/javascript", PerformSubstitution = false)]
 
 
 // Setting ComVisible to false makes the types in this assembly not visible 

@@ -12,6 +12,7 @@ using System.Web.UI.HtmlControls;
 using Shunde.Framework;
 using Shunde.Utilities;
 using Shunde.Web;
+using Shunde.Framework.Columns;
 
 public partial class EditObjects_Edit : PageBase
 {
@@ -27,7 +28,7 @@ public partial class EditObjects_Edit : PageBase
 
 
 		dbName = GetStringParam("dbName");
-		DBUtils.GetSqlConnection().ChangeDatabase(dbName);
+		DBManager.SqlConnection.ChangeDatabase(dbName);
 
 		Assembly ass = Assembly.Load(GetStringParam("assName"));
 		obj = DBObject.CreateObject(ass, GetStringParam("className"));
@@ -66,7 +67,7 @@ public partial class EditObjects_Edit : PageBase
 					continue;
 				}
 
-				ObjectEditorRow row = this.ObjectEditor.GetRow(col.Name);
+				ObjectEditorRow row = this.ObjectEditor[col.Name];
 
 				if (col.Type.Equals(typeof(DBObject)) || col.Type.IsSubclassOf(typeof(DBObject)))
 				{
@@ -86,7 +87,7 @@ public partial class EditObjects_Edit : PageBase
 				{
 					row.ViewBinaryDataUrl = "ViewBinaryData.aspx?objectId=";
 				}
-				else if (FrameworkUtils.IsEnumOrNullableEnum(col.Type))
+				else if (EnumColumn.IsEnumOrNullableEnum(col.Type))
 				{
 					row.SetEnumListItems(col.Type, (Enum)obj.Get(col.Name));
 					row.InputMode = InputMode.RadioButtonList;

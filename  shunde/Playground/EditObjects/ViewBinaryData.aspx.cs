@@ -10,6 +10,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 public partial class EditObjects_ViewBinaryData : PageBase
 {

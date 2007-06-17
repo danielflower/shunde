@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Shunde.Framework;
 using System.Drawing;
+using Shunde.Framework.Columns;
 
 /// <summary>
 /// Summary description for Car
@@ -65,12 +66,12 @@ namespace TestingGround {
 		{
 
 			DBTable tbl = new DBTable("Car", new DBColumn[] {
-				new DBColumn( "make", typeof(string), 1, 200 ),
-				new DBColumn( "year", typeof(short?), true, (short?)1000, (short?)2000 ),
-				new DBColumn( "person", typeof(Person), true ),
-				new DBColumn( "dateImported", typeof(DateTime?), true ),
-				new DBColumn( "picture", typeof(BinaryData), true ),
-				new DBColumn( "color", typeof(Color), true )
+				new SingleLineString( "make", 1, 200 ),
+				new NumberColumn( "year", typeof(short?), (short?)1000, (short?)2000 ),
+				new DBObjectColumn( "person", typeof(Person), true ),
+				new DateTimeColumn( "dateImported", true, DateTimePart.Date ),
+				new BinaryDataColumn( "picture", true ),
+				new ColorColumn("color", true)
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(Car), tbl);

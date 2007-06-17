@@ -5,6 +5,7 @@ using Shunde.Framework;
 using System.Web.UI.WebControls;
 using System.Reflection;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Web
 {
@@ -311,7 +312,7 @@ namespace Shunde.Web
 		/// <param name="currentValue">The current value</param>
 		public void SetEnumListItems(Type type, Enum currentValue)
 		{
-			if (!FrameworkUtils.IsEnumOrNullableEnum(type))
+			if (!EnumColumn.IsEnumOrNullableEnum(type))
 			{
 				throw new ArgumentException("The type " + type.FullName + " is not an enumeration", "type");
 			}
@@ -360,7 +361,8 @@ namespace Shunde.Web
 			}
 			else if (t == typeof(string))
 			{
-				if (this.DBColumn.MaxLength < 0)
+				
+				if (this.DBColumn is MultiLineString)
 				{
 					this.inputMode = InputMode.MultilineTextBox;
 				}
@@ -389,7 +391,7 @@ namespace Shunde.Web
 			{
 				this.inputMode = InputMode.DateTimePicker;
 			}
-			else if (FrameworkUtils.IsEnumOrNullableEnum(t))
+			else if (EnumColumn.IsEnumOrNullableEnum(t))
 			{
 				this.inputMode = InputMode.DropDownList;
 			}

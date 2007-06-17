@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Utilities
 {
@@ -174,29 +175,39 @@ namespace Shunde.Utilities
 			t += " " + nullVal + uniqueVal;
 
 			string cks = "";
-			if (col.MinLength > 0)
-			{
-				cks = " LEN([" + col.Name + "]) >= " + col.MinLength;
-			}
 
 
-			if (col.MinAllowed != null)
+			if (col is StringColumn)
 			{
-				if (cks.Length > 0)
+				StringColumn strCol = (StringColumn)col;
+				if (strCol.MinLength > 0)
 				{
-					cks += " AND";
+					cks = " LEN([" + strCol.Name + "]) >= " + strCol.MinLength;
 				}
-				cks += " [" + col.Name + "] >= " + col.GetSqlText(col.MinAllowed);
 			}
 
-			if (col.MaxAllowed != null)
+			if (col is IRangeValidatedColumn)
 			{
-				if (cks.Length > 0)
+				IRangeValidatedColumn rvCol = (IRangeValidatedColumn)col;
+				if (rvCol.MinimumAllowed != null)
 				{
-					cks += " AND";
+					if (cks.Length > 0)
+					{
+						cks += " AND";
+					}
+					cks += " [" + col.Name + "] >= " + col.GetSqlText(rvCol.MinimumAllowed);
 				}
-				cks += " [" + col.Name + "] <= " + col.GetSqlText(col.MaxAllowed);
+
+				if (rvCol.MaximumAllowed != null)
+				{
+					if (cks.Length > 0)
+					{
+						cks += " AND";
+					}
+					cks += " [" + col.Name + "] <= " + col.GetSqlText(rvCol.MaximumAllowed);
+				}
 			}
+
 
 			if (col.Constraints.Length > 0)
 			{
@@ -223,13 +234,14 @@ namespace Shunde.Utilities
 
 			if (t.Equals(typeof(string)))
 			{
-				if (col.MaxLength < 0)
+				if (col is MultiLineString)
 				{
 					return "NTEXT";
 				}
 				else
 				{
-					return "NVARCHAR(" + col.MaxLength + ")";
+					SingleLineString strCol = (SingleLineString)col;
+					return "NVARCHAR(" + strCol.MaxLength + ")";
 				}
 			}
 

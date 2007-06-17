@@ -1,6 +1,7 @@
 using System;
 using Shunde.Framework;
 using System.Web.UI.WebControls;
+using Shunde.Framework.Columns;
 
 
 namespace TestingGround
@@ -40,8 +41,8 @@ namespace TestingGround
 		{
 
 			DBTable tbl = new DBTable("ImportedCar", new DBColumn[] {
-				new DBColumn( "manual", typeof(BinaryData), false ),
-				new DBColumn( "horizontalAlign", typeof(HorizontalAlign?), true)
+				new BinaryDataColumn( "manual", false ),
+				new EnumColumn( "horizontalAlign", typeof(HorizontalAlign?))
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(ImportedCar), tbl);

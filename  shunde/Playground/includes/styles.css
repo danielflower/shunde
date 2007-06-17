@@ -24,6 +24,16 @@
 }
 
 
+a:link, a:visited
+{
+	color: Blue;
+}
+
+a:hover
+{
+	color: Red;
+}
+
 #navigationContainer a:link, a:visited
 {
 	color: White;

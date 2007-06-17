@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Text;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Common
 {
@@ -62,7 +63,7 @@ namespace Shunde.Common
 		public TextSection(string code)
 		{
 			this.code = code;
-			SqlDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT id FROM TextSection WHERE code = '" + DBUtils.ParseSql(code) + "'");
+			SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT id FROM TextSection WHERE code = '" + DBUtils.ParseSql(code) + "'");
 			if (sdr.Read())
 			{
 				Id = Convert.ToInt32(sdr["id"]);
@@ -80,10 +81,10 @@ namespace Shunde.Common
 		{
 
 			DBTable tbl = new DBTable("TextSection", new DBColumn[] {
-				new DBColumn( "code", typeof(string), 1, 400 ),
-				new DBColumn( "header", typeof(string), 0, 200 ),
-				new DBColumn( "content", typeof(string), 0, -1 ),
-				new DBColumn( "nameForAdministrators", typeof(string), 0, 200 )
+				new SingleLineString( "code", 1, 400 ),
+				new SingleLineString( "header", 0, 200 ),
+				new MultiLineString( "content", true ),
+				new SingleLineString( "nameForAdministrators", 0, 200 )
 			});
 			 
 			ObjectInfo.RegisterObjectInfo(typeof(TextSection), tbl);
