@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Common
 {
@@ -75,14 +76,14 @@ namespace Shunde.Common
 		static GenericType()
 		{
 
-			DBColumn codeCol = new DBColumn("code", typeof(int?), true, 1, null);
+			DBColumn codeCol = new NumberColumn("code", typeof(int?), 1, null);
 			codeCol.IsUnique = true;
 
 			DBTable tbl = new DBTable("GenericType", new DBColumn[] {
-				new DBColumn( "genericTypeType", typeof(GenericTypeType), false ),
-				new DBColumn( "name", typeof(string), 1, 100 ),
-				new DBColumn( "notes", typeof(string), true ),
-				new DBColumn( "formatInfo", typeof(string), 0, 200 ),
+				new DBObjectColumn( "genericTypeType", typeof(GenericTypeType), false ),
+				new SingleLineString( "name", 1, 100 ),
+				new MultiLineString( "notes", true ),
+				new SingleLineString( "formatInfo", 0, 200 ),
 				codeCol
 			});
 

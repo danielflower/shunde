@@ -28,5 +28,10 @@ Selected item: <asp:Literal ID="selectedItem" runat="server" /><br />
 <p>Changed to: 
 <asp:Literal ID="colorChangeLit" runat="server" EnableViewState="false" />
 </p>
+
+<p>Date picker:
+<Shunde:DateTimePicker ID="datePicker" runat="server" />
+</p>
+
 </asp:Content>
 

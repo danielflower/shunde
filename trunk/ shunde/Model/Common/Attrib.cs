@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Common
 {
@@ -11,6 +12,17 @@ namespace Shunde.Common
 	public class Attrib : TreeNode
 	{
 
+		private string notes;
+
+		/// <summary>
+		/// A string used for multiline string values
+		/// </summary>
+		public string Notes
+		{
+			get { return notes; }
+			set { notes = value; }
+		}
+	
 
 		private AttribType attribType;
 
@@ -78,8 +90,9 @@ namespace Shunde.Common
 		{
 
 			DBTable tbl = new DBTable("Attrib", new DBColumn[] {
-				new DBColumn( "attribType", typeof(AttribType), false ),
-				new DBColumn( "dataValue", typeof(BinaryData), true )
+				new DBObjectColumn( "attribType", typeof(AttribType), false ),
+				new BinaryDataColumn( "dataValue", true ),
+				new MultiLineString("notes", true)
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(Attrib), tbl);

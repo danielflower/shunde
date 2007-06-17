@@ -122,11 +122,11 @@ public partial class EditObjects_Default : PageBase
 		String curDBName = GetStringParam("dbName");
 		if (curDBName.Length == 0)
 		{
-			curDBName = DBUtils.GetSqlConnection().Database;
+			curDBName = DBManager.SqlConnection.Database;
 		}
 
-		SqlDataReader sdr = DBUtils.ExecuteSqlQuery("sp_helpdb");
-		//SqlDataReader sdr = DBUtils.executeSqlQuery("SELECT * FROM Master..sysdatabases" );
+		SqlDataReader sdr = DBManager.ExecuteSqlQuery("sp_helpdb");
+		//SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT * FROM Master..sysdatabases" );
 
 
 		while (sdr.Read())
@@ -161,7 +161,7 @@ public partial class EditObjects_Default : PageBase
 			return;
 		}
 
-		DBUtils.GetSqlConnection().ChangeDatabase(dbDropDown.SelectedItem.Value);
+		DBManager.SqlConnection.ChangeDatabase(dbDropDown.SelectedItem.Value);
 
 		objectsBox.Items.Clear();
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using Shunde.Utilities;
 using Shunde.Common;
+using Shunde.Framework;
 
 namespace Shunde.Web
 {
@@ -52,7 +53,7 @@ namespace Shunde.Web
 		/// <summary>Called when the page loads</summary>
 		public virtual void Page_Init(object Sender, EventArgs e)
 		{
-			DBUtils.SetSqlConnection(ConnectionString);
+			DBManager.SetSqlConnection(HttpContext.Current.Items, ConnectionString);
 		}
 
 		/// <summary>Called when the page loads</summary>
@@ -64,7 +65,7 @@ namespace Shunde.Web
 		/// <summary>Called when the page un-loads</summary>
 		public virtual void Page_Unload(object Sender, EventArgs e)
 		{
-			DBUtils.CloseSqlConnection();
+			DBManager.CloseSqlConnection();
 		}
 
 

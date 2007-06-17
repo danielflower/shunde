@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Shunde.Framework;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Common
 {
@@ -42,8 +43,8 @@ namespace Shunde.Common
 		{
 
 			DBTable tbl = new DBTable("AttribDataType", new DBColumn[] {
-				new DBColumn( "name", typeof(string), 1, 100 ),
-				new DBColumn( "dataClassName", typeof(string), 1, 200 )
+				new SingleLineString( "name", 1, 100 ),
+				new SingleLineString( "dataClassName", 1, 200 )
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(AttribDataType), tbl);

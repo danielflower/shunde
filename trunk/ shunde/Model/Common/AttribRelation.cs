@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Common
 {
@@ -41,8 +42,8 @@ namespace Shunde.Common
 		{
 
 			DBTable tbl = new DBTable("AttribRelation", new DBColumn[] {
-				new DBColumn( "attrib", typeof(Attrib), false ),
-				new DBColumn( "dbObject", typeof(DBObject), false )
+				new DBObjectColumn( "attrib", typeof(Attrib), false ),
+				new DBObjectColumn( "dbObject", typeof(DBObject), false )
 			});
 
 			tbl.UniqueIndexColumns = "attribId,dbObjectId";

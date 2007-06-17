@@ -11,25 +11,6 @@ namespace Shunde.Utilities
 	public static class FrameworkUtils
 	{
 
-		/// <summary>
-		/// Returns true if the specified type is an enumeration, or a nullable enumeration
-		/// </summary>
-		public static bool IsEnumOrNullableEnum(Type type)
-		{
-			if (type.IsEnum)
-			{
-				return true;
-			}
-
-			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-			{
-				type = Nullable.GetUnderlyingType(type);
-				return type.IsEnum;
-			}
-
-			return false;
-
-		}
 
 		/// <summary>
 		/// Returns an Object with the specified Type and whose value is equivalent to the specified object.

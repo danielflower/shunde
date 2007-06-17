@@ -5,6 +5,7 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Data;
 using Shunde.Utilities;
+using Shunde.Framework.Columns;
 
 namespace Shunde.Framework
 {
@@ -120,16 +121,16 @@ namespace Shunde.Framework
 		static DBObject()
 		{
 
-			DBColumn cnCol = new DBColumn("className", typeof(string), 1, 100);
+			DBColumn cnCol = new SingleLineString("className", 1, 150);
 			cnCol.Constraints = "className LIKE '_%._%'";
 
 			DBTable tbl = new DBTable("DBObject", new DBColumn[] {
 				cnCol,
-				new DBColumn( "isDeleted", typeof(bool), false),
-				new DBColumn( "displayOrder", typeof(int), false, -320000, 32000 ),
-				new DBColumn( "updateId", typeof(int), false),
-				new DBColumn( "lastUpdate", typeof(DateTime), false ),
-				new DBColumn( "lastUpdatedBy", typeof(string), 0, 100 ),
+				new BoolColumn("isDeleted"),
+				new NumberColumn( "displayOrder", typeof(int), -320000, 32000 ),
+				new NumberColumn( "updateId", typeof(int)),
+				new DateTimeColumn("lastUpdate", false, DateTimePart.DateAndTime),
+				new SingleLineString("lastUpdatedBy", 0, 100 ),
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(DBObject), tbl);
@@ -161,7 +162,7 @@ namespace Shunde.Framework
 			string sql = objectInfo.GetSelectStatement() + " WHERE [DBObject].[id] = " + id;
 
 
-			SqlDataReader sdr = DBUtils.ExecuteSqlQuery(sql);
+			SqlDataReader sdr = DBManager.ExecuteSqlQuery(sql);
 			if (sdr.Read())
 			{
 
@@ -196,7 +197,7 @@ namespace Shunde.Framework
 					}
 
 					FieldInfo fi = col.FieldInfo;
-					SqlDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT [" + col.Name + "] AS binaryData, [" + col.Name + "MimeType] AS mimeType, [" + col.Name + "Filename] AS filename FROM [" + table.Name + "] WHERE [id] = " + id);
+					SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT [" + col.Name + "] AS binaryData, [" + col.Name + "MimeType] AS mimeType, [" + col.Name + "Filename] AS filename FROM [" + table.Name + "] WHERE [id] = " + id);
 					sdr.Read();
 
 					string mimeType = sdr["mimeType"].ToString();
@@ -345,7 +346,7 @@ namespace Shunde.Framework
 								value = null;
 							}
 						}
-						else if (!col.Type.IsEnum && FrameworkUtils.IsEnumOrNullableEnum(col.Type))
+						else if (!col.Type.IsEnum && EnumColumn.IsEnumOrNullableEnum(col.Type))
 						{
 							Type underlyingType = Nullable.GetUnderlyingType(col.Type);
 							value = Enum.Parse(underlyingType, value.ToString());
@@ -553,13 +554,13 @@ END
 						throw new ShundeException("Error while validating column " + col.Name + " with value " + value);
 					}
 
-					if (DBColumn.IsColumnNull(value))
+					if (col.IsNull(value))
 					{
 						value = DBNull.Value;
 					}
 
 					// add the Value as a parameter to the statement
-					SqlParameter param = new SqlParameter("@" + col.Name, DBUtils.GetSqlDbType(col));
+					SqlParameter param = new SqlParameter("@" + col.Name, col.GetCorrespondingSqlDBType());
 					param.IsNullable = col.AllowNulls;
 					sqlCommand.Parameters.Add(param);
 
@@ -599,7 +600,7 @@ END
 						classNameParam.IsNullable = col.AllowNulls;
 						sqlCommand.Parameters.Add(classNameParam);
 
-						if (DBColumn.IsColumnNull(value))
+						if (col.IsNull(value))
 						{
 							classNameParam.Value = value;
 							param.Value = value;
@@ -621,7 +622,7 @@ END
 						filenameParam.IsNullable = col.AllowNulls;
 						sqlCommand.Parameters.Add(filenameParam);
 
-						if (DBColumn.IsColumnNull(value))
+						if (col.IsNull(value))
 						{
 							mimeTypeParam.Value = DBNull.Value;
 							filenameParam.Value = DBNull.Value;
@@ -751,7 +752,7 @@ END
 				try
 				{
 					sqlCommand.CommandText = sql.ToString();
-					DBUtils.ExecuteSqlCommand(sqlCommand);
+					DBManager.ExecuteSqlCommand(sqlCommand);
 				}
 				catch (ShundeSqlException sqlEx)
 				{
@@ -762,7 +763,7 @@ END
 					}
 					else if (sqlEx.Message.IndexOf("conflicted with COLUMN CHECK constraint") > -1)
 					{
-						String colName = sqlEx.Message.Substring(sqlEx.Message.IndexOf(", column '"));
+						string colName = sqlEx.Message.Substring(sqlEx.Message.IndexOf(", column '"));
 						colName = colName.Substring(colName.IndexOf("'") + 1);
 						colName = colName.Substring(0, colName.IndexOf("'"));
 						throw new ValidationException("You have entered an invalid value for " + TextUtils.MakeFriendly(colName) + ". Please try again.");
@@ -832,7 +833,7 @@ END
 		public static DBObject[] GetObjects(string query, Type baseType)
 		{
 
-			SqlDataReader sdr = DBUtils.ExecuteSqlQuery(query);
+			SqlDataReader sdr = DBManager.ExecuteSqlQuery(query);
 			List<DBObject> objs = new List<DBObject>();
 
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(baseType);
@@ -869,7 +870,7 @@ END
 
 			string query = "SELECT " + oi.GetJoinedColumnClause(extendingTypes) + " FROM " + oi.GetJoinedFromClause(extendingTypes) + " " + where;
 
-			SqlDataReader sdr = DBUtils.ExecuteSqlQuery(query);
+			SqlDataReader sdr = DBManager.ExecuteSqlQuery(query);
 			List<DBObject> objects = new List<DBObject>();
 
 			while (sdr.Read())
@@ -923,7 +924,7 @@ END
 				throw new ObjectDoesNotExistException();
 			}
 
-			SqlDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT [id], [className] FROM [DBObject] WHERE [id] IN (" + query + ")");
+			SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT [id], [className] FROM [DBObject] WHERE [id] IN (" + query + ")");
 
 			if (!sdr.Read())
 			{
@@ -966,7 +967,7 @@ END
 				throw new ObjectDoesNotExistException();
 			}
 
-			SqlDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT [className] FROM [DBObject] WHERE [id] = " + id);
+			SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT [className] FROM [DBObject] WHERE [id] = " + id);
 
 			if (!sdr.Read())
 			{
