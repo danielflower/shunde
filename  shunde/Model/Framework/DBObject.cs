@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Data;
 using Shunde.Utilities;
 using Shunde.Framework.Columns;
+using System.Diagnostics;
 
 namespace Shunde.Framework
 {
@@ -992,8 +993,10 @@ END
 		/// <summary>Gets and populates a single DBObject of the given type with the supplied ID</summary>
 		/// <remarks>Use this method when you know the type as it is faster than <see cref="GetObject(int)" /></remarks>
 		/// <exception cref="ObjectDoesNotExistException">Thrown if the specified ID is not found in the database.</exception>
+		/// <param name="id">The ID of the object</param>
+		/// <typeparam name="TDBObject">A concrete type which extends DBObject</typeparam>
 		/// <returns>Returns a fully populated DBObject</returns>
-		public static DBObject GetObject(int id, Type objectType)
+		public static TDBObject GetObject<TDBObject>(int id) where TDBObject : DBObject, new()
 		{
 
 			if (id < 1)
@@ -1001,10 +1004,9 @@ END
 				throw new ObjectDoesNotExistException();
 			}
 
-			DBObject obj = CreateObject(Assembly.GetCallingAssembly(), objectType.FullName);
+			TDBObject obj = new TDBObject();
 			obj.id = id;
 			obj.Populate();
-
 			return obj;
 
 		}

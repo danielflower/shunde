@@ -10,6 +10,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using Shunde.Framework;
 using Shunde.Utilities;
+using Shunde.Web;
 
 public partial class ClassCreator_Default : PageBase
 {
@@ -47,18 +48,15 @@ public partial class ClassCreator_Default : PageBase
 		if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
 		{
 			TextBox fieldNameTB = (TextBox)e.Item.FindControl("fieldNameTB");
-			TextBox typeTB = (TextBox)e.Item.FindControl("typeTB");
+			ComboBox typeTB = (ComboBox)e.Item.FindControl("typeTB");
 			CheckBox allowNullsCB = (CheckBox)e.Item.FindControl("allowNullsCB");
 			TextBox minAllowedTB = (TextBox)e.Item.FindControl("minAllowedTB");
 			TextBox maxAllowedTB = (TextBox)e.Item.FindControl("maxAllowedTB");
 
-			typeTB.Attributes["onkeyup"] = "typeChanged( '" + fieldNameTB.ClientID + "', '" + typeTB.ClientID + "', '" + allowNullsCB.ClientID + "', '" + minAllowedTB.ClientID + "', '" + maxAllowedTB.ClientID + "' );";
+			//typeTB.Attributes["onkeyup"] = "typeChanged( '" + fieldNameTB.ClientID + "', '" + typeTB.ClientID + "', '" + allowNullsCB.ClientID + "', '" + minAllowedTB.ClientID + "', '" + maxAllowedTB.ClientID + "' );";
+			typeTB.DataSource = ColumnTypes.DataSource;
+			typeTB.DataBind();
 
-		}
-		else if (e.Item.ItemType == ListItemType.Footer)
-		{
-			Button submitButton = (Button)e.Item.FindControl("submitButton");
-			//submitButton.Click += new EventHandler(submitButton_Click);
 		}
 	}
 
@@ -81,7 +79,7 @@ public partial class ClassCreator_Default : PageBase
 				continue;
 			}
 			TextBox fieldNameTB = (TextBox)item.FindControl("fieldNameTB");
-			TextBox typeTB = (TextBox)item.FindControl("typeTB");
+			ComboBox typeTB = (ComboBox)item.FindControl("typeTB");
 			CheckBox allowNullsCB = (CheckBox)item.FindControl("allowNullsCB");
 			TextBox minAllowedTB = (TextBox)item.FindControl("minAllowedTB");
 			TextBox maxAllowedTB = (TextBox)item.FindControl("maxAllowedTB");
@@ -116,23 +114,28 @@ public partial class ClassCreator_Default : PageBase
 			string propertyName = name.Substring(0,1).ToUpper() + name.Substring(1);
 
 
+			bool allowNulls = allowNullsCB.Checked;
 			string type = typeTB.Text.Trim();
-
-
-			string allowNulls = (type == "string") ? "" : ", " + allowNullsCB.Checked.ToString().ToLower();
-
-			if (type.Equals("multiline"))
+			string dotNetType = type;
+			if (allowNulls && Array.IndexOf(ColumnTypes.NullablePrimitives, type) >= 0)
 			{
-				type = "string";
+				dotNetType += "?";
+			}
+			else if (type == ColumnTypes.SingleLineString || type == ColumnTypes.MultilineString)
+			{
+				dotNetType = "string";
 			}
 
 
 
+
+
+
 			fields += @"
-		private " + type + " " + fieldNameTB.Text + @";
+		private " + dotNetType + " " + fieldNameTB.Text + @";
 
 		/// <summary>" + Server.HtmlEncode(summaryTB.Text) + @"</summary>
-		public " + type + " " + propertyName + @"
+		public " + dotNetType + " " + propertyName + @"
 		{
 			get { return this." + name + @"; }
 			set { this." + name + @" = value; }
@@ -140,7 +143,7 @@ public partial class ClassCreator_Default : PageBase
 ";
 
 
-			if (IsDBObjectType(type))
+			if (IsDBObjectType(dotNetType))
 			{
 				dbObjectColTypes.Add(type);
 				dbObjectColNames.Add(name);
@@ -151,7 +154,7 @@ public partial class ClassCreator_Default : PageBase
 			string maxLength = maxAllowedTB.Text;
 
 
-			if (type == "DateTime")
+			if (type == ColumnTypes.DateTime)
 			{
 				if (minAllowedTB.Text.Length > 0)
 				{
@@ -181,11 +184,6 @@ public partial class ClassCreator_Default : PageBase
 				}
 			}
 
-			if (allowNulls.Length == 0 && (minLength.Length == 0 || maxLength.Length == 0))
-			{
-				infoLabel.Text = "Please specify a minimum and maximum value for " + name;
-				return;
-			}
 
 			if (minLength.Length > 0 ^ maxLength.Length > 0)
 			{
@@ -205,8 +203,60 @@ public partial class ClassCreator_Default : PageBase
 				maxLength = ", " + maxLength;
 			}
 
+			switch (type)
+			{
+				case ColumnTypes.Int:
+				case ColumnTypes.Short:
+				case ColumnTypes.Long:
+				case ColumnTypes.Float:
+				case ColumnTypes.Double:
+					{
+						if (minLength.Length > 0 || maxLength.Length > 0)
+						{
+							minLength = (minLength == "null") ? ", null" : ", (" + dotNetType + ")" + minLength;
+							maxLength = (maxLength == "null") ? ", null" : ", (" + dotNetType + ")" + maxLength;
+						}
+						dbcols.Add("new NumberColumn(\"" + name + "\", typeof(" + dotNetType + @")" + minLength + maxLength + ")");
+						break;
+					}
+				case ColumnTypes.SingleLineString:
+					{
+						dbcols.Add("new SingleLineString(\"" + name + "\"" + minLength + maxLength + ")");
+						break;
+					}
 
-			dbcols.Add( "new DBColumn( \"" + name + "\", typeof(" + type + @")" + allowNulls + minLength + maxLength + " )" );
+				case ColumnTypes.MultilineString:
+					{
+						dbcols.Add("new MultiLineString(\"" + name + "\", " + allowNulls.ToString().ToLower() + ")");
+						break;
+					}
+				case ColumnTypes.BinaryData:
+					{
+						dbcols.Add("new BinaryDataColumn(\"" + name + "\", " + allowNulls.ToString().ToLower() + ")");
+						break;
+					}
+				case ColumnTypes.Color:
+					{
+						dbcols.Add("new ColorColumn(\"" + name + "\", " + allowNulls.ToString().ToLower() + ")");
+						break;
+					}
+				case ColumnTypes.DateTime:
+					{
+						if (minLength.Length > 0 || maxLength.Length > 0)
+						{
+							minLength = (minLength == "null") ? ", null" : ", (" + dotNetType + ")" + minLength;
+							maxLength = (maxLength == "null") ? ", null" : ", (" + dotNetType + ")" + maxLength;
+						}
+						dbcols.Add("new DateTimeColumn(\"" + name + "\", " + allowNulls.ToString().ToLower() + minLength + maxLength + ", DateTimePart.DateAndOptionallyTime)");
+						break;
+					}
+				default:
+					{
+						dbcols.Add("new DBObjectColumn(\"" + name + "\", typeof(" + dotNetType + "), " + allowNulls.ToString().ToLower() + ")");
+						break;
+					}
+			}
+
 
 		}
 
@@ -220,7 +270,7 @@ public partial class ClassCreator_Default : PageBase
 
 		s.Append(@"using System;
 using Shunde.Framework;
-
+using Shunde.Framework.Columns;
 
 namespace " + namespaceTB.Text + @" {
 
@@ -316,7 +366,7 @@ namespace " + namespaceTB.Text + @" {
 	bool IsDBObjectType(string name)
 	{
 		string[] primitives = new string[] {
-			"multiline", "string", "int", "short", "long", "float", "double", "bool", "DateTime", "BinaryData"
+			"multiline", "string", "int", "short", "long", "float", "double", "bool", "DateTime", "BinaryData", "Color"
 		};
 
 		foreach (string primitive in primitives)
@@ -343,7 +393,33 @@ namespace " + namespaceTB.Text + @" {
 		return singular + "s";
 	}
 
+	private static class ColumnTypes
+	{
+		public const string Int = "int";
+		public const string Short = "short";
+		public const string Long = "long";
+		public const string Float = "float";
+		public const string Double = "double";
+		public const string SingleLineString = "Single Line String";
+		public const string MultilineString = "Multiline String";
+		public const string DateTime = "DateTime";
+		public const string Color = "Color";
+		public const string BinaryData = "BinaryData";
+//		public const string Enumeration = "Enumeration";
+//		public const string DBObject = "DBObject";
 
+
+		public static readonly string[] NullablePrimitives = new string[] { Int, Short, Long, Float, Double, DateTime };
+		public static readonly string[] DataSource;
+
+		static ColumnTypes()
+		{
+			string[] types = new string[] { Int, Short, Long, Float, Double, SingleLineString, MultilineString, DateTime, Color, BinaryData };
+			Array.Sort(types);
+			DataSource = types;
+		}
+
+	}
 
 }
 
