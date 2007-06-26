@@ -69,6 +69,9 @@ public partial class ClassCreator_Default : PageBase
 		string fields = "";
 		List<string> dbcols = new List<string>();
 
+		List<string> enumColTypes = new List<string>();
+		List<string> enumColNames = new List<string>();
+
 		List<string> dbObjectColTypes = new List<string>();
 		List<string> dbObjectColNames = new List<string>();
 
@@ -125,6 +128,12 @@ public partial class ClassCreator_Default : PageBase
 			{
 				dotNetType = "string";
 			}
+			else if (IsEnumType(type))
+			{
+				dotNetType = type.Substring(5);
+				enumColNames.Add(fieldNameTB.Text);
+				enumColTypes.Add(dotNetType);
+			}
 
 
 
@@ -143,7 +152,7 @@ public partial class ClassCreator_Default : PageBase
 ";
 
 
-			if (IsDBObjectType(dotNetType))
+			if (IsDBObjectType(type, dotNetType))
 			{
 				dbObjectColTypes.Add(type);
 				dbObjectColNames.Add(name);
@@ -203,6 +212,8 @@ public partial class ClassCreator_Default : PageBase
 				maxLength = ", " + maxLength;
 			}
 
+
+
 			switch (type)
 			{
 				case ColumnTypes.Int:
@@ -250,9 +261,17 @@ public partial class ClassCreator_Default : PageBase
 						dbcols.Add("new DateTimeColumn(\"" + name + "\", " + allowNulls.ToString().ToLower() + minLength + maxLength + ", DateTimePart.DateAndOptionallyTime)");
 						break;
 					}
+					
 				default:
 					{
-						dbcols.Add("new DBObjectColumn(\"" + name + "\", typeof(" + dotNetType + "), " + allowNulls.ToString().ToLower() + ")");
+						if (IsEnumType(type))
+						{
+							dbcols.Add("new EnumColumn(\"" + name + "\", typeof(" + dotNetType + "))");
+						}
+						else
+						{
+							dbcols.Add("new DBObjectColumn(\"" + name + "\", typeof(" + dotNetType + "), " + allowNulls.ToString().ToLower() + ")");
+						}
 						break;
 					}
 			}
@@ -341,9 +360,47 @@ namespace " + namespaceTB.Text + @" {
 ");
 		}
 
+		for (int i = 0; i < enumColTypes.Count; i++)
+		{
+			string type = enumColTypes[i];
+			string name = enumColNames[i];
+
+			s.Append(@"
+		/// <summary>Gets all the " + className + @" objects in the database filtered by the given <see cref=""" + type + @""">" + name + @"</see></summary>
+		/// <param name=""" + name + @""">The " + type + @" to filter by</param>
+		public static " + className + @"[] Get" + Pluralise(className) + @"(" + type + @" " + name + @")
+		{
+
+			Type t = typeof(" + className + @");
+			ObjectInfo oi = ObjectInfo.GetObjectInfo(t);
+			string sql = oi.GetSelectStatement() + "" WHERE [DBObject].[isDeleted] = 0 AND [" + className + @"].[" + name + @"] = (int)" + name + @" ORDER BY [DBObject].[displayOrder] ASC"";
+			return (" + className + @"[])DBObject.GetObjects(sql, t);
+
+		}
+");
+		}
+
 		s.Append(@"
 
 	}
+
+	");
+
+		for (int i = 0; i < enumColTypes.Count; i++)
+		{
+			string type = enumColTypes[i];
+			string name = enumColNames[i];
+			s.Append(@"
+
+	/// <summary>The " + name + @" of a " + className + @"</summary>
+	public enum " + type + @"
+	{
+
+	}
+");
+		}
+
+		s.Append(@"
 
 }
 
@@ -361,9 +418,12 @@ namespace " + namespaceTB.Text + @" {
 
 
 
+	bool IsEnumType(string enteredName)
+	{
+		return enteredName.StartsWith("enum ");
+	}
 
-
-	bool IsDBObjectType(string name)
+	bool IsDBObjectType(string enteredName, string name)
 	{
 		string[] primitives = new string[] {
 			"multiline", "string", "int", "short", "long", "float", "double", "bool", "DateTime", "BinaryData", "Color"
@@ -376,6 +436,12 @@ namespace " + namespaceTB.Text + @" {
 				return false;
 			}
 		}
+
+		if (enteredName.StartsWith("enum "))
+		{
+			return false;
+		}
+
 		return true;
 	}
 
@@ -405,7 +471,7 @@ namespace " + namespaceTB.Text + @" {
 		public const string DateTime = "DateTime";
 		public const string Color = "Color";
 		public const string BinaryData = "BinaryData";
-//		public const string Enumeration = "Enumeration";
+		public const string Enumeration = "enum ";
 //		public const string DBObject = "DBObject";
 
 
@@ -414,7 +480,7 @@ namespace " + namespaceTB.Text + @" {
 
 		static ColumnTypes()
 		{
-			string[] types = new string[] { Int, Short, Long, Float, Double, SingleLineString, MultilineString, DateTime, Color, BinaryData };
+			string[] types = new string[] { Int, Short, Long, Float, Double, SingleLineString, MultilineString, DateTime, Color, BinaryData, Enumeration };
 			Array.Sort(types);
 			DataSource = types;
 		}
