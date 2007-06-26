@@ -6,15 +6,16 @@ var ShundeComboBox = {
 	initialise: function(tb, lb) {
 	
 		lb.style.width = parseInt(tb.offsetWidth) + 'px';
-		lb.style.top = (parseInt(ShundeUtils.findPosY(tb)) + parseInt(tb.offsetHeight)) + 'px';
+		var tbYPos = parseInt(ShundeUtils.findPosY(tb));
+		var tbHeight = parseInt(tb.offsetHeight);
+		lb.style.top = (tbYPos + tbHeight) + 'px';
+		
 		mouseIsOverListbox = false;
 		
 	},
 
 	showListBox: function(tb, lb) {
-		
 		lb.style.visibility = 'visible';
-		
 	},
 	
 	updateBox: function(tb, lb) {

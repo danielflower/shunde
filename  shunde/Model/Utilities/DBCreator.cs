@@ -285,6 +285,11 @@ namespace Shunde.Utilities
 				return "IMAGE";
 			}
 
+			if (col.Type.IsEnum)
+			{
+				return "INT";
+			}
+
 			return t.Name;
 
 		}

@@ -16,7 +16,7 @@ namespace Shunde.Web
 	/// <summary>
 	/// A combo box, allowing the selection of an existing value in a drop-down list, or typing in a new value
 	/// </summary>
-	[ToolboxData("<{0}:ComboBox runat=server></{0}:ComboBox>")]
+	[ToolboxData("<{0}:ComboBox runat=server />")]
 	public class ComboBox : ListControl, INamingContainer
 	{
 
@@ -224,9 +224,7 @@ namespace Shunde.Web
 			tb.Attributes["autocomplete"] = "off";
 			tb.TabIndex = this.TabIndex;
 
-			Page.ClientScript.RegisterStartupScript(typeof(ComboBox), this.ID, "ShundeComboBox.initialise(" + tbVar + ", " + lbVar + ");", true);
-
-
+			Page.ClientScript.RegisterStartupScript(typeof(ComboBox), this.ClientID, "ShundeComboBox.initialise(" + tbVar + ", " + lbVar + ");", true);
 
 		}
 
