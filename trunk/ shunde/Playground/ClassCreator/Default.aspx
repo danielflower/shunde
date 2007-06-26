@@ -1,4 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/Template.master" EnableEventValidation="False" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="ClassCreator_Default" Title="Shunde Class Creator" %>
+
+<%@ Register Assembly="Shunde" Namespace="Shunde.Web" TagPrefix="Shunde" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="PageBody" Runat="Server">
 
 
@@ -39,7 +41,7 @@ Create a class with <asp:TextBox ID="numberToCreateTB" runat="server" TabIndex="
 	<ItemTemplate>
 			<tr>
 				<td><asp:TextBox ID="fieldNameTB" runat="server" TabIndex="1" /></td>
-				<td><asp:TextBox ID="typeTB" runat="server" TabIndex="1" /></td>
+				<td><Shunde:ComboBox ID="typeTB" runat="server" TabIndex="1" /></td>
 				<td><asp:CheckBox ID="allowNullsCB" runat="server" TabIndex="1" /></td>
 				<td><asp:TextBox ID="minAllowedTB" runat="server" TabIndex="1" style="width:100px;" /></td>
 				<td><asp:TextBox ID="maxAllowedTB" runat="server" TabIndex="1" style="width:100px;" /></td>
