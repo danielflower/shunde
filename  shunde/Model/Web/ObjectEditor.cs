@@ -807,7 +807,7 @@ namespace Shunde.Web
 		{
 			foreach (ObjectEditorRow row in this.rows)
 			{
-				if (row.DBColumn.Name.Equals(row))
+				if (row.DBColumn.Name.Equals(fieldName))
 				{
 					return row;
 				}
@@ -815,6 +815,11 @@ namespace Shunde.Web
 			return null;
 		}
 
+		/// <summary>Pass an array of strings and column infos for each string will be made with display order in ascending order</summary>
+		public void SetRows(params string[] fieldNames)
+		{
+			SetRows((IEnumerable<string>)fieldNames);
+		}
 
 		/// <summary>Pass an array of strings and column infos for each string will be made with display order in ascending order</summary>
 		public void SetRows(IEnumerable<string> fieldNames)

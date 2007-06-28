@@ -16,6 +16,7 @@ public partial class ClassCreator_Default : PageBase
 {
 	public override void Start()
 	{
+		
 
 		Page.Title = "Create C# Class File";
 
@@ -33,6 +34,10 @@ public partial class ClassCreator_Default : PageBase
 
 		textareaId.Text = this.outputTB.ClientID;
 
+	}
+
+	public override void Page_Unload(object Sender, EventArgs e)
+	{
 	}
 
 	void changeNumberButton_Click(object sender, EventArgs e)
@@ -67,6 +72,7 @@ public partial class ClassCreator_Default : PageBase
 		outputTB.Text = "";
 
 		string fields = "";
+		string properties = "";
 		List<string> dbcols = new List<string>();
 
 		List<string> enumColTypes = new List<string>();
@@ -140,9 +146,10 @@ public partial class ClassCreator_Default : PageBase
 
 
 
-			fields += @"
-		private " + dotNetType + " " + fieldNameTB.Text + @";
+			fields += @"		private " + dotNetType + " " + fieldNameTB.Text + @";
+";
 
+			properties += @"
 		/// <summary>" + Server.HtmlEncode(summaryTB.Text) + @"</summary>
 		public " + dotNetType + " " + propertyName + @"
 		{
@@ -299,11 +306,26 @@ namespace " + namespaceTB.Text + @" {
 	public class " + className + @" : DBObject
 	{
 
+		#region Fields
 ");
 
 		s.Append(fields);
 
-		s.Append( @"
+		s.Append(@"		#endregion
+
+
+		#region Properties
+");
+
+		s.Append(properties);
+
+		s.Append(@"
+		#endregion
+");
+
+		s.Append(@"
+
+		#region Static Constructor
 
 		/// <summary>Sets up the <see cref=""ObjectInfo"" /> for this class</summary>
 		static " + className + @"()
@@ -326,6 +348,10 @@ namespace " + namespaceTB.Text + @" {
 
 		}
 
+		#endregion
+
+
+		#region Static Methods
 
 		/// <summary>Gets all the " + className + @" objects in the database</summary>
 		public static " + className + @"[] Get" + Pluralise(className) + @"()
@@ -373,7 +399,7 @@ namespace " + namespaceTB.Text + @" {
 
 			Type t = typeof(" + className + @");
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(t);
-			string sql = oi.GetSelectStatement() + "" WHERE [DBObject].[isDeleted] = 0 AND [" + className + @"].[" + name + @"] = (int)" + name + @" ORDER BY [DBObject].[displayOrder] ASC"";
+			string sql = oi.GetSelectStatement() + "" WHERE [DBObject].[isDeleted] = 0 AND [" + className + @"].[" + name + @"] = "" + (int)" + name + @" + "" ORDER BY [DBObject].[displayOrder] ASC"";
 			return (" + className + @"[])DBObject.GetObjects(sql, t);
 
 		}
@@ -381,6 +407,7 @@ namespace " + namespaceTB.Text + @" {
 		}
 
 		s.Append(@"
+		#endregion
 
 	}
 
