@@ -394,9 +394,6 @@ namespace Shunde.Web
 				lc.Items.AddRange(row.ListItems.ToArray());
 			}
 
-
-			span.Controls.Add(lc);
-
 			CreateStandardRow(row, headerControls, tableRow, span);
 
 		}

@@ -335,7 +335,7 @@ namespace Shunde.Web
 				ListItem li = new ListItem();
 				li.Text = val.ToString();
 				li.Value = Convert.ToInt32(val).ToString();
-				li.Selected = val.Equals(currentValue);
+				li.Selected = (currentValue != null && val.Equals(currentValue));
 				this.ListItems.Add(li);
 			}
 
@@ -393,7 +393,7 @@ namespace Shunde.Web
 			}
 			else if (EnumColumn.IsEnumOrNullableEnum(t))
 			{
-				this.inputMode = InputMode.DropDownList;
+				this.inputMode = InputMode.RadioButtonList;
 			}
 			else if (t == typeof(System.Drawing.Color))
 			{

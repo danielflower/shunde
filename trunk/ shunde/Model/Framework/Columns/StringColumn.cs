@@ -86,6 +86,10 @@ namespace Shunde.Framework.Columns
 		public override void Validate(DBObject obj, object value)
 		{
 			base.Validate(obj, value);
+			if (value == null)
+			{
+				return;
+			}
 
 			string friendlyName = TextUtils.MakeFriendly(this.Name);
 

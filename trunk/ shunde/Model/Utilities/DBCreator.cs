@@ -231,6 +231,10 @@ namespace Shunde.Utilities
 		{
 
 			Type t = col.Type;
+			if (DBColumn.IsNullableType(t))
+			{
+				t = Nullable.GetUnderlyingType(t);
+			}
 
 			if (t.Equals(typeof(string)))
 			{

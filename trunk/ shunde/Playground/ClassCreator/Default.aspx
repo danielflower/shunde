@@ -9,7 +9,7 @@
 	<asp:Label ID="infoLabel" runat="server" Text="" ForeColor="Red" Style="display:block;"></asp:Label>
 	<asp:ValidationSummary ID="ValidationSummary1" runat="server" />
 
-Create a class with <asp:TextBox ID="numberToCreateTB" runat="server" TabIndex="1" Columns="4" Text="7" /> 
+Create a class with <asp:TextBox ID="numberToCreateTB" runat="server" TabIndex="1" Columns="4" Text="15" /> 
 	<asp:RangeValidator ID="RangeValidator1" runat="server" ControlToValidate="numberToCreateTB"
 		ErrorMessage="Please enter an integer here" MinimumValue="0" Type="Integer" MaximumValue="100">*</asp:RangeValidator>fields. 
 		<asp:Button ID="changeNumberButton" runat="server" TabIndex="1" Text="Go" CausesValidation="False" />&nbsp;<br />

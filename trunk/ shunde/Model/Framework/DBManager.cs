@@ -92,9 +92,12 @@ namespace Shunde.Framework
 			}
 			sqlConnection.Close();
 			sqlConnection.Dispose();
-			StorageContainer.Remove("sqlConnection");
-			StorageContainer.Remove("sqlTransaction");
-			storageContainer = null;
+			if (storageContainer != null)
+			{
+				storageContainer.Remove("sqlConnection");
+				storageContainer.Remove("sqlTransaction");
+				storageContainer = null;
+			}
 		}
 
 		/// <summary></summary>
