@@ -294,6 +294,11 @@ namespace Shunde.Utilities
 				return "INT";
 			}
 
+			if (col.Type.Equals(typeof(System.Drawing.Color)))
+			{
+				return "VARCHAR(20)";
+			}
+
 			return t.Name;
 
 		}
