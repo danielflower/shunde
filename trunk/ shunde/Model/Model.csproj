@@ -50,15 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Attrib.cs" />
-    <Compile Include="Common\AttribDataType.cs" />
-    <Compile Include="Common\AttribRelation.cs" />
-    <Compile Include="Common\AttribType.cs" />
     <Compile Include="Common\Email.cs" />
     <Compile Include="Common\GenericType.cs" />
     <Compile Include="Common\GenericTypeType.cs" />
-    <Compile Include="Common\IAttribRelation.cs" />
-    <Compile Include="Common\TreeNode.cs" />
+    <Compile Include="Common\ITreeNode.cs" />
+    <Compile Include="Common\TreeNodeHelper.cs" />
     <Compile Include="Framework\Columns\BinaryDataColumn.cs" />
     <Compile Include="Framework\Columns\BoolColumn.cs" />
     <Compile Include="Framework\Columns\ColorColumn.cs" />

@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using Shunde.Common;
 using Shunde.Utilities;
 using System.Web.UI.HtmlControls;
+using Shunde.Framework;
 
 [assembly: TagPrefix("Shunde.Web", "Shunde")]
 
@@ -19,30 +20,33 @@ namespace Shunde.Web
 	/// Displays a forest of trees, using HTML unordered lists
 	/// </summary>
 	[ToolboxData("<{0}:TreeDisplayer runat=server />")]
-	public class TreeDisplayer : WebControl
+	public class TreeDisplayer<T> : WebControl
+		where T : DBObject, ITreeNode<T>
 	{
 
-		private IEnumerable<Shunde.Common.TreeNode> forest = null;
+		private IEnumerable<T> forest = null;
 
 		/// <summary>
 		/// The forest of treenodes to display
 		/// </summary>
-		public IEnumerable<Shunde.Common.TreeNode> Forest
+		public IEnumerable<T> Forest
 		{
 			get { return forest; }
 			set { forest = value; }
 		}
 
 
-		private NodeToHtmlDelegate nodeToHtmlDelegate = null;
+		private NodeToHtmlDelegate nodeToHtml = null;
 
 		/// <summary>
-		/// A delegate that converts a node to HTML. Each node that gets displayed will use this delegate to create the text to show. If no delegate is specified, then the <see cref="Shunde.Common.TreeNode.Name" /> field will be used.
+		/// A delegate that converts a node to HTML. Each node that gets displayed will use this delegate to create 
+		/// the text to show. If no delegate is specified, then the <see cref="Shunde.Common.ITreeNode{T}.Name" /> field 
+		/// will be used.
 		/// </summary>
-		public NodeToHtmlDelegate NodeToHtmlDelegate
+		public NodeToHtmlDelegate NodeToHtml
 		{
-			get { return nodeToHtmlDelegate; }
-			set { nodeToHtmlDelegate = value; }
+			get { return nodeToHtml; }
+			set { nodeToHtml = value; }
 		}
 	
 
@@ -58,7 +62,7 @@ namespace Shunde.Web
 			}
 
 			HtmlGenericControl ul = new HtmlGenericControl("ul");
-			foreach (Shunde.Common.TreeNode node in forest)
+			foreach (T node in forest)
 			{
 				AddNode(ul, node);
 			}
@@ -67,18 +71,18 @@ namespace Shunde.Web
 		}
 
 
-		private void AddNode(HtmlGenericControl ul, Shunde.Common.TreeNode node)
+		private void AddNode(HtmlGenericControl ul, T node)
 		{
 			HtmlGenericControl li = new HtmlGenericControl("li");
 
-			string nodeHtml = (NodeToHtmlDelegate == null) ? node.Name : NodeToHtmlDelegate(node);
+			string nodeHtml = (NodeToHtml == null) ? node.Name : NodeToHtml(node);
 
 			li.Controls.Add(new LiteralControl(nodeHtml));
 
-			if (node.Children.Length > 0)
+			if (node.Children.Count > 0)
 			{
 				HtmlGenericControl subUl = new HtmlGenericControl("ul");
-				foreach (Shunde.Common.TreeNode child in node.Children)
+				foreach (T child in node.Children)
 				{
 					AddNode(subUl, child);
 				}
@@ -86,14 +90,18 @@ namespace Shunde.Web
 			}
 
 			ul.Controls.Add(li);
+
+
 		}
+
+
+		/// <summary>
+		/// A delegate that gets an HTML representation for the treenode
+		/// </summary>
+		public delegate string NodeToHtmlDelegate(T node);
+
 
 	}
 
-
-	/// <summary>
-	/// A delegate that gets an HTML representation for the treenode
-	/// </summary>
-	public delegate string NodeToHtmlDelegate(Shunde.Common.TreeNode node);
 
 }
