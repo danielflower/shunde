@@ -7,13 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\Playground\", "Playground", "{6E58A54F-4B78-470C-831E-CD0C6210DD9B}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\Playground\", "Playground\", "{6E58A54F-4B78-470C-831E-CD0C6210DD9B}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = ""
 		SccAuxPath = ""
 		SccLocalPath = ""
 		SccProvider = ""
-		ProjectReferences = ""
+		ProjectReferences = "{11CAADB6-843B-42B2-8E08-3FBDD066F84E}|Shunde.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/Playground 3.0"
 		Debug.AspNetCompiler.PhysicalPath = "Playground\"
 		Debug.AspNetCompiler.TargetPath = "Z:\Shunde\Playground 3.0\"
