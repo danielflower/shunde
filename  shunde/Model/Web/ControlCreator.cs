@@ -621,6 +621,9 @@ namespace Shunde.Web
 
 		static DateTime? GetDateTimePickerValue(ObjectEditorRow row)
 		{
+			DateTimePicker dtp = (DateTimePicker)row.ObjectEditor.FindControl(row.Id);
+			return dtp.SelectedDate;
+		/*	
 			TextBox dateTB = (TextBox)row.ObjectEditor.FindControl(row.Id);
 			TextBox timeTB = (TextBox)row.ObjectEditor.FindControl(row.Id + "_shundeTime");
 			DropDownList ampmDDL = (DropDownList)row.ObjectEditor.FindControl(row.Id + "_ampmDDL");
@@ -655,6 +658,7 @@ namespace Shunde.Web
 					throw new ValidationException(" Please enter a valid date and time for " + row.Header);
 				}
 			}
+		 */
 		}
 
 		static string GetSingleLineTextControlValue(ObjectEditorRow row)
@@ -851,7 +855,28 @@ namespace Shunde.Web
 		static void CreateDateTimePicker(ObjectEditorRow row, TableRow tableRow, DateTime? initialValue)
 		{
 
+			DateTimePicker dtp = new DateTimePicker();
+			dtp.SelectedDate = initialValue;
+			dtp.ID = row.Id;
+			dtp.TabIndex = 1;
 
+			DateTimeColumn dtCol = row.DBColumn as DateTimeColumn;
+			if (dtCol != null)
+			{
+				dtp.PartToPick = dtCol.Part;
+			}
+
+			List<Control> headerControls = new List<Control>();
+			if (row.RequiredField)
+			{
+				string partFriendlyName = TextUtils.MakeFriendly(dtp.PartToPick.ToString());
+				headerControls.Add(CreateRequiredFieldValidator(dtp.ID, "Please select a " + partFriendlyName + " for " + row.Header, row.ObjectEditor.ValidationGroup));
+			}
+
+			CreateStandardRow(row, headerControls, tableRow, dtp);
+
+
+			/*
 			string controlId = row.ObjectEditor.ClientID;
 			DBColumn col = row.DBColumn;
 
@@ -943,7 +968,7 @@ namespace Shunde.Web
 			}
 
 			CreateStandardRow(row, headerControls, tableRow, span);
-
+			*/
 		}
 
 

@@ -251,7 +251,7 @@ namespace Shunde.Web
 
 	}
 
-	#region EventsStuff
+	#region Events Stuff
 
 	/// <summary>
 	/// The delegate to handle the SelectedColorChanged event

@@ -7,59 +7,10 @@
 // ===================================================================
 // Author: Matt Kruse <matt@mattkruse.com>
 // WWW: http://www.mattkruse.com/
-//
-// NOTICE: You may use this code for any purpose, commercial or
-// private, without any further permission from the author. You may
-// remove this notice from your final code if you wish, however it is
-// appreciated by the author if at least my web site address is kept.
-//
-// You may *NOT* re-distribute this code in any way except through its
-// use. That means, you can include it in your product, or your web
-// site, or any other form where the code is actually being used. You
-// may not put the plain javascript up on your site for download or
-// include it in your javascript libraries for download.
-// If you wish to share this code with others, please just point them
-// to the URL instead.
-// Please DO NOT link directly to my .js files from your site. Copy
-// the files to your server and use them there. Thank you.
 // ===================================================================
 
 
 /* SOURCE FILE: AnchorPosition.js */
-
-/*
-AnchorPosition.js
-Author: Matt Kruse
-Last modified: 10/11/02
-
-DESCRIPTION: These functions find the position of an <A> tag in a document,
-so other elements can be positioned relative to it.
-
-COMPATABILITY: Netscape 4.x,6.x,Mozilla, IE 5.x,6.x on Windows. Some small
-positioning errors - usually with Window positioning - occur on the
-Macintosh platform.
-
-FUNCTIONS:
-getAnchorPosition(anchorname)
-  Returns an Object() having .x and .y properties of the pixel coordinates
-  of the upper-left corner of the anchor. Position is relative to the PAGE.
-
-getAnchorWindowPosition(anchorname)
-  Returns an Object() having .x and .y properties of the pixel coordinates
-  of the upper-left corner of the anchor, relative to the WHOLE SCREEN.
-
-NOTES:
-
-1) For popping up separate browser windows, use getAnchorWindowPosition.
-   Otherwise, use getAnchorPosition
-
-2) Your anchor tag MUST contain both NAME and ID attributes which are the
-   same. For example:
-   <A NAME="test" ID="test"> </A>
-
-3) There must be at least a space between <A> </A> for IE5.5 to see the
-   anchor tag correctly. Do not do <A></A> with no space.
-*/
 
 // getAnchorPosition(anchorname)
 //   This function returns an object having .x and .y properties which are the coordinates
@@ -157,43 +108,6 @@ function AnchorPosition_getWindowOffsetTop (el) {
 
 /* SOURCE FILE: date.js */
 
-// HISTORY
-// ------------------------------------------------------------------
-// May 17, 2003: Fixed bug in parseDate() for dates <1970
-// March 11, 2003: Added parseDate() function
-// March 11, 2003: Added "NNN" formatting option. Doesn't match up
-//                 perfectly with SimpleDateFormat formats, but
-//                 backwards-compatability was required.
-
-// ------------------------------------------------------------------
-// These functions use the same 'format' strings as the
-// java.text.SimpleDateFormat class, with minor exceptions.
-// The format string consists of the following abbreviations:
-//
-// Field        | Full Form          | Short Form
-// -------------+--------------------+-----------------------
-// Year         | yyyy (4 digits)    | yy (2 digits), y (2 or 4 digits)
-// Month        | MMM (name or abbr.)| MM (2 digits), M (1 or 2 digits)
-//              | NNN (abbr.)        |
-// Day of Month | dd (2 digits)      | d (1 or 2 digits)
-// Day of Week  | EE (name)          | E (abbr)
-// Hour (1-12)  | hh (2 digits)      | h (1 or 2 digits)
-// Hour (0-23)  | HH (2 digits)      | H (1 or 2 digits)
-// Hour (0-11)  | KK (2 digits)      | K (1 or 2 digits)
-// Hour (1-24)  | kk (2 digits)      | k (1 or 2 digits)
-// Minute       | mm (2 digits)      | m (1 or 2 digits)
-// Second       | ss (2 digits)      | s (1 or 2 digits)
-// AM/PM        | a                  |
-//
-// NOTE THE DIFFERENCE BETWEEN MM and mm! Month=MM, not mm!
-// Examples:
-//  "MMM d, y" matches: January 01, 2000
-//                      Dec 1, 1900
-//                      Nov 20, 00
-//  "M/d/yy"   matches: 01/20/00
-//                      9/2/00
-//  "MMM dd, yyyy hh:mm:ssa" matches: "January 01, 2000 12:30:45AM"
-// ------------------------------------------------------------------
 
 var MONTH_NAMES=new Array('January','February','March','April','May','June','July','August','September','October','November','December','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
 var DAY_NAMES=new Array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sun','Mon','Tue','Wed','Thu','Fri','Sat');
@@ -475,72 +389,6 @@ function parseDate(val) {
 
 /* SOURCE FILE: PopupWindow.js */
 
-/*
-PopupWindow.js
-Author: Matt Kruse
-Last modified: 02/16/04
-
-DESCRIPTION: This object allows you to easily and quickly popup a window
-in a certain place. The window can either be a DIV or a separate browser
-window.
-
-COMPATABILITY: Works with Netscape 4.x, 6.x, IE 5.x on Windows. Some small
-positioning errors - usually with Window positioning - occur on the
-Macintosh platform. Due to bugs in Netscape 4.x, populating the popup
-window with <STYLE> tags may cause errors.
-
-USAGE:
-// Create an object for a WINDOW popup
-var win = new PopupWindow();
-
-// Create an object for a DIV window using the DIV named 'mydiv'
-var win = new PopupWindow('mydiv');
-
-// Set the window to automatically hide itself when the user clicks
-// anywhere else on the page except the popup
-win.autoHide();
-
-// Show the window relative to the anchor name passed in
-win.showPopup(anchorname);
-
-// Hide the popup
-win.hidePopup();
-
-// Set the size of the popup window (only applies to WINDOW popups
-win.setSize(width,height);
-
-// Populate the contents of the popup window that will be shown. If you
-// change the contents while it is displayed, you will need to refresh()
-win.populate(string);
-
-// set the URL of the window, rather than populating its contents
-// manually
-win.setUrl("http://www.site.com/");
-
-// Refresh the contents of the popup
-win.refresh();
-
-// Specify how many pixels to the right of the anchor the popup will appear
-win.offsetX = 50;
-
-// Specify how many pixels below the anchor the popup will appear
-win.offsetY = 100;
-
-NOTES:
-1) Requires the functions in AnchorPosition.js
-
-2) Your anchor tag MUST contain both NAME and ID attributes which are the
-   same. For example:
-   <A NAME="test" ID="test"> </A>
-
-3) There must be at least a space between <A> </A> for IE5.5 to see the
-   anchor tag correctly. Do not do <A></A> with no space.
-
-4) When a PopupWindow object is created, a handler for 'onmouseup' is
-   attached to any event handler you may have already defined. Do NOT define
-   an event handler for 'onmouseup' after you define a PopupWindow object or
-   the autoHide() will not work correctly.
-*/
 
 // Set the position of the popup window based on the anchor
 function PopupWindow_getXYPosition(anchorname) {
@@ -797,172 +645,6 @@ function PopupWindow() {
 
 /* SOURCE FILE: CalendarPopup.js */
 
-// HISTORY
-// ------------------------------------------------------------------
-// March 29, 2004: Added check in select() method for the form field
-//      being disabled. If it is, just return and don't do anything.
-// March 24, 2004: Fixed bug - when month name and abbreviations were
-//      changed, date format still used original values.
-// January 26, 2004: Added support for drop-down month and year
-//      navigation (Thanks to Chris Reid for the idea)
-// September 22, 2003: Fixed a minor problem in YEAR calendar with
-//      CSS prefix.
-// August 19, 2003: Renamed the function to get styles, and made it
-//      work correctly without an object reference
-// August 18, 2003: Changed showYearNavigation and
-//      showYearNavigationInput to optionally take an argument of
-//      true or false
-// July 31, 2003: Added text input option for year navigation.
-//      Added a per-calendar CSS prefix option to optionally use
-//      different styles for different calendars.
-// July 29, 2003: Fixed bug causing the Today link to be clickable
-//      even though today falls in a disabled date range.
-//      Changed formatting to use pure CSS, allowing greater control
-//      over look-and-feel options.
-// June 11, 2003: Fixed bug causing the Today link to be unselectable
-//      under certain cases when some days of week are disabled
-// March 14, 2003: Added ability to disable individual dates or date
-//      ranges, display as light gray and strike-through
-// March 14, 2003: Removed dependency on graypixel.gif and instead
-///     use table border coloring
-// March 12, 2003: Modified showCalendar() function to allow optional
-//      start-date parameter
-// March 11, 2003: Modified select() function to allow optional
-//      start-date parameter
-/*
-DESCRIPTION: This object implements a popup calendar to allow the user to
-select a date, month, quarter, or year.
-
-COMPATABILITY: Works with Netscape 4.x, 6.x, IE 5.x on Windows. Some small
-positioning errors - usually with Window positioning - occur on the
-Macintosh platform.
-The calendar can be modified to work for any location in the world by
-changing which weekday is displayed as the first column, changing the month
-names, and changing the column headers for each day.
-
-USAGE:
-// Create a new CalendarPopup object of type WINDOW
-var cal = new CalendarPopup();
-
-// Create a new CalendarPopup object of type DIV using the DIV named 'mydiv'
-var cal = new CalendarPopup('mydiv');
-
-// Easy method to link the popup calendar with an input box.
-cal.select(inputObject, anchorname, dateFormat);
-// Same method, but passing a default date other than the field's current value
-cal.select(inputObject, anchorname, dateFormat, '01/02/2000');
-// This is an example call to the popup calendar from a link to populate an
-// input box. Note that to use this, date.js must also be included!!
-<A HREF="#" onClick="cal.select(document.forms[0].date,'anchorname','MM/dd/yyyy'); return false;">Select</A>
-
-// Set the type of date select to be used. By default it is 'date'.
-cal.setDisplayType(type);
-
-// When a date, month, quarter, or year is clicked, a function is called and
-// passed the details. You must write this function, and tell the calendar
-// popup what the function name is.
-// Function to be called for 'date' select receives y, m, d
-cal.setReturnFunction(functionname);
-// Function to be called for 'month' select receives y, m
-cal.setReturnMonthFunction(functionname);
-// Function to be called for 'quarter' select receives y, q
-cal.setReturnQuarterFunction(functionname);
-// Function to be called for 'year' select receives y
-cal.setReturnYearFunction(functionname);
-
-// Show the calendar relative to a given anchor
-cal.showCalendar(anchorname);
-
-// Hide the calendar. The calendar is set to autoHide automatically
-cal.hideCalendar();
-
-// Set the month names to be used. Default are English month names
-cal.setMonthNames("January","February","March",...);
-
-// Set the month abbreviations to be used. Default are English month abbreviations
-cal.setMonthAbbreviations("Jan","Feb","Mar",...);
-
-// Show navigation for changing by the year, not just one month at a time
-cal.showYearNavigation();
-
-// Show month and year dropdowns, for quicker selection of month of dates
-cal.showNavigationDropdowns();
-
-// Set the text to be used above each day column. The days start with
-// sunday regardless of the value of WeekStartDay
-cal.setDayHeaders("S","M","T",...);
-
-// Set the day for the first column in the calendar grid. By default this
-// is Sunday (0) but it may be changed to fit the conventions of other
-// countries.
-cal.setWeekStartDay(1); // week is Monday - Saturday
-
-// Set the weekdays which should be disabled in the 'date' select popup. You can
-// then allow someone to only select week end dates, or Tuedays, for example
-cal.setDisabledWeekDays(0,1); // To disable selecting the 1st or 2nd days of the week
-
-// Selectively disable individual days or date ranges. Disabled days will not
-// be clickable, and show as strike-through text on current browsers.
-// Date format is any format recognized by parseDate() in date.js
-// Pass a single date to disable:
-cal.addDisabledDates("2003-01-01");
-// Pass null as the first parameter to mean "anything up to and including" the
-// passed date:
-cal.addDisabledDates(null, "01/02/03");
-// Pass null as the second parameter to mean "including the passed date and
-// anything after it:
-cal.addDisabledDates("Jan 01, 2003", null);
-// Pass two dates to disable all dates inbetween and including the two
-cal.addDisabledDates("January 01, 2003", "Dec 31, 2003");
-
-// When the 'year' select is displayed, set the number of years back from the
-// current year to start listing years. Default is 2.
-// This is also used for year drop-down, to decide how many years +/- to display
-cal.setYearSelectStartOffset(2);
-
-// Text for the word "Today" appearing on the calendar
-cal.setTodayText("Today");
-
-// The calendar uses CSS classes for formatting. If you want your calendar to
-// have unique styles, you can set the prefix that will be added to all the
-// classes in the output.
-// For example, normal output may have this:
-//     <SPAN CLASS="cpTodayTextDisabled">Today<SPAN>
-// But if you set the prefix like this:
-cal.setCssPrefix("Test");
-// The output will then look like:
-//     <SPAN CLASS="TestcpTodayTextDisabled">Today<SPAN>
-// And you can define that style somewhere in your page.
-
-// When using Year navigation, you can make the year be an input box, so
-// the user can manually change it and jump to any year
-cal.showYearNavigationInput();
-
-// Set the calendar offset to be different than the default. By default it
-// will appear just below and to the right of the anchorname. So if you have
-// a text box where the date will go and and anchor immediately after the
-// text box, the calendar will display immediately under the text box.
-cal.offsetX = 20;
-cal.offsetY = 20;
-
-NOTES:
-1) Requires the functions in AnchorPosition.js and PopupWindow.js
-
-2) Your anchor tag MUST contain both NAME and ID attributes which are the
-   same. For example:
-   <A NAME="test" ID="test"> </A>
-
-3) There must be at least a space between <A> </A> for IE5.5 to see the
-   anchor tag correctly. Do not do <A></A> with no space.
-
-4) When a CalendarPopup object is created, a handler for 'onmouseup' is
-   attached to any event handler you may have already defined. Do NOT define
-   an event handler for 'onmouseup' after you define a CalendarPopup object
-   or the autoHide() will not work correctly.
-
-5) The calendar popup display uses style sheets to make it look nice.
-
-*/
 
 // CONSTRUCTOR for the CalendarPopup Object
 function CalendarPopup() {
@@ -1210,22 +892,23 @@ function getCalendarStyles() {
 	var result = "";
 	var p = "";
 	if (this!=null && typeof(this.cssPrefix)!="undefined" && this.cssPrefix!=null && this.cssPrefix!="") { p=this.cssPrefix; }
-	result += "<STYLE>\n";
-	result += "."+p+"cpYearNavigation,."+p+"cpMonthNavigation { background-color:#C0C0C0; text-align:center; vertical-align:center; text-decoration:none; color:#000000; font-weight:bold; }\n";
+	result += "<style type='text/css'>\n";
+	result += "."+p+"cpYearNavigation,."+p+"cpMonthNavigation { background-color:#C0C0C0; text-align:center; vertical-align:middle; text-decoration:none; color:#000000; font-weight:bold; }\n";
 	result += "."+p+"cpDayColumnHeader, ."+p+"cpYearNavigation,."+p+"cpMonthNavigation,."+p+"cpCurrentMonthDate,."+p+"cpCurrentMonthDateDisabled,."+p+"cpOtherMonthDate,."+p+"cpOtherMonthDateDisabled,."+p+"cpCurrentDate,."+p+"cpCurrentDateDisabled,."+p+"cpTodayText,."+p+"cpTodayTextDisabled,."+p+"cpText { font-family:arial; font-size:8pt; }\n";
-	result += "TD."+p+"cpDayColumnHeader { text-align:right; border:solid thin #C0C0C0;border-width:0 0 1 0; }\n";
+	result += "TD."+p+"cpDayColumnHeader { text-align:right; border:solid thin #C0C0C0;border-width:0px 0px 1px 0px; }\n";
 	result += "."+p+"cpCurrentMonthDate, ."+p+"cpOtherMonthDate, ."+p+"cpCurrentDate  { text-align:right; text-decoration:none; }\n";
 	result += "."+p+"cpCurrentMonthDateDisabled, ."+p+"cpOtherMonthDateDisabled, ."+p+"cpCurrentDateDisabled { color:#D0D0D0; text-align:right; text-decoration:line-through; }\n";
 	result += "."+p+"cpCurrentMonthDate, .cpCurrentDate { color:#000000; }\n";
-	result += "."+p+"cpOtherMonthDate { color:#808080; }\n";
-	result += "TD."+p+"cpCurrentDate { color:white; background-color: #C0C0C0; border-width:1; border:solid thin #800000; }\n";
-	result += "TD."+p+"cpCurrentDateDisabled { border-width:1; border:solid thin #FFAAAA; }\n";
-	result += "TD."+p+"cpTodayText, TD."+p+"cpTodayTextDisabled { border:solid thin #C0C0C0; border-width:1 0 0 0;}\n";
-	result += "A."+p+"cpTodayText, SPAN."+p+"cpTodayTextDisabled { height:20px; }\n";
-	result += "A."+p+"cpTodayText { color:black; }\n";
+	result += "."+p+"cpOtherMonthDate { background-color:#CCCCCC; color:#808080; }\n";
+	result += "TD."+p+"cpCurrentDate { background-color: #FFFF55; border-width:1px; border:solid thin #800000; }\n";
+	result += "TD."+p+"cpCurrentDateDisabled { border-width:1px; border:solid thin #FFAAAA; }\n";
+	result += "TD."+p+"cpTodayText, TD."+p+"cpTodayTextDisabled { border:solid thin #C0C0C0; border-width:1px 0px 0px 0px;}\n";
+	result += "."+p+"cpBorder A:link, ."+p+"cpBorder A:visited, { color: #0000FF; }\n";
+	result += "."+p+"cpBorder A."+p+"cpTodayText, SPAN."+p+"cpTodayTextDisabled { height:20px; }\n";
+	result += "."+p+"cpBorder A."+p+"cpTodayText { color:black; }\n";
 	result += "."+p+"cpTodayTextDisabled { color:#D0D0D0; }\n";
 	result += "."+p+"cpBorder { border:solid thin #808080; }\n";
-	result += "</STYLE>\n";
+	result += "</style>\n";
 	return result;
 	}
 

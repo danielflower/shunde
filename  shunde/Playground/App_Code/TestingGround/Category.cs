@@ -21,6 +21,8 @@ namespace TestingGround
 		private string name;
 		private Color color;
 		private IList<Category> children;
+		private DateTime? dateAdded = DateTimeColumn.NotSetValue;
+
 		#endregion
 
 
@@ -48,6 +50,12 @@ namespace TestingGround
 			get { return this.color; }
 			set { this.color = value; }
 		}
+		public DateTime? DateAdded
+		{
+			get { return dateAdded; }
+			set { dateAdded = value; }
+		}
+
 
 		#endregion
 
@@ -61,7 +69,8 @@ namespace TestingGround
 			DBTable tbl = new DBTable("Category", new DBColumn[] {
 				new DBObjectColumn("parent", typeof(Category), true),
 				new SingleLineString("name", 1, 100),
-				new ColorColumn("color", false)
+				new ColorColumn("color", false),
+				new DateTimeColumn("dateAdded", false, DateTimePart.DateAndOptionallyTime)
 			});
 
 			ObjectInfo.RegisterObjectInfo(typeof(Category), tbl);

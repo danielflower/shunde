@@ -11,6 +11,13 @@ namespace Shunde.Framework.Columns
 	public class DateTimeColumn : DBColumn
 	{
 
+		private const int MillisecondsToRepresentNullTime = 100;
+
+		/// <summary>
+		/// Represents a DateTime which hasn't been set
+		/// </summary>
+		public static readonly DateTime NotSetValue = MakeDateNull(MakeTimeNull(new DateTime()));
+
 		private DateTimePart part;
 
 		/// <summary>
@@ -77,13 +84,16 @@ namespace Shunde.Framework.Columns
 		}
 
 
+
+		#region Static Utility Methods
+
 		/// <summary>
 		/// Returns true if the given DateTime object is considered to have its time not set
 		/// </summary>
-		/// <remarks>A date is considered to have a "null time" if it's time component is 1 millisecond past midnight</remarks>
+		/// <remarks>A date is considered to have a "null time" if it's time component is 100 milliseconds past midnight</remarks>
 		public static bool TimeIsNull(DateTime date)
 		{
-			return date.Hour == 0 && date.Minute == 0 && date.Second == 0 && date.Millisecond == 1;
+			return date.Hour == 0 && date.Minute == 0 && date.Second == 0 && date.Millisecond == MillisecondsToRepresentNullTime;
 		}
 
 		/// <summary>
@@ -91,10 +101,8 @@ namespace Shunde.Framework.Columns
 		/// </summary>
 		public static DateTime MakeTimeNull(DateTime date)
 		{
-			return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, 1);
+			return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, MillisecondsToRepresentNullTime);
 		}
-
-
 
 		/// <summary>
 		/// Returns true if the given DateTime object is considered to have its date not set
@@ -113,8 +121,10 @@ namespace Shunde.Framework.Columns
 			return new DateTime(1, 1, 1, date.Hour, date.Minute, date.Second, date.Millisecond);
 		}
 
+		#endregion
 
 	}
+
 
 	/// <summary>
 	/// Specifies what part of the date or time is of interest
