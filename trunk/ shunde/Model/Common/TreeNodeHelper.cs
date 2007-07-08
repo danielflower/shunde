@@ -155,7 +155,7 @@ namespace Shunde.Common
 		}
 
 		/// <summary>Finds the TreeNode with the TreeNode id catId from the tree of categories</summary>
-		public static T FindTreeNode(T[] cats, int catId)
+		public static T FindTreeNode(IEnumerable<T> cats, int catId)
 		{
 
 			foreach (T cat in cats)
@@ -224,6 +224,78 @@ namespace Shunde.Common
 		}
 
 
+		#region Useful tree properties
+
+		/// <summary>
+		/// Gets the depth of a node, e.g. a root node has depth 0, its children have depth 1, etc.
+		/// </summary>
+		public static int GetDepth(T node)
+		{
+			int depth = 0;
+			while (node.Parent != null)
+			{
+				++depth;
+				node = node.Parent;
+			}
+			return depth;
+		}
+
+
+		/// <summary>
+		/// Gets the siblings of the given node. Note that the given node is included in the
+		/// returned list.  Throws an <see cref="Exception" /> if this is a root node.
+		/// </summary>
+		public static IList<T> GetSiblings(T node)
+		{
+			if (GetNodeType(node) == NodeType.Root)
+			{
+				throw new Exception("GetSiblings called on a root node.");
+			}
+
+			return node.Parent.Children;
+
+		}
+
+		/// <summary>
+		/// Gets the type of node that the specified node is.
+		/// </summary>
+		public static NodeType GetNodeType(T node)
+		{
+			if (node.Parent == null)
+			{
+				return NodeType.Root;
+			}
+			else if (node.Children.Count == 0)
+			{
+				return NodeType.Leaf;
+			}
+			return NodeType.Internal;
+		}
+
+		#endregion
+
 
 	}
+
+	/// <summary>
+	/// A type of tree node.
+	/// </summary>
+	public enum NodeType
+	{
+		/// <summary>
+		/// A node which is at the root of the tree, i.e. it has no parents.
+		/// </summary>
+		Root,
+
+		/// <summary>
+		/// A node which has parent and children.
+		/// </summary>
+		Internal,
+
+		/// <summary>
+		/// A node with no children.
+		/// </summary>
+		Leaf
+	}
+
 }
