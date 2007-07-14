@@ -96,6 +96,7 @@ namespace Shunde.Web
 		protected override void OnInit(EventArgs e)
 		{
 			base.OnInit(e);
+			this.Page.ClientScript.RegisterClientScriptInclude(typeof(Shunde.Framework.DBObject), "ShundeScripts", this.Page.ClientScript.GetWebResourceUrl(this.GetType(), "Shunde.Resources.ShundeScripts.js"));
 
 		}
 
@@ -114,7 +115,7 @@ namespace Shunde.Web
 			this.Controls.Add(cancelButton);
 
 			string deleteButtonJs = (deleteButton.Visible) ? ", '" + deleteButton.ClientID + "'" : "";
-			string disableJS = "oe_disableControls( new Array('" + saveButton.ClientID + "', '" + cancelButton.ClientID + "'" + deleteButtonJs + ") );";
+			string disableJS = "ShundeUtils.disableControls( new Array('" + saveButton.ClientID + "', '" + cancelButton.ClientID + "'" + deleteButtonJs + ") );";
 			saveButton.Attributes["onclick"] = "if (typeof(Page_ClientValidate) == 'function') if (!Page_ClientValidate()) return false; " + disableJS + this.Page.ClientScript.GetPostBackEventReference(saveButton, saveButton.ClientID);
 			cancelButton.Attributes["onclick"] = disableJS + this.Page.ClientScript.GetPostBackEventReference(cancelButton, cancelButton.ClientID);
 			if (deleteButton.Visible)

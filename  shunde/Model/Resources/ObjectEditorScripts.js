@@ -7,26 +7,6 @@ var mouseIsOverResultsBox = false;
 
 
 
-function oe_disableControls(controls) {
-
-	var textChanged = false;
-
-	for (var i = 0; i < controls.length; i++) {
-		var control = document.getElementById(controls[i]);
-		if (control == null) {
-			continue;
-		}
-		if (!textChanged) {
-			control.value = 'Please wait...';
-			textChanged = true;
-		} else {
-			control.style.display = 'none';
-		}
-		control.disabled = true;
-	}
-	
-	
-}
 
 function oe_mouseOver(resultsBox, mouseIsOver) {
 	mouseIsOverResultsBox = mouseIsOver;
