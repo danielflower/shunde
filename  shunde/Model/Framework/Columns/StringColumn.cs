@@ -157,7 +157,7 @@ namespace Shunde.Framework.Columns
 		/// <summary>
 		/// The error message for when a string contains HTML
 		/// </summary>
-		public const string NoHtmlErrorMessage = "Sorry, HTML, or the \"&lt;\" and \"&gt;\" signs are not allowed.";
+		public const string NoHtmlErrorMessage = "Sorry, HTML, or the \"<\" and \">\" signs are not allowed.";
 
 
 
