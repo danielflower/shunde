@@ -102,7 +102,6 @@
     <None Include="Shunde.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ObjectEditorScripts.js" />
     <EmbeddedResource Include="Resources\DateTimePickerScripts.js" />
     <EmbeddedResource Include="Resources\Cross.gif" />
     <EmbeddedResource Include="Resources\Tick.gif" />
