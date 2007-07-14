@@ -5,16 +5,21 @@ var ShundeComboBox = {
 
 	initialise: function(tb, lb) {
 	
+	
 		lb.style.width = parseInt(tb.offsetWidth) + 'px';
+		
+		var tbProperties = ShundeUtils.getElementPosition(tb);
 		var tbYPos = parseInt(ShundeUtils.findPosY(tb));
+		var tbXPos = parseInt(ShundeUtils.findPosX(tb));
 		var tbHeight = parseInt(tb.offsetHeight);
 		lb.style.top = (tbYPos + tbHeight) + 'px';
-		
+		lb.style.left = tbXPos + 'px';
 		mouseIsOverListbox = false;
 		
 	},
 
 	showListBox: function(tb, lb) {
+		document.body.appendChild(lb);
 		lb.style.visibility = 'visible';
 	},
 	

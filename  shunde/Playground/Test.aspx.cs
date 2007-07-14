@@ -18,14 +18,6 @@ public partial class Test : PageBase
 	public override void Start()
 	{
 
-		IList<Category> cats = TreeNodeHelper<Category>.GetTreeNodesAsForest(null);
-		List<Category> flat = TreeNodeHelper<Category>.ConvertToFlatArray(cats);
-
-		foreach (Category cat in flat)
-		{
-			Response.Write(TreeNodeHelper<Category>.GetFullName(cat, " &gt; ") + "<br/>");
-		}
-		Response.End();
 
 		colorPicker.SelectedColorChanged += new Shunde.Web.SelectedColorChangedEventHandler(colorPicker_SelectedColorChanged);
 
