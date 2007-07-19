@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Web;
 using Shunde.Framework;
 using Shunde.Framework.Columns;
+using System.Data.Common;
 
 namespace Shunde.Utilities
 {
@@ -14,7 +15,118 @@ namespace Shunde.Utilities
 	{
 
 
+		#region Database execution methods
 
+		/// <summary>Executes a non-query SQL Command</summary>
+		/// <param Name="sqlStatement">The SQL statement to be executed (not a SELECT statement)</param>
+		public static void ExecuteSqlCommand(string sqlStatement)
+		{
+			ShundeContext context = ShundeContext.Current;
+
+			SqlConnection sqlConnection = context.DbConnection;
+			SqlCommand myCommand = sqlConnection.CreateCommand();
+			myCommand.CommandText = sqlStatement;
+			myCommand.CommandTimeout = context.DbConnectionTimeout;
+			myCommand.CommandType = CommandType.Text;
+			myCommand.Transaction = context.Transaction;
+
+
+			try
+			{
+				myCommand.ExecuteNonQuery();
+			}
+			catch (Exception se)
+			{
+				if (se.Message.StartsWith("CONCURRENCY"))
+				{
+					throw new ConcurrencyException();
+				}
+				throw new ShundeSqlException(sqlStatement, se);
+			}
+		}
+
+		/// <summary>Executes a non-query SQL Command using the supplied SqlCommand object (useful for transactions)</summary>
+		/// <param Name="dbCommand">A DbCommand object</param>
+		/// <remarks>The Connection, CommandTimeout, and Transaction properties are set - and so will be overridden - in this method. All other properties of the DbCommand object are left as is.</remarks>
+		public static void ExecuteSqlCommand(SqlCommand dbCommand)
+		{
+			ShundeContext context = ShundeContext.Current;
+
+			dbCommand.Connection = context.DbConnection;
+			dbCommand.CommandTimeout = context.DbConnectionTimeout;
+			dbCommand.Transaction = context.Transaction;
+
+			try
+			{
+				dbCommand.ExecuteNonQuery();
+			}
+			catch (SqlException se)
+			{
+				if (se.Message.StartsWith("CONCURRENCY"))
+				{
+					throw new ConcurrencyException();
+				}
+				throw new ShundeSqlException(dbCommand.CommandText, se);
+			}
+		}
+
+		/// <summary>Executes an SQL Query</summary>
+		/// <param Name="sqlQuery">The SQL SELECT statement to be queried</param>
+		/// <returns>Returns a DbDataReader object with the results from the query</returns>
+		public static SqlDataReader ExecuteSqlQuery(string sqlQuery)
+		{
+			ShundeContext context = ShundeContext.Current;
+
+			SqlConnection sqlConnection = context.DbConnection;
+			SqlCommand myCommand = sqlConnection.CreateCommand();
+			myCommand.CommandText = sqlQuery;
+			myCommand.CommandTimeout = context.DbConnectionTimeout;
+			myCommand.Transaction = context.Transaction;
+
+
+			SqlDataReader myReader = null;
+			try
+			{
+				myReader = myCommand.ExecuteReader();
+			}
+			catch (Exception se)
+			{
+				throw new ShundeSqlException(sqlQuery, se);
+			}
+
+			return myReader;
+		}
+
+		/// <summary>Executes an SQL Query using the specified SqlCommand object (useful in Transactions)</summary>
+		/// <param Name="dbCommand">The DbCommand object to use</param>
+		/// <remarks>The Connection, CommandTimeout, and Transaction properties are set - and so will be overridden - in this method. All other properties of the DbCommand object are left as is.</remarks>
+		/// <returns>Returns a DbDataReader object with the results from the query</returns>
+		public static SqlDataReader ExecuteSqlQuery(SqlCommand dbCommand)
+		{
+
+			ShundeContext context = ShundeContext.Current;
+
+			dbCommand.Connection = context.DbConnection;
+			dbCommand.CommandTimeout = context.DbConnectionTimeout;
+			dbCommand.Transaction = context.Transaction;
+
+			SqlDataReader myReader = null;
+			try
+			{
+				myReader = dbCommand.ExecuteReader();
+			}
+			catch (Exception se)
+			{
+				if (myReader != null)
+				{
+					myReader.Close();
+				}
+				throw new ShundeSqlException(dbCommand.CommandText, se);
+			}
+			return (SqlDataReader)myReader;
+		}
+
+		#endregion
 
 
 		/// <summary>Executes an SQL Query that is known to return just one integer Value</summary>
@@ -36,7 +148,7 @@ namespace Shunde.Utilities
 		public static int GetIntFromSqlSelect(SqlCommand sqlCommand)
 		{
 
-			SqlDataReader myReader = DBManager.ExecuteSqlQuery(sqlCommand);
+			DbDataReader myReader = DBUtils.ExecuteSqlQuery(sqlCommand);
 
 			int returnValue = -1;
 			if (myReader.Read())
@@ -71,7 +183,7 @@ namespace Shunde.Utilities
 		public static bool HasRows(string query)
 		{
 			bool returnValue = false;
-			SqlDataReader sdr = DBManager.ExecuteSqlQuery(query);
+			DbDataReader sdr = DBUtils.ExecuteSqlQuery(query);
 			if (sdr.Read())
 			{
 				returnValue = true;
@@ -132,6 +244,50 @@ namespace Shunde.Utilities
 
 
 
+	}
+
+	/// <summary>
+	/// Facilitates the execution of a database transaction.
+	/// </summary>
+	public class TransactionScope : IDisposable
+	{
+
+		private bool isCommitted = false;
+
+		/// <summary>
+		/// Starts a new transaction
+		/// </summary>
+		public TransactionScope()
+		{
+
+			ShundeContext.Current.BeginTransaction();
+
+		}
+
+		/// <summary>
+		/// Commits the transaction
+		/// </summary>
+		public void Commit()
+		{
+			ShundeContext.Current.CommitTransaction();
+			isCommitted = true;
+		}
+
+
+		#region IDisposable Members
+
+		/// <summary>
+		/// Disposes of the object.
+		/// </summary>
+		public void Dispose()
+		{
+			if (!isCommitted)
+			{
+				ShundeContext.Current.RollbackTransaction();
+			}
+		}
+
+		#endregion
 	}
 
 }

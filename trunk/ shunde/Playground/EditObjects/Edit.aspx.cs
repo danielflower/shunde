@@ -28,7 +28,7 @@ public partial class EditObjects_Edit : PageBase
 
 
 		dbName = GetStringParam("dbName");
-		DBManager.SqlConnection.ChangeDatabase(dbName);
+		ShundeContext.Current.DbConnection.ChangeDatabase(dbName);
 
 		Assembly ass = Assembly.Load(GetStringParam("assName"));
 		obj = DBObject.CreateObject(ass, GetStringParam("className"));

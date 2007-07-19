@@ -50,23 +50,32 @@ namespace Shunde.Web
 			get;
 		}
 
-		/// <summary>Called when the page loads</summary>
-		public virtual void Page_Init(object Sender, EventArgs e)
+		/// <summary>
+		/// Initialises the class.
+		/// </summary>
+		public ShundePageBase()
 		{
-			DBManager.SetSqlConnection(HttpContext.Current.Items, ConnectionString);
+			this.PreInit += new EventHandler(ShundePageBase_PreInit);
+			this.Unload += new EventHandler(ShundePageBase_Unload);
 		}
 
-		/// <summary>Called when the page loads</summary>
-		public virtual void Page_Load(object Sender, EventArgs e)
+
+		/// <summary>
+		/// Sets the database connection string for the current ShundeContext
+		/// </summary>
+		void ShundePageBase_PreInit(object sender, EventArgs e)
 		{
-			
+			ShundeContext.Current.DbConnectionString = ConnectionString;
 		}
 
-		/// <summary>Called when the page un-loads</summary>
-		public virtual void Page_Unload(object Sender, EventArgs e)
+		/// <summary>
+		/// Closes the database connection.
+		/// </summary>
+		void ShundePageBase_Unload(object sender, EventArgs e)
 		{
-			DBManager.CloseSqlConnection();
+			ShundeContext.CloseContext();
 		}
+
 
 
 		/// <summary>Redirets to the given URL (absolute or relative)</summary>
@@ -89,20 +98,6 @@ namespace Shunde.Web
 			Response.Redirect(url);
 		}
 
-		/// <summary>Gets a short from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
-		/// <param Name="paramName">The Name of the querystring parameter</param>
-		/// <returns>Returns retrieved parameter as a short</returns>
-		public short GetShortParam(string paramName)
-		{
-			try
-			{
-				return System.Convert.ToInt16(Request.Params[paramName]);
-			}
-			catch
-			{
-				return (short)-1;
-			}
-		}
 
 		/// <summary>Gets an int from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
 		/// <param Name="paramName">The Name of the querystring parameter</param>
@@ -135,20 +130,6 @@ namespace Shunde.Web
 		}
 
 
-		/// <summary>Gets a float from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
-		/// <param Name="paramName">The Name of the querystring parameter</param>
-		/// <returns>Returns retrieved parameter as a float</returns>
-		public float GetFloatParam(string paramName)
-		{
-			try
-			{
-				return System.Convert.ToSingle(Request.Params[paramName]);
-			}
-			catch
-			{
-				return -1.0f;
-			}
-		}
 
 		/// <summary>Gets a double from the querystring. Returns -1 if the param does not exist or is in an incorrect format</summary>
 		/// <param Name="paramName">The Name of the querystring parameter</param>
@@ -171,11 +152,7 @@ namespace Shunde.Web
 		public string GetStringParam(string paramName)
 		{
 			string paramValue;
-			paramValue = Request.Params[paramName];
-			if (paramValue == null)
-			{
-				paramValue = "";
-			}
+			paramValue = Request.Params[paramName] ?? string.Empty;
 			return paramValue.Trim();
 		}
 

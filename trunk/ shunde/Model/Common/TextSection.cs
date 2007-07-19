@@ -4,6 +4,7 @@ using System.Text;
 using Shunde.Framework;
 using Shunde.Utilities;
 using Shunde.Framework.Columns;
+using System.Data.Common;
 
 namespace Shunde.Common
 {
@@ -63,7 +64,7 @@ namespace Shunde.Common
 		public TextSection(string code)
 		{
 			this.code = code;
-			SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT id FROM TextSection WHERE code = '" + DBUtils.ParseSql(code) + "'");
+			DbDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT id FROM TextSection WHERE code = '" + DBUtils.ParseSql(code) + "'");
 			if (sdr.Read())
 			{
 				Id = Convert.ToInt32(sdr["id"]);
