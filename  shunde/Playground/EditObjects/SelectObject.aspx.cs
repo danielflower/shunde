@@ -20,7 +20,7 @@ public partial class EditObjects_SelectObject : PageBase
 
 		Page.Title = "Select an object";
 
-		DBManager.SqlConnection.ChangeDatabase(GetStringParam("dbName"));
+		ShundeContext.Current.DbConnection.ChangeDatabase(GetStringParam("dbName"));
 
 		functionName.Text = GetStringParam("functionName");
 

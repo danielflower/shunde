@@ -12,6 +12,7 @@ using System.Web.UI.HtmlControls;
 using Shunde;
 using Shunde.Framework;
 using Shunde.Utilities;
+using System.Data.Common;
 
 public partial class EditObjects_Default : PageBase
 {
@@ -119,13 +120,13 @@ public partial class EditObjects_Default : PageBase
 	void setupDatabaseNames()
 	{
 
-		String curDBName = GetStringParam("dbName");
+		string curDBName = GetStringParam("dbName");
 		if (curDBName.Length == 0)
 		{
-			curDBName = DBManager.SqlConnection.Database;
+			curDBName = ShundeContext.Current.DbConnection.Database;
 		}
 
-		SqlDataReader sdr = DBManager.ExecuteSqlQuery("sp_helpdb");
+		DbDataReader sdr = DBUtils.ExecuteSqlQuery("sp_helpdb");
 		//SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT * FROM Master..sysdatabases" );
 
 
@@ -161,7 +162,7 @@ public partial class EditObjects_Default : PageBase
 			return;
 		}
 
-		DBManager.SqlConnection.ChangeDatabase(dbDropDown.SelectedItem.Value);
+		ShundeContext.Current.DbConnection.ChangeDatabase(dbDropDown.SelectedItem.Value);
 
 		objectsBox.Items.Clear();
 

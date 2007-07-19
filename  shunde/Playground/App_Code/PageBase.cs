@@ -13,9 +13,8 @@ using Shunde.Web;
 /// </summary>
 public abstract class PageBase : ShundePageBase
 {
-	public override sealed void Page_Load(object Sender, EventArgs e)
+	public void Page_Load(object Sender, EventArgs e)
 	{
-		base.Page_Load(Sender, e);
 		Start();
 	}
 

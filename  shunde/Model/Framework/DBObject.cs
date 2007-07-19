@@ -163,7 +163,7 @@ namespace Shunde.Framework
 			string sql = objectInfo.GetSelectStatement() + " WHERE [DBObject].[id] = " + id;
 
 
-			SqlDataReader sdr = DBManager.ExecuteSqlQuery(sql);
+			SqlDataReader sdr = DBUtils.ExecuteSqlQuery(sql);
 			if (sdr.Read())
 			{
 
@@ -198,7 +198,7 @@ namespace Shunde.Framework
 					}
 
 					FieldInfo fi = col.FieldInfo;
-					SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT [" + col.Name + "] AS binaryData, [" + col.Name + "MimeType] AS mimeType, [" + col.Name + "Filename] AS filename FROM [" + table.Name + "] WHERE [id] = " + id);
+					SqlDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT [" + col.Name + "] AS binaryData, [" + col.Name + "MimeType] AS mimeType, [" + col.Name + "Filename] AS filename FROM [" + table.Name + "] WHERE [id] = " + id);
 					sdr.Read();
 
 					string mimeType = sdr["mimeType"].ToString();
@@ -753,7 +753,7 @@ END
 				try
 				{
 					sqlCommand.CommandText = sql.ToString();
-					DBManager.ExecuteSqlCommand(sqlCommand);
+					DBUtils.ExecuteSqlCommand(sqlCommand);
 				}
 				catch (ShundeSqlException sqlEx)
 				{
@@ -834,7 +834,7 @@ END
 		public static DBObject[] GetObjects(string query, Type baseType)
 		{
 
-			SqlDataReader sdr = DBManager.ExecuteSqlQuery(query);
+			SqlDataReader sdr = DBUtils.ExecuteSqlQuery(query);
 			List<DBObject> objs = new List<DBObject>();
 
 			ObjectInfo oi = ObjectInfo.GetObjectInfo(baseType);
@@ -871,7 +871,7 @@ END
 
 			string query = "SELECT " + oi.GetJoinedColumnClause(extendingTypes) + " FROM " + oi.GetJoinedFromClause(extendingTypes) + " " + where;
 
-			SqlDataReader sdr = DBManager.ExecuteSqlQuery(query);
+			SqlDataReader sdr = DBUtils.ExecuteSqlQuery(query);
 			List<DBObject> objects = new List<DBObject>();
 
 			while (sdr.Read())
@@ -925,7 +925,7 @@ END
 				throw new ObjectDoesNotExistException();
 			}
 
-			SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT [id], [className] FROM [DBObject] WHERE [id] IN (" + query + ")");
+			SqlDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT [id], [className] FROM [DBObject] WHERE [id] IN (" + query + ")");
 
 			if (!sdr.Read())
 			{
@@ -968,7 +968,7 @@ END
 				throw new ObjectDoesNotExistException();
 			}
 
-			SqlDataReader sdr = DBManager.ExecuteSqlQuery("SELECT [className] FROM [DBObject] WHERE [id] = " + id);
+			SqlDataReader sdr = DBUtils.ExecuteSqlQuery("SELECT [className] FROM [DBObject] WHERE [id] = " + id);
 
 			if (!sdr.Read())
 			{
