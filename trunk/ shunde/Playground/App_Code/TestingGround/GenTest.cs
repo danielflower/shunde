@@ -64,10 +64,13 @@ namespace Test
 
 
 	/// <summary>The status of a Test</summary>
+	[Flags]
 	public enum Status
 	{
 		Up = 1,
-		Down = 2
+		Down = 2,
+		Around = 4,
+		There = 8
 	}
 
 

@@ -1,6 +1,5 @@
 using System;
 using Shunde.Framework;
-using System.Web.UI.WebControls;
 using Shunde.Framework.Columns;
 
 
@@ -63,6 +62,18 @@ namespace TestingGround
 
 
 	}
+
+	[Flags]
+	public enum HorizontalAlign
+	{
+		None = 0,
+		Left = 1,
+		Right = 2,
+		Up = 4,
+		Down = 8,
+		Horizontal = Left | Right
+	}
+
 
 }
 

@@ -65,5 +65,26 @@ namespace Shunde.Utilities
 			return Convert.ChangeType(value, conversionType);
 		}
 
+		/// <summary>
+		/// Checks whether the specified enumeration type (or nullable enumeration type) is a bitmask.
+		/// </summary>
+		/// <remarks>An enumeration is considered a bitmask if it is appended with the <see cref="FlagsAttribute">[Flags]</see> attribute.</remarks>
+		public static bool IsBitMask(Type enumType)
+		{
+			// see if it is a bitmask
+			Type t = (enumType.IsEnum) ? enumType : Nullable.GetUnderlyingType(enumType);
+			object[] flagsAttribs = t.GetCustomAttributes(typeof(FlagsAttribute), true);
+			return flagsAttribs.Length > 0;
+		}
+
+		/// <summary>
+		/// Checks whether an integer is a power of 2
+		/// </summary>
+		public static bool IsPowerOfTwo(int num)
+		{
+			return (num & (num - 1)) == 0;
+		}
+
+
 	}
 }

@@ -36,9 +36,6 @@ public partial class ClassCreator_Default : PageBase
 
 	}
 
-	public override void Page_Unload(object Sender, EventArgs e)
-	{
-	}
 
 	void changeNumberButton_Click(object sender, EventArgs e)
 	{
