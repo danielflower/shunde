@@ -317,6 +317,8 @@ namespace Shunde.Web
 				throw new ArgumentException("The type " + type.FullName + " is not an enumeration", "type");
 			}
 
+			bool isFlags = FrameworkUtils.IsBitMask(type);
+
 			if (this.ListItems == null)
 			{
 				this.ListItems = new List<ListItem>();
@@ -330,12 +332,37 @@ namespace Shunde.Web
 			{
 				allValues = Enum.GetValues(Nullable.GetUnderlyingType(type));
 			}
+
+			int curIntVal = Convert.ToInt32(currentValue);
+
 			foreach (Enum val in allValues)
 			{
 				ListItem li = new ListItem();
 				li.Text = val.ToString();
 				li.Value = Convert.ToInt32(val).ToString();
-				li.Selected = (currentValue != null && val.Equals(currentValue));
+				if (currentValue != null)
+				{
+					if (isFlags)
+					{
+						int valAsInt = Convert.ToInt32(val);
+						li.Selected = (valAsInt & curIntVal) != 0;
+					}
+					else
+					{
+						li.Selected = val.Equals(currentValue);
+					}
+				}
+
+				if (isFlags)
+				{
+					int valAsInt = Convert.ToInt32(val);
+					// don't add non-powers of 2, as these are combinations of selectable list items.
+					if (valAsInt == 0 || !FrameworkUtils.IsPowerOfTwo(valAsInt))
+					{
+						continue;
+					}
+				}
+
 				this.ListItems.Add(li);
 			}
 
@@ -349,7 +376,7 @@ namespace Shunde.Web
 			Type t = this.DBColumn.Type;
 			if (t == typeof(bool))
 			{
-				this.inputMode = InputMode.Checkbox;
+				this.inputMode = InputMode.CheckBox;
 			}
 			else if (t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double))
 			{
@@ -393,7 +420,15 @@ namespace Shunde.Web
 			}
 			else if (EnumColumn.IsEnumOrNullableEnum(t))
 			{
-				this.inputMode = InputMode.RadioButtonList;
+
+				if (FrameworkUtils.IsBitMask(t))
+				{
+					this.inputMode = InputMode.CheckBoxList;
+				}
+				else
+				{
+					this.inputMode = InputMode.RadioButtonList;
+				}
 			}
 			else if (t == typeof(System.Drawing.Color))
 			{
@@ -451,9 +486,14 @@ namespace Shunde.Web
 		Unspecified,
 
 		/// <summary>
-		/// Auto-detect the best input mode based on the column's data type
+		/// A CheckBox is used to specify true or false.
 		/// </summary>
-		Checkbox,
+		CheckBox,
+
+		/// <summary>
+		/// A CheckBoxList is used to select multiple values.
+		/// </summary>
+		CheckBoxList,
 
 		/// <summary>
 		/// Uses a dropdown list to select the object.

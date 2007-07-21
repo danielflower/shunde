@@ -90,7 +90,6 @@ public partial class EditObjects_Edit : PageBase
 				else if (EnumColumn.IsEnumOrNullableEnum(col.Type))
 				{
 					row.SetEnumListItems(col.Type, (Enum)obj.Get(col.Name));
-					row.InputMode = InputMode.RadioButtonList;
 				}
 
 

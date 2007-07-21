@@ -29,7 +29,7 @@ namespace Shunde.Web
 			{
 				CreateHiddenField(row, tableRow, initialValue);
 			}
-			else if (row.InputMode == InputMode.Checkbox)
+			else if (row.InputMode == InputMode.CheckBox)
 			{
 				bool selected = (initialValue == null) ? false : (bool)initialValue;
 				CreateCheckbox(row, tableRow, selected);
@@ -63,6 +63,10 @@ namespace Shunde.Web
 			{
 				CreateColorPickerControl(row, tableRow, (Color)initialValue);
 			}
+			else if (row.InputMode == InputMode.CheckBoxList)
+			{
+				CreateCheckBoxList(row, tableRow);
+			}
 			else
 			{
 				throw new ShundeException("Row could not be created as the InputMode was not set to a valid value (set value was " + row.InputMode + ").");
@@ -81,7 +85,7 @@ namespace Shunde.Web
 			{
 				value = GetHiddenFieldValue(row);
 			}
-			else if (row.InputMode == InputMode.Checkbox)
+			else if (row.InputMode == InputMode.CheckBox)
 			{
 				value = GetCheckboxValue(row);
 			}
@@ -108,6 +112,10 @@ namespace Shunde.Web
 			else if (row.InputMode == InputMode.DropDownList || row.InputMode == InputMode.RadioButtonList || row.InputMode == InputMode.ComboBox)
 			{
 				value = GetListControlValue(row);
+			}
+			else if (row.InputMode == InputMode.CheckBoxList)
+			{
+				value = GetCheckBoxListControlValue(row);
 			}
 			else if (row.InputMode == InputMode.Password)
 			{
@@ -239,6 +247,17 @@ namespace Shunde.Web
 				if (value is ListItem)
 				{
 					intermediateValue = ((ListItem)value).Value;
+				}
+				else if (value is List<ListItem>)
+				{
+					int val = 0;
+
+					foreach (ListItem li in (List<ListItem>)value)
+					{
+						val = val | int.Parse(li.Value);
+					}
+
+					intermediateValue = val.ToString();
 				}
 				else
 				{
@@ -397,6 +416,29 @@ namespace Shunde.Web
 			CreateStandardRow(row, headerControls, tableRow, span);
 
 		}
+
+
+		static void CreateCheckBoxList(ObjectEditorRow row, TableRow tableRow)
+		{
+			HtmlGenericControl span = new HtmlGenericControl("span");
+			CheckBoxList lc = new CheckBoxList();
+			lc.ID = row.Id;
+			lc.TabIndex = 1;
+
+
+			span.Controls.Add(lc);
+
+
+
+			if (row.ListItems != null)
+			{
+				lc.Items.AddRange(row.ListItems.ToArray());
+			}
+
+			CreateStandardRow(row, null, tableRow, span);
+
+		}
+
 
 
 
@@ -687,6 +729,20 @@ namespace Shunde.Web
 		{
 			ListControl lc = (ListControl)row.ObjectEditor.FindControl(row.Id);
 			return lc.SelectedItem;
+		}
+
+		static List<ListItem> GetCheckBoxListControlValue(ObjectEditorRow row)
+		{
+			CheckBoxList cbl = (CheckBoxList)row.ObjectEditor.FindControl(row.Id);
+			List<ListItem> selected = new List<ListItem>();
+			foreach (ListItem li in cbl.Items)
+			{
+				if (li.Selected)
+				{
+					selected.Add(li);
+				}
+			}
+			return selected;
 		}
 
 		static string GetMultiLineTextControlValue(ObjectEditorRow row)
