@@ -27,7 +27,7 @@ namespace Shunde.Web
 	public class ObjectEditor : WebControl, INamingContainer
 	{
 
-
+		#region Fields and properties
 
 		private string updaterName = "Object Editor";
 
@@ -123,6 +123,19 @@ namespace Shunde.Web
 			set { multilineTextBoxHeight = value; }
 		}
 
+		private bool saveInTransaction = false;
+
+		/// <summary>
+		/// If true, then a Transaction is started before the <see cref="Saving" /> event, and committed after the <see cref="Saved"/> event.
+		/// </summary>
+		[Category("Behaviour")]
+		[DefaultValue("False")]
+		public bool SaveInTransaction
+		{
+			get { return saveInTransaction; }
+			set { saveInTransaction = value; }
+		}
+	
 		
 
 		private Unit fileUploaderWidth = new Unit("80%");
@@ -164,82 +177,49 @@ namespace Shunde.Web
 			get { return validationGroup; }
 			set { validationGroup = value; }
 		}
-	
-	
-
-
-		private BeforeSaveDelegate beforeSaveDelegate = null;
-
-		/// <summary>If this is set and ObjectSaveDelegate is null, then this will be called after populating the object with the values from the object editor, but before the <see cref="Shunde.Framework.DBObject.Save" /> method is called.</summary>
-		public BeforeSaveDelegate BeforeSaveDelegate
-		{
-			get { return beforeSaveDelegate; }
-			set { beforeSaveDelegate = value; }
-		}
-
-		private ObjectSaveDelegate objectSaveDelegate = null;
-
-		/// <summary>If this is set, then this will be called when the object editor 'save' button is pressed. If it is null, then the object editor will save the object.</summary>
-		public ObjectSaveDelegate ObjectSaveDelegate
-		{
-			get { return objectSaveDelegate; }
-			set { objectSaveDelegate = value; }
-		}
-
-		private AfterObjectSavedDelegate afterObjectSavedDelegate = null;
-
-		/// <summary>If the object editor saves the object, then this will be called upon a successful save, upon which the delegate will probably redirect to another page.</summary>
-		public AfterObjectSavedDelegate AfterObjectSavedDelegate
-		{
-			get { return afterObjectSavedDelegate; }
-			set { afterObjectSavedDelegate = value; }
-		}
-
-
-		private ObjectDeleteDelegate objectDeleteDelegate = null;
-
-		/// <summary>If this is set, then this will be called when the object editor 'delete' button is pressed. If it is null, then the object editor will delete the object.</summary>
-		public ObjectDeleteDelegate ObjectDeleteDelegate
-		{
-			get { return objectDeleteDelegate; }
-			set { objectDeleteDelegate = value; }
-		}
-
-		private AfterObjectDeletedDelegate afterObjectDeletedDelegate = null;
-
-		/// <summary>If the object editor deletes the object, then this will be called upon a successful delete, upon which the delegate will probably redirect to another page.</summary>
-		public AfterObjectDeletedDelegate AfterObjectDeletedDelegate
-		{
-			get { return afterObjectDeletedDelegate; }
-			set { afterObjectDeletedDelegate = value; }
-		}
-
-
-		private EditCancelledDelegate editCancelledDelegate;
-
-		/// <summary>Called when the 'cancel' button is pressed</summary>
-		public EditCancelledDelegate EditCancelledDelegate
-		{
-			get { return editCancelledDelegate; }
-			set { editCancelledDelegate = value; }
-		}
-
-
-
-
-
-
-
-
 
 		private Label infoMessage;
 
 
+		#endregion
+
+
+		#region Events
+
+		/// <summary>
+		/// Called after the user input has been assigned to the object, but before it is saved to the database.
+		/// </summary>
+		public event EventHandler Saving;
+
+		/// <summary>
+		/// Called after the object is saved to the database.
+		/// </summary>
+		public event EventHandler Saved;
+
+		/// <summary>
+		/// Called before the object is deleted.
+		/// </summary>
+		public event EventHandler Deleting;
+
+		/// <summary>
+		/// Called after the object is deleted.
+		/// </summary>
+		public event EventHandler Deleted;
+
+		/// <summary>
+		/// Called when the user clicks the cancel button.
+		/// </summary>
+		public event EventHandler Cancelled;
+
+
+		#endregion
 
 
 
 
 
+
+		#region Constructor
 
 		/// <summary>
 		/// Creates a new Object Editor
@@ -249,6 +229,7 @@ namespace Shunde.Web
 			this.Width = new Unit("95%");
 		}
 
+		#endregion
 
 
 		/// <summary>
@@ -273,20 +254,23 @@ namespace Shunde.Web
 		void deleteButton_Click(object sender, EventArgs e)
 		{
 
-			if (ObjectDeleteDelegate != null)
-			{
-				ObjectDeleteDelegate();
-				return;
-			}
-
-			DBObject.IsDeleted = true;
 			try
 			{
-				DBObject.Save();
-				if (AfterObjectDeletedDelegate != null)
+
+				if (Deleting != null)
 				{
-					AfterObjectDeletedDelegate();
+					Deleting(this, EventArgs.Empty);
+					return;
 				}
+
+				DBObject.IsDeleted = true;
+				DBObject.Save();
+
+				if (Deleted != null)
+				{
+					Deleted(this, EventArgs.Empty);
+				}
+
 			}
 			catch (ValidationException vex)
 			{
@@ -300,9 +284,9 @@ namespace Shunde.Web
 
 		void cancelButton_Click(object sender, EventArgs e)
 		{
-			if (EditCancelledDelegate != null)
+			if (Cancelled != null)
 			{
-				EditCancelledDelegate();
+				Cancelled(this, EventArgs.Empty);
 			}
 			else
 			{
@@ -319,11 +303,13 @@ namespace Shunde.Web
 				return;
 			}
 
+			/*
 			if (ObjectSaveDelegate != null)
 			{
 				ObjectSaveDelegate();
 				return;
 			}
+			 */
 
 			DBObject.LastUpdatedBy = UpdaterName;
 
@@ -342,28 +328,51 @@ namespace Shunde.Web
 
 
 
+			bool needToCommit = this.saveInTransaction;
 			try
 			{
-
-				if (BeforeSaveDelegate != null)
+				if (this.saveInTransaction)
 				{
-					BeforeSaveDelegate();
+					ShundeContext.Current.BeginTransaction();
+				}
+
+				if (Saving != null)
+				{
+					Saving(this, EventArgs.Empty);
 				}
 				DBObject.Save();
-				if (AfterObjectSavedDelegate != null)
+
+				if (Saved != null)
 				{
-					AfterObjectSavedDelegate();
+					Saved(this, EventArgs.Empty);
 				}
 			}
 			catch (ValidationException vex)
 			{
 				infoMessage.Text = vex.Message;
+				needToCommit = false;
+				if (this.saveInTransaction)
+				{
+					ShundeContext.Current.RollbackTransaction();
+				}
 			}
-			//catch (Exception ex)
+			catch
 			{
-			//	string exceptionHandled = ((ShundePageBase)Page).HandleException(ex, Page.Request, "Error while saving " + DBObject);
-			//	infoMessage.Text = "There was an error while saving that. " + exceptionHandled;
+				needToCommit = false;
+				if (this.saveInTransaction)
+				{
+					ShundeContext.Current.RollbackTransaction();
+				}
+				throw;
 			}
+			finally
+			{
+				if (needToCommit)
+				{
+					ShundeContext.Current.CommitTransaction();
+				}
+			}
+
 		}
 
 
@@ -954,36 +963,5 @@ namespace Shunde.Web
 
 	}
 
-
-
-	/// <summary>
-	/// Called after the object has been saved
-	/// </summary>
-	public delegate void BeforeSaveDelegate();
-
-	/// <summary>
-	/// Called after the object has been saved
-	/// </summary>
-	public delegate void AfterObjectSavedDelegate();
-
-	/// <summary>
-	/// Called after an object is deleted
-	/// </summary>
-	public delegate void AfterObjectDeletedDelegate();
-
-	/// <summary>
-	/// A delegate to take care of saving the object
-	/// </summary>
-	public delegate void ObjectSaveDelegate();
-
-	/// <summary>
-	/// A delegate to take care of saving the object
-	/// </summary>
-	public delegate void ObjectDeleteDelegate();
-
-	/// <summary>
-	/// A delegate to take care of saving the object
-	/// </summary>
-	public delegate void EditCancelledDelegate();
 
 }
