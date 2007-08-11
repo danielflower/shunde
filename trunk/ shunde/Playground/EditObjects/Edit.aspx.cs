@@ -49,9 +49,9 @@ public partial class EditObjects_Edit : PageBase
 		Page.Title = "Edit " + obj.FriendlyName;
 
 		this.ObjectEditor.DBObject = obj;
-		this.ObjectEditor.EditCancelledDelegate = RedirectorDelegate;
-		this.ObjectEditor.AfterObjectDeletedDelegate = RedirectorDelegate;
-		this.ObjectEditor.AfterObjectSavedDelegate = RedirectorDelegate;
+		this.ObjectEditor.Deleted += new EventHandler(ObjectEditor_Deleted);
+		this.ObjectEditor.Cancelled += new EventHandler(ObjectEditor_Cancelled);
+		this.ObjectEditor.Saved += new EventHandler(ObjectEditor_Saved);
 		this.ObjectEditor.UpdaterName = "Shunde Playground";
 
 
@@ -103,6 +103,21 @@ public partial class EditObjects_Edit : PageBase
 		this.ObjectEditor.PopulateTable();
 
 		headerTag.InnerHtml = "Edit a " + obj.GetType().Name;
+	}
+
+	void ObjectEditor_Saved(object sender, EventArgs e)
+	{
+		RedirectorDelegate();
+	}
+
+	void ObjectEditor_Cancelled(object sender, EventArgs e)
+	{
+		RedirectorDelegate();
+	}
+
+	void ObjectEditor_Deleted(object sender, EventArgs e)
+	{
+		RedirectorDelegate();
 	}
 
 
