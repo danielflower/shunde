@@ -32,12 +32,13 @@ namespace Shunde.Utilities
 				throw new Exception("The binary data has no bytes");
 			}
 
-			MemoryStream ms = new MemoryStream(bd.Data);
+			using (MemoryStream ms = new MemoryStream(bd.Data))
+			{
 
-			Bitmap bitmap = (Bitmap)Bitmap.FromStream(ms,true);
-			ms.Close();
-			return bitmap;
-
+				Bitmap bitmap = (Bitmap)Bitmap.FromStream(ms, true);
+				ms.Close();
+				return bitmap;
+			}
 		}
 
 
@@ -47,10 +48,12 @@ namespace Shunde.Utilities
 		public static byte[] GetBytes(Bitmap bitmap)
 		{
 
-			MemoryStream ms = new MemoryStream();
-			bitmap.Save(ms, bitmap.RawFormat);
+			using (MemoryStream ms = new MemoryStream())
+			{
+				bitmap.Save(ms, bitmap.RawFormat);
 
-			return ms.GetBuffer();
+				return ms.GetBuffer();
+			}
 		}
 
 		/// <summary>Gets this image as an array of bytes</summary>
