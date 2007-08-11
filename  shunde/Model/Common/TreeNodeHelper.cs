@@ -231,6 +231,10 @@ namespace Shunde.Common
 		/// </summary>
 		public static int GetDepth(T node)
 		{
+			if (node == null)
+			{
+				throw new ArgumentException("The specified node was null", "node");
+			}
 			int depth = 0;
 			while (node.Parent != null)
 			{
