@@ -148,11 +148,11 @@ namespace Shunde.Web
 
 				// write the javascript stuff we need for the calendar dropdowns first
 				this.Controls.Add(new LiteralControl(@"
-<SCRIPT LANGUAGE=""JavaScript"">
+<script type=""text/javascript"">
 
 	document.write(getCalendarStyles());
  
-</SCRIPT>
+</script>
 
 "
 				));

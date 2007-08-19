@@ -55,7 +55,7 @@ public partial class EditObjects_Edit : PageBase
 		this.ObjectEditor.UpdaterName = "Shunde Playground";
 
 
-
+		this.ObjectEditor.SetRows("surname", "-<hr/>");
 
 		ObjectInfo oi = ObjectInfo.GetObjectInfo(obj.GetType());
 		foreach (DBTable table in oi.Tables)
