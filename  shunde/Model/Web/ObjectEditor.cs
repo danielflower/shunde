@@ -812,11 +812,22 @@ namespace Shunde.Web
 
 		ObjectEditorRow FindRow(string fieldName)
 		{
+			bool isReadOnly = fieldName.StartsWith("-");
 			foreach (ObjectEditorRow row in this.rows)
 			{
-				if (row.DBColumn.Name.Equals(fieldName))
+				if (isReadOnly)
 				{
-					return row;
+					if (row.InputMode == InputMode.ReadOnly && row.Header.Equals(fieldName.Substring(1)))
+					{
+						return row;
+					}
+				}
+				else
+				{
+					if (row.InputMode != InputMode.ReadOnly && row.DBColumn.Name.Equals(fieldName))
+					{
+						return row;
+					}
 				}
 			}
 			return null;
