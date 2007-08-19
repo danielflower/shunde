@@ -146,6 +146,16 @@ namespace Shunde.Web
 			if (partToPick != DateTimePart.Time) // add the date box
 			{
 
+				// write the javascript stuff we need for the calendar dropdowns first
+				this.Controls.Add(new LiteralControl(@"
+<SCRIPT LANGUAGE=""JavaScript"">
+
+	document.write(getCalendarStyles());
+ 
+</SCRIPT>
+
+"
+				));
 
 
 				TextBox dateBox = new TextBox();

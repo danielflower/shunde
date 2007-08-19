@@ -98,7 +98,7 @@ public partial class EditObjects_Edit : PageBase
 		}
 
 
-
+		ObjectEditorRow info = this.ObjectEditor["-<hr/>"];
 
 		this.ObjectEditor.PopulateTable();
 

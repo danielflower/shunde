@@ -244,15 +244,25 @@ namespace Shunde.Web
 
 
 		/// <summary>
-		/// Creates a new ObjectEditor row, using the specified name to get the DBColumn reference
+		/// Creates a new ObjectEditor row, using the specified name to get the DBColumn reference.
 		/// </summary>
 		public ObjectEditorRow(ObjectEditor objectEditor, string name)
 		{
 			this.objectEditor = objectEditor;
-			ObjectInfo oi = ObjectInfo.GetObjectInfo(this.objectEditor.DBObject.GetType());
-			this.dbColumn = oi.FindDBColumn(name);
-			this.RequiredField = !dbColumn.AllowNulls;
-			this.AutoDetectAndSetInputMode();
+
+			if (name.StartsWith("-")) // text only row
+			{
+				this.inputMode = InputMode.ReadOnly;
+				this.header = name.Substring(1);
+			}
+			else
+			{
+				ObjectInfo oi = ObjectInfo.GetObjectInfo(this.objectEditor.DBObject.GetType());
+				this.dbColumn = oi.FindDBColumn(name);
+				this.RequiredField = !dbColumn.AllowNulls;
+				this.AutoDetectAndSetInputMode();
+				this.header = TextUtils.MakeFriendly(name);
+			}
 		}
 
 		/// <summary>
@@ -338,7 +348,7 @@ namespace Shunde.Web
 			foreach (Enum val in allValues)
 			{
 				ListItem li = new ListItem();
-				li.Text = val.ToString();
+				li.Text = TextUtils.MakeFriendly(val.ToString());
 				li.Value = Convert.ToInt32(val).ToString();
 				if (currentValue != null)
 				{
@@ -484,6 +494,11 @@ namespace Shunde.Web
 		/// The input mode has not been specified
 		/// </summary>
 		Unspecified,
+
+		/// <summary>
+		/// Text is displayed with no input controls.
+		/// </summary>
+		ReadOnly,
 
 		/// <summary>
 		/// A CheckBox is used to specify true or false.
