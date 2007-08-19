@@ -67,6 +67,13 @@ namespace Shunde.Web
 			{
 				CreateCheckBoxList(row, tableRow);
 			}
+			else if (row.InputMode == InputMode.ReadOnly)
+			{
+				TableCell tc = new TableCell();
+				tc.ColumnSpan = 2;
+				tc.Text = row.Header;
+				tableRow.Cells.Add(tc);
+			}
 			else
 			{
 				throw new ShundeException("Row could not be created as the InputMode was not set to a valid value (set value was " + row.InputMode + ").");
@@ -757,7 +764,7 @@ namespace Shunde.Web
 		{
 			CheckBox cb = new CheckBox();
 			cb.Checked = selected;
-			cb.Text = "<strong>" + row.DBColumn.Name + "</strong>";
+			cb.Text = row.Header;
 			cb.ID = row.Id;
 			cb.TabIndex = 1;
 			

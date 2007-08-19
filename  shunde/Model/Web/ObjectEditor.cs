@@ -397,16 +397,6 @@ namespace Shunde.Web
 		{
 
 
-			// write the javascript stuff we need for the calendar dropdowns first
-			this.Controls.Add(new LiteralControl(@"
-<SCRIPT LANGUAGE=""JavaScript"">
-
-	document.write(getCalendarStyles());
- 
-</SCRIPT>
-
-"
-			));
 
 			Table editorTable = new Table();
 			editorTable.Width = new Unit(95, UnitType.Percentage);
@@ -445,7 +435,15 @@ namespace Shunde.Web
 				}
 
 
-				object value = row.DBColumn.FieldInfo.GetValue(DBObject);
+				object value;
+				if (row.InputMode == InputMode.ReadOnly)
+				{
+					value = null;
+				}
+				else
+				{
+					value = row.DBColumn.FieldInfo.GetValue(DBObject);
+				}
 
 
 				TableRow tableRow = new TableRow();
@@ -518,7 +516,7 @@ namespace Shunde.Web
 			foreach (ObjectEditorRow row in this.rows)
 			{
 
-				if (!row.Visible)
+				if (!row.Visible || row.InputMode == InputMode.ReadOnly)
 				{
 					continue;
 				}
@@ -853,7 +851,6 @@ namespace Shunde.Web
 				throw new ShundeException(fieldName + " has already been added.");
 			}
 			ObjectEditorRow row = new ObjectEditorRow(this, fieldName);
-			row.Header = TextUtils.MakeFriendly(fieldName);
 			if (this.rows.Count > 0)
 			{
 				row.DisplayOrder = this.rows[this.rows.Count - 1].DisplayOrder + 100;

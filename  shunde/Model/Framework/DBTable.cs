@@ -55,7 +55,7 @@ namespace Shunde.Framework
 		private string uniqueIndexColumns = "";
 
 		/// <summary>Creates a new DBTable with the specified Name and columns</summary>
-		public DBTable(string name, DBColumn[] columns)
+		public DBTable(string name, params DBColumn[] columns)
 		{
 			this.name = name;
 			this.columns = columns;
